@@ -9,6 +9,7 @@ BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = arg_mine
 PYTHON_INTERPRETER = python3
+DOCKER_WORKSPACE = "/opt/workspace"
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -75,6 +76,33 @@ endif
 ## Test python environment is setup correctly
 test_environment:
 	$(PYTHON_INTERPRETER) test_environment.py
+
+# default is to map the current directory into the workspace
+DOCKER_RUN_OPTS = \
+	-v ${PWD}:${DOCKER_WORKSPACE} \
+	-w ${DOCKER_WORKSPACE}
+
+build:
+	docker build -t $(PROJECT_NAME) .
+
+shell:
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} /bin/bash
+
+jupyter:
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		-p 8888:8888 \
+		-w ${DOCKER_WORKSPACE}/projects \
+		${PROJECT_NAME} jupyter lab --allow-root
+
+compile-reqs:
+	pip-compile requirements.in && \
+	pip-compile requirements_dev.in
+
+sync-reqs:
+	pip-sync requirements_dev.txt
 
 #################################################################################
 # PROJECT RULES                                                                 #
