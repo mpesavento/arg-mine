@@ -94,7 +94,7 @@ jupyter:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		-p 8888:8888 \
-		-w ${DOCKER_WORKSPACE}/projects \
+		-w "${DOCKER_WORKSPACE}/notebooks" \
 		${PROJECT_NAME} jupyter lab --allow-root
 
 compile-reqs:

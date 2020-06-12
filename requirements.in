@@ -8,6 +8,7 @@ jupyterhub~=1.1.0
 jupyterlab~=2.1.4
 
 awscli~=1.18.73
+click
 ipywidgets
 ipympl
 matplotlib~=3.2.1
