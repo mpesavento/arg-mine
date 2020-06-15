@@ -1,26 +1,16 @@
 import os
-from pathlib import Path
 import requests
 import zipfile
 import logging
 
 from dotenv import find_dotenv, load_dotenv
-import pandas as pd
 
-from arg_mine import ROOT_DIR
+from arg_mine import PROJECT_DIR
 
 logger = logging.getLogger(__name__)
 
-# URL taken from https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/
+# URL taken from https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/  # noqa: E501
 BASE_URL_FMT = "http://data.gdeltproject.org/blog/2020-climate-change-narrative/WebNewsEnglishSnippets.{year}.csv.zip"
-
-GDELT_COL_NAMES = [
-    "datetime",
-    "title",
-    "headline_image_url",
-    "content_url",
-    "snippit"  # contextual snippits
-]
 
 
 def download_file_from_url(url, target_file_path):
@@ -64,7 +54,7 @@ def download_gdelt_year(year, base_url_fmt=BASE_URL_FMT):
     full_url = base_url_fmt.format(year=year)
     uri_path, zip_filename = os.path.split(full_url.split("://")[1])
     gdelt_project_name = os.path.basename(uri_path)
-    gdelt_raw_dir = os.path.join(ROOT_DIR, "data", "raw", gdelt_project_name)
+    gdelt_raw_dir = os.path.join(PROJECT_DIR, "data", "raw", gdelt_project_name)
     os.makedirs(gdelt_raw_dir, exist_ok=True)
 
     zip_filepath = os.path.join(gdelt_raw_dir, zip_filename)
@@ -86,58 +76,6 @@ def download_gdelt_year(year, base_url_fmt=BASE_URL_FMT):
         logger.info("Using cached data for '{}': {}".format(year, csv_filepath))
 
     return csv_filepath
-
-
-def convert_datetime_int(datetime_int):
-    """
-    Convert an integer like `20200107101500` to a pd.Timestamp `2020.01.07T10:15:00`
-
-    Parameters
-    ----------
-    datetime_int : int
-        long integer with date and time, 14 char long
-
-    Returns
-    -------
-    pd.Timestamp
-
-    Raises
-    ------
-    ValueError : when int is not 14 char long
-    """
-    # NOTE we still need to confirm that these times are all GMT
-    datetime_str = str(datetime_int)
-    if len(datetime_str) != 14:
-        raise ValueError("Incorrect length for datetime integer, expected 12, found {}". format(len(datetime_str)))
-    ts = pd.Timestamp(
-        year=int(datetime_str[:4]),
-        month=int(datetime_str[4:6]),
-        day=int(datetime_str[6:8]),
-        hour=int(datetime_str[8:10]),
-        minute=int(datetime_str[10:12]),
-        second=int(datetime_str[12:14]),
-    )
-    return ts
-
-
-def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
-    """
-    From CSV path, load a pandas dataframe with the target data
-
-    Parameters
-    ----------
-    csv_filepath : str, path
-    col_names : List[str]
-
-    Returns
-    -------
-    pd.DataFrame
-    """
-    # convert csv to dataframe. should probably do this in a separate step, and just return the path here.
-    logger.info("reading data from: {}".format(csv_filepath))
-    df = pd.read_csv(csv_filepath, header=0, names=col_names, index_col=False)
-    df['timestamp'] = df.datetime.apply(convert_datetime_int)
-    return df
 
 
 def main():

@@ -25,7 +25,9 @@ load_dotenv(find_dotenv())
 
 To set up a virtual environment for development, run:
 ```
-make create-env
+make create-environment
+conda activate arg-mine 
+make requirements
 ```
 This will create an environment in conda, if conda is installed, or a virtualenv if not. This
 will also install all dev requirements into the env.
