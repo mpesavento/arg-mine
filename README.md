@@ -3,6 +3,23 @@
 Uses the ArgumentText API to mine arguments from selected data sources. A part of the Great American Debate project https://www.greatamericandebate.org/
 
 
+## env var requirements
+We are using the `dotenv` package to maintain separation of required keys and submitted code. The file `.env`
+is part of the base repo, but will NOT be committed to the repository. This file must be updated with the
+following required secrets, which will be read as environment variables:
+```
+ARGUMENTEXT_USERID=<your_userid>
+ARGUMENTEXT_KEY=<your_key>
+AWS_ACCESS_KEY=<your_key>
+AWS_SECRET_ACCESS_KEY=<your_key>
+```
+Each of these should have the corresponding values in the appropriate place
+
+These env vars can be loaded into the environment inside a script or notebook via:
+```
+load_dotenv(find_dotenv())
+```
+
 
 ## Project set up
 
