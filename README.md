@@ -1,10 +1,46 @@
-arg_mine
-==============================
+# arg_mine
 
 Uses the ArgumentText API to mine arguments from selected data sources. A part of the Great American Debate project https://www.greatamericandebate.org/
 
-Project Organization
-------------
+
+
+## Project set up
+
+To set up a virtual environment for development, run:
+```
+make create-env
+```
+This will create an environment in conda, if conda is installed, or a virtualenv if not. This
+will also install all dev requirements into the env.
+
+To build the associated docker image with identical dependencies, run:
+```
+make build
+```
+
+To access the bash terminal in the docker container, run
+```
+make shell
+```
+
+To run a jupyter lab server from a docker container, run
+```
+make jupyter
+```
+This will launch the jupyter lab server, with the host repository volume-mapped to the docker container, persisting all changes.
+
+
+### Dependency management
+To maintain and update dependencies, we use `pip-compile` on `requirements.in`, resulting in a complete list of all dependencies.
+This list keeps the explicit dependencies small, and deals with possible version conflicts rapidly.
+To update dependencies, inside the dev environment run:
+```
+make compile-reqs
+```
+
+
+
+## Project Organization
 
     ├── LICENSE
     ├── Makefile           <- Makefile with commands like `make data` or `make train`

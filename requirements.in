@@ -9,6 +9,7 @@ jupyterlab~=2.1.4
 
 awscli~=1.18.73
 click
+python-dotenv
 ipywidgets
 ipympl
 matplotlib~=3.2.1
