@@ -30,7 +30,9 @@ clean:
 
 ## Lint using flake8
 lint:
-	flake8 src
+	flake8 arg_mine
+
+
 
 ## Upload Data to S3
 sync_data_to_s3:
@@ -68,7 +70,7 @@ endif
 
 ## Test python environment is setup correctly
 test_environment:
-	$(PYTHON_INTERPRETER) test_environment.py
+	$(PYTHON_INTERPRETER) tests/test_environment.py
 
 ## Install Python Dependencies
 requirements: test_environment
@@ -110,10 +112,13 @@ jupyter:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		-p 8888:8888 \
-		-w "${DOCKER_WORKSPACE}/notebooks" \
-		${PROJECT_NAME} jupyter lab --allow-root
+		${PROJECT_NAME} scripts/run_jupyter.sh
 
-
+## testing inside docker instance
+test:
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} scripts/run_tests.sh
 
 #################################################################################
 # PROJECT RULES                                                                 #

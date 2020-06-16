@@ -86,7 +86,7 @@ RUN pip install -r requirements_dev.txt
 
 # Copy local files as late as possible to avoid cache busting
 # copy our version of the notebook config in
-COPY configs/jupyter_notebook_config.py /etc/jupyter/
+COPY .jupyter /etc/jupyter/
 
 # Fix permissions on /etc/jupyter as root
 USER root
@@ -110,6 +110,7 @@ RUN \
 ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
     fix-permissions /home/$NB_USER
+ENV PYTHONPATH /opt/workspace
 
 # # create SSL cert
 # RUN mkdir certs
