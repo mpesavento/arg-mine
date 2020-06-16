@@ -1,38 +1,41 @@
+import os
+import logging
+
 import requests
+from dotenv import find_dotenv, load_dotenv
+import http.cookiejar
 
-from arg_mine.api import errors
+logger = logging.getLogger(__name__)
 
-GATEWAY_BASE_URL = "https://api.argumentsearch.com/en/"
-
+GATEWAY_BASE_URL = "https://api.argumentsearch.com/en"
 CLASSIFY_BASE_URL = GATEWAY_BASE_URL + "/classify"
+CLUSTER_BASE_URL = GATEWAY_BASE_URL + "/cluster_arguments"
+SEARCH_BASE_URL = GATEWAY_BASE_URL + "/search"
+
+DEFAULT_TIMEOUT = 5  # sec
 
 
-def main():
-    timeout = 5
-    payload = {}
-    headers = {}
-    try:
-        response = requests.post(
-            CLASSIFY_BASE_URL,
-            json=payload,
-            headers=headers,
-            timeout=timeout,
-        )
-        response.raise_for_status()
+# A shared requests session for payment requests.
+class _BlockAll(http.cookiejar.CookiePolicy):
+    def set_ok(self, cookie, request):
+        return False
 
-    except (requests.ConnectionError, requests.Timeout) as e:
-        raise errors.Unavailable() from e
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 400:
-            error = e.response.json()
-            code = error['code']
-            message = error['message']
-        if code == 1:
-            raise errors.Refused(code, message) from e
-        elif code == 2:
-            raise errors.Stolen(code, message) from e
-        else:
-            raise errors.PaymentGatewayError(code, message) from e
 
-        logger.exception("Payment service had internal error.")
-        raise errors.Unavailable() from e
+query_session = requests.Session()
+query_session.cookies.policy = _BlockAll()
+
+
+def load_auth_tokens():
+    """
+    Read the ArgumentText auth tokens from the .env file
+
+    Returns
+    -------
+    user_id, api_key
+    """
+    load_dotenv(find_dotenv())
+    am_user_id = os.getenv("ARGUMENTEXT_USERID")
+    am_user_key = os.getenv("ARGUMENTEXT_KEY")
+    return am_user_id, am_user_key
+
+
