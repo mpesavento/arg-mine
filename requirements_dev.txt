@@ -6,19 +6,21 @@
 #
 alabaster==0.7.12         # via sphinx
 alembic==1.4.2            # via jupyterhub
+appdirs==1.4.4            # via black
 appnope==0.1.0            # via ipykernel, ipython
 async-generator==1.10     # via jupyterhub
-attrs==19.3.0             # via jsonschema, pytest
+attrs==19.3.0             # via black, jsonschema, pytest
 awscli==1.18.74           # via -r requirements.in
 babel==2.8.0              # via sphinx, sphinx-intl
 backcall==0.1.0           # via ipython
+black==19.10b0            # via -r requirements_dev.in
 bleach==3.1.5             # via nbconvert
 botocore==1.16.24         # via awscli, s3transfer
 certifi==2020.4.5.1       # via requests
 certipy==0.1.3            # via jupyterhub
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
-click==7.1.2              # via -r requirements.in, pip-tools, sphinx-intl
+click==7.1.2              # via -r requirements.in, black, pip-tools, sphinx-intl
 colorama==0.4.3           # via awscli
 coverage==5.1             # via -r requirements_dev.in
 cryptography==2.9.2       # via pyopenssl
@@ -67,6 +69,7 @@ pamela==1.0.0             # via jupyterhub
 pandas==1.0.4             # via -r requirements.in, seaborn, statsmodels
 pandocfilters==1.4.2      # via nbconvert
 parso==0.7.0              # via jedi
+pathspec==0.8.0           # via black
 patsy==0.5.1              # via statsmodels
 pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
@@ -96,6 +99,7 @@ pytz==2020.1              # via babel, pandas
 pywavelets==1.1.1         # via scikit-image
 pyyaml==5.3.1             # via awscli
 pyzmq==19.0.1             # via jupyter-client, notebook
+regex==2020.6.8           # via black
 requests==2.23.0          # via -r requirements.in, docker, jupyterhub, jupyterlab-server, sphinx, transifex-client
 retrying==1.3.3           # via plotly
 rsa==3.4.2                # via awscli
@@ -122,9 +126,11 @@ statsmodels==0.11.1       # via -r requirements.in
 tabulate==0.8.7           # via -r requirements_dev.in
 terminado==0.8.3          # via notebook
 testpath==0.4.4           # via nbconvert
+toml==0.10.1              # via black
 tornado==6.0.4            # via ipykernel, jupyter-client, jupyterhub, jupyterlab, notebook, terminado
 traitlets==4.3.3          # via ipykernel, ipython, ipywidgets, jupyter-client, jupyter-core, jupyter-telemetry, jupyterhub, nbconvert, nbformat, notebook
 transifex-client==0.13.9  # via -r requirements_dev.in
+typed-ast==1.4.1          # via black
 unidecode==1.1.1          # via python-slugify
 urllib3==1.25.9           # via botocore, requests, transifex-client
 wcwidth==0.2.3            # via prompt-toolkit, pytest
