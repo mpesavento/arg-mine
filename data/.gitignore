@@ -1,0 +1,10 @@
+###################################
+# Filter everything...
+*
+
+# ... except the .gitignore...
+!.gitignore
+
+# and whatever we list here
+!external/
+!climate_change_keywords.csv
