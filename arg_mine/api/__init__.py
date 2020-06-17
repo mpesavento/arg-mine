@@ -5,6 +5,7 @@ import requests
 from dotenv import find_dotenv, load_dotenv
 import http.cookiejar
 
+
 logger = logging.getLogger(__name__)
 
 GATEWAY_BASE_URL = "https://api.argumentsearch.com/en"
@@ -28,6 +29,8 @@ query_session.cookies.policy = _BlockAll()
 def load_auth_tokens():
     """
     Read the ArgumentText auth tokens from the .env file
+
+    # TODO: make this into a context manager
 
     Returns
     -------

@@ -15,11 +15,13 @@ class Unavailable(Error):
 
 class ArgumenTextGatewayError(Error):
     """Base class for gateway parsing errors (400)"""
-    def __init__(self, code, message):
-        self.code = code
+    def __init__(self, message):
         self.message = message
 
 
 class Refused(ArgumenTextGatewayError):
-    """Raise if 400 output code is ==1 (Not implemented in server currently)"""
-    pass
+    """
+    Raise if source URL is responding with 404
+    Filters 400 error message containing TARGET_MSG
+    """
+    TARGET_MSG = "Website could not be crawled"

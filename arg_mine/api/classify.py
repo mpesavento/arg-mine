@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from typing import List, Tuple, Any
 import logging
 import requests
-import json
+import math
+import time
 
-from arg_mine.api import DEFAULT_TIMEOUT, CLASSIFY_BASE_URL
+from arg_mine.api import DEFAULT_TIMEOUT, CLASSIFY_BASE_URL, load_auth_tokens
 from arg_mine.api import errors
 from arg_mine.utils import enum, unique_hash
 
@@ -139,6 +141,7 @@ def classify_url_sentences(
         url: str,
         user_id: str,
         api_key: str,
+        only_arguments: bool = True,
         topic_relevance: str = TOPIC_RELEVANCE.WORD2VEC,
         timeout: float = DEFAULT_TIMEOUT,
 ):
@@ -151,9 +154,14 @@ def classify_url_sentences(
     Parameters
     ----------
     topic : str
+        string of keywords used to query if sentence states argument on topic
     url : str
+        source of the content, webpage URL works well
     user_id : str
     api_key : str
+    only_arguments : bool
+        only return the sentences of the estimated arguments
+        TODO: check to see if setting this true decreases the computation time on the server
     topic_relevance : str
         use options from TOPIC_RELEVANCE enum
     timeout : float
@@ -171,7 +179,7 @@ def classify_url_sentences(
         "topicRelevance": topic_relevance,
         "predictStance": True,  # we don't want to predict stance without context
         "computeAttention": False,  # doesnt work for BERT-based models (the default model)
-        "showOnlyArguments": False,  # only return sentences classified as arguments
+        "showOnlyArguments": only_arguments,  # only return sentences classified as arguments
         "userMetadata": url,
     }
 
@@ -191,12 +199,10 @@ def classify_url_sentences(
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 400:
             error = e.response.json()
-            code = error['code']
-            message = error['message']
-            if code == 1:  # TODO: make the error codes an enum
-                raise errors.Refused(code, message) from e
-            else:
-                raise errors.ArgumenTextGatewayError(code, message) from e
+            message = error['error']
+            if errors.Refused.TARGET_MSG in message:
+                raise errors.Refused(message)
+            raise errors.ArgumenTextGatewayError(message) from e
 
         msg = "ArgumentText service had internal error."
         logger.exception(msg)
@@ -204,17 +210,58 @@ def classify_url_sentences(
     return response.json()
 
 
-def collect_sentences_by_topic(topic, url_list):
+def collect_sentences_by_topic(topic, url_list, pause_every=None, sleep_dur=5, max_attempts=3):
     """
     Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
 
     Parameters
     ----------
-    topic
-    url_list
+    topic : str
+    url_list : List[AnyStr]
+    pause_every : int
+        pause this many iterations
+        throttling to not DDOS the API server
+    sleep_dur : float
+        number of second to pause when pause_every is hit
+    max_attempts : int
+        maximum number of retries per url
+
 
     Returns
     -------
-
+    Tuple[List[ClassifyMetadata]], List[ClassifiedSentence], List[Any]]
     """
-    pass
+    pause_every = pause_every or len(url_list)
+    user_id, api_key = load_auth_tokens()
+    doc_list = []
+    refused_doc_list = []
+    sentence_list = []
+    for url_index, url in enumerate(url_list):
+        attempts = 0
+        if url_index and url_index % pause_every == 0:
+            logger.debug("sleeping for {} sec".format(sleep_dur))
+            time.sleep(sleep_dur)
+
+        out_dict = None
+        while attempts < max_attempts:
+            try:
+                attempts += 1
+                logger.debug("Attempting url {}, try #{}".format(url_index, attempts))
+                out_dict = classify_url_sentences(topic, url, user_id, api_key)
+                break  # exit out if we didnt error on anything
+            except errors.Refused as e:
+                logger.warning("Refused: {}, url={}".format(e, url))
+                refused_doc_list.append(url)
+                break
+            except (errors.Unavailable, errors.ArgumenTextGatewayError) as e:
+                logger.error(e)
+            if attempts == max_attempts:
+                logger.error("Failing attempts")
+        if not out_dict:
+            logger.info("Skipping {}: {}".format(url_index, url))
+            continue
+        doc_list.append(ClassifyMetadata.from_dict(out_dict['metadata']))
+        for sentence in out_dict['sentences']:
+            sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
+
+    return doc_list, sentence_list, refused_doc_list
