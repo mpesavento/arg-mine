@@ -2,6 +2,7 @@
 
 import hashlib
 
+
 def enum(**named_values):
     """
     Named enum. Doesnt need to use the Enum.NAME.value with the built in Enum
@@ -21,7 +22,7 @@ def enum(**named_values):
     -------
     Enum class
     """
-    return type('Enum', (), named_values)
+    return type("Enum", (), named_values)
 
 
 def unique_hash(input_str: str) -> str:

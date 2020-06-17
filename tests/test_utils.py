@@ -19,5 +19,5 @@ class TestHash(unittest.TestCase):
         self.assertIsInstance(hash_str, str)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

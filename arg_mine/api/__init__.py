@@ -40,5 +40,3 @@ def load_auth_tokens():
     am_user_id = os.getenv("ARGUMENTEXT_USERID")
     am_user_key = os.getenv("ARGUMENTEXT_KEY")
     return am_user_id, am_user_key
-
-

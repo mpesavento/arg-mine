@@ -31,7 +31,7 @@ def download_file_from_url(url, target_file_path):
     logger.info("downloading file from {}".format(url))
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
-    with open(target_file_path, 'wb') as f:
+    with open(target_file_path, "wb") as f:
         f.write(response.content)
     return
 
@@ -71,7 +71,11 @@ def download_gdelt_year(year, base_url_fmt=BASE_URL_FMT):
         if os.path.exists(zip_filepath):
             os.remove(zip_filepath)
         else:
-            logger.info("Unable to find the zip file we just extracted from: {}".format(zip_filepath))
+            logger.info(
+                "Unable to find the zip file we just extracted from: {}".format(
+                    zip_filepath
+                )
+            )
     else:
         logger.info("Using cached data for '{}': {}".format(year, csv_filepath))
 
@@ -82,7 +86,7 @@ def main():
     """
     Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
     """
-    logger.info('making final data set from raw data')
+    logger.info("making final data set from raw data")
 
     years = list(range(2015, 2021))
     # download article URL datasets from all given years
@@ -92,8 +96,8 @@ def main():
         data_paths[str(year)] = csv_path
 
 
-if __name__ == '__main__':
-    log_fmt = '%(levelname)s:%(asctime)s:%(name)s: %(message)s'
+if __name__ == "__main__":
+    log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
     logging.basicConfig(level=logging.DEBUG, format=log_fmt)
 
     # find .env automagically by walking up directories until it's found, then

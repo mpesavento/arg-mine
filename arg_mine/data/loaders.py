@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 
-log_fmt = '%(levelname)s:%(asctime)s:%(name)s: %(message)s'
+log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
 logging.basicConfig(level=logging.DEBUG, format=log_fmt)
 logger = logging.getLogger(__name__)
 
@@ -10,7 +10,7 @@ GDELT_COL_NAMES = [
     "title",
     "headline_image_url",
     "content_url",
-    "snippit"  # contextual snippits
+    "snippit",  # contextual snippits
 ]
 
 
@@ -34,7 +34,11 @@ def convert_datetime_int(datetime_int):
     # NOTE we still need to confirm that these times are all GMT
     datetime_str = str(datetime_int)
     if len(datetime_str) != 14:
-        raise ValueError("Incorrect length for datetime integer, expected 12, found {}". format(len(datetime_str)))
+        raise ValueError(
+            "Incorrect length for datetime integer, expected 12, found {}".format(
+                len(datetime_str)
+            )
+        )
     ts = pd.Timestamp(
         year=int(datetime_str[:4]),
         month=int(datetime_str[4:6]),
@@ -62,5 +66,5 @@ def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     # convert csv to dataframe. should probably do this in a separate step, and just return the path here.
     logger.info("reading data from: {}".format(csv_filepath))
     df = pd.read_csv(csv_filepath, header=0, names=col_names, index_col=False)
-    df['timestamp'] = df.datetime.apply(convert_datetime_int)
+    df["timestamp"] = df.datetime.apply(convert_datetime_int)
     return df

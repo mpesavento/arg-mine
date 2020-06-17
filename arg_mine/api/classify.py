@@ -15,23 +15,14 @@ logger = logging.getLogger(__name__)
 
 # enum for the topic relevance matching options, via "topicRelevance" in API
 TOPIC_RELEVANCE = enum(
-    MATCH_STRING='match_string',
-    N_GRAM_OVERLAP='n_gram_overlap',
-    WORD2VEC='word2vec'
+    MATCH_STRING="match_string", N_GRAM_OVERLAP="n_gram_overlap", WORD2VEC="word2vec"
 )
 
 # enum for possible argument labels
-ARGUMENT_LABEL = enum(
-    ARGUMENT='argument',
-    NO_ARGUMENT='no argument'
-)
+ARGUMENT_LABEL = enum(ARGUMENT="argument", NO_ARGUMENT="no argument")
 
 # enum for possible stance labels
-STANCE_LABEL = enum(
-    PRO='pro',
-    CON='contra',
-    NA=''
-)
+STANCE_LABEL = enum(PRO="pro", CON="contra", NA="")
 
 
 @dataclass
@@ -39,6 +30,7 @@ class ClassifyMetadata:
     """
     data class to hold the return values from a classify API call
     """
+
     doc_id: str  # unique hash associated with the source document / content
     url: str
     topic: str
@@ -60,25 +52,27 @@ class ClassifyMetadata:
     @classmethod
     def from_dict(cls, metadata_dict):
         """Load data object from a dict"""
-        url = metadata_dict["userMetadata"]  # should be enforcing upstream that the metadata will be the URL
+        url = metadata_dict[
+            "userMetadata"
+        ]  # should be enforcing upstream that the metadata will be the URL
         return ClassifyMetadata(
             # make the document ID based on the url
             doc_id=cls.make_doc_id(url),
             url=url,
-            topic=metadata_dict['topic'],
-            model_version=metadata_dict['modelVersion'],
-            language=metadata_dict['language'],
-            time_argument_prediction=metadata_dict['timeArgumentPrediction'],
-            time_attention_computation=metadata_dict['timeAttentionComputation'],
-            time_preprocessing=metadata_dict['timePreprocessing'],
-            time_stance_prediction=metadata_dict['timeStancePrediction'],
-            time_logging=metadata_dict['timeLogging'],
-            time_total=metadata_dict['timeTotal'],
-            total_arguments=metadata_dict['totalArguments'],
-            total_contra_arguments=metadata_dict['totalContraArguments'],
-            total_pro_arguments=metadata_dict['totalProArguments'],
-            total_non_arguments=metadata_dict['totalNonArguments'],
-            total_classified_sentences=metadata_dict['totalClassifiedSentences'],
+            topic=metadata_dict["topic"],
+            model_version=metadata_dict["modelVersion"],
+            language=metadata_dict["language"],
+            time_argument_prediction=metadata_dict["timeArgumentPrediction"],
+            time_attention_computation=metadata_dict["timeAttentionComputation"],
+            time_preprocessing=metadata_dict["timePreprocessing"],
+            time_stance_prediction=metadata_dict["timeStancePrediction"],
+            time_logging=metadata_dict["timeLogging"],
+            time_total=metadata_dict["timeTotal"],
+            total_arguments=metadata_dict["totalArguments"],
+            total_contra_arguments=metadata_dict["totalContraArguments"],
+            total_pro_arguments=metadata_dict["totalProArguments"],
+            total_non_arguments=metadata_dict["totalNonArguments"],
+            total_classified_sentences=metadata_dict["totalClassifiedSentences"],
         )
 
     @staticmethod
@@ -93,6 +87,7 @@ class ClassifiedSentence:
     data class to hold the return values from a classify API call
     The kwargs in this class are optional, and are not required when parsing from a dict
     """
+
     url: str
     doc_id: str
     topic: str
@@ -112,14 +107,14 @@ class ClassifiedSentence:
             url=url,
             doc_id=ClassifyMetadata.make_doc_id(url),
             topic=topic,
-            sentence_id=cls.make_sentence_id(sentence_dict['sentencePreprocessed']),
-            argument_confidence=sentence_dict['argumentConfidence'],
-            argument_label=sentence_dict['argumentLabel'],
-            sentence_original=sentence_dict['sentenceOriginal'],
-            sentence_preprocessed=sentence_dict['sentencePreprocessed'],
-            sort_confidence=sentence_dict['sortConfidence'],
-            stance_confidence=sentence_dict.get('stanceConfidence', 0.0),
-            stance_label=sentence_dict.get('stanceLabel', STANCE_LABEL.NA),
+            sentence_id=cls.make_sentence_id(sentence_dict["sentencePreprocessed"]),
+            argument_confidence=sentence_dict["argumentConfidence"],
+            argument_label=sentence_dict["argumentLabel"],
+            sentence_original=sentence_dict["sentenceOriginal"],
+            sentence_preprocessed=sentence_dict["sentencePreprocessed"],
+            sort_confidence=sentence_dict["sortConfidence"],
+            stance_confidence=sentence_dict.get("stanceConfidence", 0.0),
+            stance_label=sentence_dict.get("stanceLabel", STANCE_LABEL.NA),
         )
 
     @property
@@ -132,18 +127,19 @@ class ClassifiedSentence:
         _id = unique_hash(input_str)
         return _id
 
+
 # ==============================================================================
 # methods
 
 
 def classify_url_sentences(
-        topic: str,
-        url: str,
-        user_id: str,
-        api_key: str,
-        only_arguments: bool = True,
-        topic_relevance: str = TOPIC_RELEVANCE.WORD2VEC,
-        timeout: float = DEFAULT_TIMEOUT,
+    topic: str,
+    url: str,
+    user_id: str,
+    api_key: str,
+    only_arguments: bool = True,
+    topic_relevance: str = TOPIC_RELEVANCE.WORD2VEC,
+    timeout: float = DEFAULT_TIMEOUT,
 ):
     """
     For a given URL and topic phrase, identify which sentences contain arguments
@@ -187,11 +183,7 @@ def classify_url_sentences(
         # do the requests call
         # TODO: add sessions to this:
         # inject a session or the requests object, confirm that injected object has a `post` method
-        response = requests.post(
-            CLASSIFY_BASE_URL,
-            json=payload,
-            timeout=timeout,
-        )
+        response = requests.post(CLASSIFY_BASE_URL, json=payload, timeout=timeout,)
         response.raise_for_status()
 
     except (requests.ConnectionError, requests.Timeout) as e:
@@ -199,7 +191,7 @@ def classify_url_sentences(
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 400:
             error = e.response.json()
-            message = error['error']
+            message = error["error"]
             if errors.Refused.TARGET_MSG in message:
                 raise errors.Refused(message)
             raise errors.ArgumenTextGatewayError(message) from e
@@ -210,7 +202,9 @@ def classify_url_sentences(
     return response.json()
 
 
-def collect_sentences_by_topic(topic, url_list, pause_every=None, sleep_dur=5, max_attempts=3):
+def collect_sentences_by_topic(
+    topic, url_list, pause_every=None, sleep_dur=5, max_attempts=3
+):
     """
     Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
 
@@ -260,8 +254,8 @@ def collect_sentences_by_topic(topic, url_list, pause_every=None, sleep_dur=5, m
         if not out_dict:
             logger.info("Skipping {}: {}".format(url_index, url))
             continue
-        doc_list.append(ClassifyMetadata.from_dict(out_dict['metadata']))
-        for sentence in out_dict['sentences']:
+        doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
+        for sentence in out_dict["sentences"]:
             sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
 
     return doc_list, sentence_list, refused_doc_list
