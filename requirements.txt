@@ -24,6 +24,9 @@ decorator==4.4.2          # via ipython, networkx, traitlets
 defusedxml==0.6.0         # via nbconvert
 docutils==0.15.2          # via awscli, botocore
 entrypoints==0.3          # via jupyterhub, nbconvert
+gevent==20.6.2            # via grequests
+greenlet==0.4.16          # via gevent
+grequests==0.6.0          # via -r requirements.in
 idna==2.9                 # via requests
 imageio==2.8.0            # via scikit-image
 ipykernel==5.3.0          # via ipympl, ipywidgets, notebook
@@ -74,13 +77,14 @@ pyopenssl==19.1.0         # via certipy
 pyparsing==2.4.7          # via matplotlib, packaging
 pyrsistent==0.16.0        # via jsonschema
 python-dateutil==2.8.1    # via alembic, botocore, jupyter-client, jupyterhub, matplotlib, pandas
+python-dotenv==0.13.0     # via -r requirements.in
 python-editor==1.0.4      # via alembic
 python-json-logger==0.1.11  # via jupyter-telemetry
 pytz==2020.1              # via pandas
 pywavelets==1.1.1         # via scikit-image
 pyyaml==5.3.1             # via awscli
 pyzmq==19.0.1             # via jupyter-client, notebook
-requests==2.23.0          # via -r requirements.in, jupyterhub, jupyterlab-server
+requests==2.23.0          # via -r requirements.in, grequests, jupyterhub, jupyterlab-server
 retrying==1.3.3           # via plotly
 rsa==3.4.2                # via awscli
 ruamel.yaml.clib==0.2.0   # via ruamel.yaml
@@ -102,6 +106,8 @@ urllib3==1.25.9           # via botocore, requests
 wcwidth==0.2.3            # via prompt-toolkit
 webencodings==0.5.1       # via bleach
 widgetsnbextension==3.5.1  # via ipywidgets
+zope.event==4.4           # via gevent
+zope.interface==5.1.0     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

@@ -29,3 +29,8 @@ bibtex reference:
   url = {https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf},
 }
 ```
+
+## Sentence-BERT
+Used in the clustering algorithm
+https://www.groundai.com/project/sentence-bert-sentence-embeddings-using-siamese-bert-networks/1
+[code available](https://github.com/UKPLab/sentence-transformers)
