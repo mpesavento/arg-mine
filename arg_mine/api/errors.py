@@ -17,13 +17,18 @@ class Unavailable(Error):
 
 class NotResponding(Error):
     """ConnectionError or Timeout"""
+    pass
 
 
 class ArgumenTextGatewayError(Error):
     """Base class for gateway parsing errors (400)"""
 
-    def __init__(self, message):
+    def __init__(self, code, message):
         self.message = message
+        self.code = code
+
+    def __str__(self):
+        return "{}: {}: {}".format(self.__class__.__name__, self.code, self.message)
 
 
 class Refused(ArgumenTextGatewayError):
@@ -32,3 +37,9 @@ class Refused(ArgumenTextGatewayError):
     Filters 400 error message containing TARGET_MSG
     """
     TARGET_MSG = "Website could not be crawled"
+    pass
+
+
+class InternalGatewayError(ArgumenTextGatewayError):
+    """Raise if get 500, often get this if have bad json parameters"""
+    pass

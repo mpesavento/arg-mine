@@ -71,8 +71,8 @@ class TestClassifiedSentence(unittest.TestCase):
         self.assertEqual(sentence_out.url, self.url)
         # check that the document id is the same as what we expect
         self.assertEqual(sentence_out.doc_id, self.doc_id)
-        self.assertEqual(sentence_out.stance_label, classify.STANCE_LABEL.CON)
-        self.assertEqual(sentence_out.argument_label, classify.ARGUMENT_LABEL.ARGUMENT)
+        self.assertEqual(sentence_out.stance_label, classify.StanceLabel.CON)
+        self.assertEqual(sentence_out.argument_label, classify.ArgumentLabel.ARGUMENT)
         self.assertEqual(sentence_out.is_argument, True)
 
     # TODO: add sentence with no argument and with no stance
@@ -84,9 +84,9 @@ class TestClassifiedSentence(unittest.TestCase):
         self.assertEqual(sentence_out.url, self.url)
         # check that the document id is the same as what we expect
         self.assertEqual(sentence_out.doc_id, self.doc_id)
-        self.assertEqual(sentence_out.stance_label, classify.STANCE_LABEL.NA)
+        self.assertEqual(sentence_out.stance_label, classify.StanceLabel.NA)
         self.assertEqual(
-            sentence_out.argument_label, classify.ARGUMENT_LABEL.NO_ARGUMENT
+            sentence_out.argument_label, classify.ArgumentLabel.NO_ARGUMENT
         )
         self.assertEqual(sentence_out.is_argument, False)
 

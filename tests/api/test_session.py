@@ -84,6 +84,16 @@ class TestFetch(unittest.TestCase):
         )
         self.assertEqual(response, expected["response"])
 
+        # Assert that our mocked method was called with the right parameters
+        print(mock_post.call_args_list)
+        self.assertIn(
+            mock.call(
+                session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args",
+                json=payload,
+                timeout=session.DEFAULT_TIMEOUT),
+            mock_post.call_args_list
+        )
+
     @mock.patch("arg_mine.api.session.requests.post")
     def test_fetch_refused(self, mock_post):
         expected = load_json_fixture("response_classify_refused_remote_404.json")
@@ -105,19 +115,63 @@ class TestFetch(unittest.TestCase):
                 session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args", payload
             )
 
-    #
-    #
-    #
-    # json_data = mgc.fetch_json('http://someotherurl.com/anothertest.json')
-    # self.assertEqual(json_data, {"key2": "value2"})
-    # json_data = mgc.fetch_json('http://nonexistenturl.com/cantfindme.json')
-    # self.assertIsNone(json_data)
-    #
-    # # We can even assert that our mocked method was called with the right parameters
-    # self.assertIn(mock.call('http://someurl.com/test.json'), mock_post.call_args_list)
-    # self.assertIn(mock.call('http://someotherurl.com/anothertest.json'), mock_post.call_args_list)
-    #
-    # self.assertEqual(len(mock_get.call_args_list), 3)
+    @mock.patch("arg_mine.api.session.requests.post")
+    def test_fetch_gateway_error(self, mock_post):
+        expected = load_json_fixture("response_classify_gateway_error.json")
+        payload = expected["payload"]
+        print("response json")
+        print(expected["response"])
+
+        mock_resp = self._mock_response(
+            status=expected["status_code"],
+            json_data=expected["response"],
+            raise_for_status=requests.HTTPError(
+                "400 Client Error: BAD REQUEST for url: https://api.argumentsearch.com/en/classify"
+            ),
+        )
+        mock_post.return_value = mock_resp
+
+        with self.assertRaises(errors.ArgumenTextGatewayError):
+            _ = session.fetch(
+                session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args", payload
+                    )
+
+    @mock.patch("arg_mine.api.session.requests.post")
+    def test_fetch_bad_payload(self, mock_post):
+        expected = load_json_fixture("response_classify_500_bad_payload.json")
+        payload = expected["payload"]
+
+        mock_resp = self._mock_response(
+            status=expected["status_code"],
+            json_data=expected["response"],
+            raise_for_status=requests.HTTPError(
+                "500 Server Error: INTERNAL SERVER ERROR for url: https://api.argumentsearch.com/en/classify"
+            ),
+        )
+        mock_post.return_value = mock_resp
+
+        with self.assertRaises(errors.InternalGatewayError):
+            _ = session.fetch(
+                session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args", payload
+            )
+
+    @mock.patch("arg_mine.api.session.requests.post")
+    def test_fetch_timeout(self, mock_post):
+        expected = load_json_fixture("response_classify_only_args.json")
+        payload = expected["payload"]
+
+        mock_resp = self._mock_response(
+            status=408,
+            json_data=None,
+            raise_for_status=requests.Timeout(
+                "mocked timeout"),
+        )
+        mock_post.return_value = mock_resp
+
+        with self.assertRaises(errors.NotResponding):
+            _ = session.fetch(
+                session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args", payload
+            )
 
 
 if __name__ == "__main__":

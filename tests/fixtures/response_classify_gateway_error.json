@@ -1,0 +1,17 @@
+{
+  "payload": {
+    "topic": "climate change",
+    "userID": "4uDdOJd9",
+    "targetUrl": "https://www.heraldmailmedia.com/news/nation/australia-sending-aid-to-wildfire-towns-as-death-toll-rises/article_883fa793-6c0a-547e-8f77-b5964f1d7182.html",
+    "model": "default",
+    "topicRelevance": "word2vec",
+    "predictStance": true,
+    "computeAttention": false,
+    "showOnlyArguments": true,
+    "userMetadata": "https://www.heraldmailmedia.com/news/nation/australia-sending-aid-to-wildfire-towns-as-death-toll-rises/article_883fa793-6c0a-547e-8f77-b5964f1d7182.html"
+  },
+  "response": {
+    "error": "Unknown internal error"
+  },
+  "status_code": 400
+}

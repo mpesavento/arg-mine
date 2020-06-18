@@ -1,0 +1,11 @@
+{
+  "payload": {
+    "topic": "climate change",
+    "userID": "4uDdOJd9",
+    "targetUrl": "https://www.smh.com.au/politics/federal/liberals-speak-out-to-back-science-minister-on-climate-change-action-20200115-p53rs1.html",
+    "model": "i_am_a_ bad_model",
+    "userMetadata": "https://www.smh.com.au/politics/federal/liberals-speak-out-to-back-science-minister-on-climate-change-action-20200115-p53rs1.html"
+  },
+  "response": "",
+  "status_code": 500
+}

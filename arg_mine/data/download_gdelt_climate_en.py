@@ -6,8 +6,10 @@ import logging
 from dotenv import find_dotenv, load_dotenv
 
 from arg_mine import PROJECT_DIR
+from arg_mine.utils import LOG_FMT
 
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__).setLevel(logging.DEBUG)  # noqa
 
 # URL taken from https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/  # noqa: E501
 BASE_URL_FMT = "http://data.gdeltproject.org/blog/2020-climate-change-narrative/WebNewsEnglishSnippets.{year}.csv.zip"
@@ -97,8 +99,7 @@ def main():
 
 
 if __name__ == "__main__":
-    log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
-    logging.basicConfig(level=logging.DEBUG, format=log_fmt)
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FMT)
 
     # find .env automagically by walking up directories until it's found, then
     # load up the .env entries as environment variables

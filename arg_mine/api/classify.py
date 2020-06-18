@@ -3,25 +3,31 @@ from typing import List
 import logging
 import time
 
-from arg_mine.api.session import DEFAULT_TIMEOUT, fetch
 from arg_mine.api.auth import load_auth_tokens
-from arg_mine.api import errors
-from arg_mine.utils import enum, unique_hash
+from arg_mine.api import session, errors
+from arg_mine import utils
 
-_logger = logging.getLogger(__name__)
+_logger = utils.get_logger(__name__, logging.DEBUG)
 
-# TODO(MJP): this enum pattern is horrible. Find a better one.
 
-# enum for the topic relevance matching options, via "topicRelevance" in API
-TOPIC_RELEVANCE = enum(
-    MATCH_STRING="match_string", N_GRAM_OVERLAP="n_gram_overlap", WORD2VEC="word2vec"
-)
+class TopicRelevance:
+    """enum for the topic relevance matching options, via "topicRelevance" in API"""
+    MATCH_STRING = "match_string"
+    N_GRAM_OVERLAP = "n_gram_overlap"
+    WORD2VEC = "word2vec"
 
-# enum for possible argument labels
-ARGUMENT_LABEL = enum(ARGUMENT="argument", NO_ARGUMENT="no argument")
 
-# enum for possible stance labels
-STANCE_LABEL = enum(PRO="pro", CON="contra", NA="")
+class ArgumentLabel:
+    """enum for possible argument labels"""
+    ARGUMENT = "argument"
+    NO_ARGUMENT = "no argument"
+
+
+class StanceLabel:
+    """enum for possible stance labels"""
+    PRO = "pro"
+    CON = "contra"
+    NA = ""
 
 
 @dataclass
@@ -77,7 +83,7 @@ class ClassifyMetadata:
     @staticmethod
     def make_doc_id(input_str):
         """Return a unique hash for the given input string; used as the document id"""
-        return unique_hash(input_str)
+        return utils.unique_hash(input_str)
 
 
 @dataclass
@@ -97,7 +103,7 @@ class ClassifiedSentence:
     sentence_preprocessed: str
     sort_confidence: float
     stance_confidence: float = 0.0
-    stance_label: str = STANCE_LABEL.NA
+    stance_label: str = StanceLabel.NA
 
     @classmethod
     def from_dict(cls, url, topic, sentence_dict):
@@ -113,17 +119,17 @@ class ClassifiedSentence:
             sentence_preprocessed=sentence_dict["sentencePreprocessed"],
             sort_confidence=sentence_dict["sortConfidence"],
             stance_confidence=sentence_dict.get("stanceConfidence", 0.0),
-            stance_label=sentence_dict.get("stanceLabel", STANCE_LABEL.NA),
+            stance_label=sentence_dict.get("stanceLabel", StanceLabel.NA),
         )
 
     @property
     def is_argument(self):
-        return self.argument_label == ARGUMENT_LABEL.ARGUMENT
+        return self.argument_label == ArgumentLabel.ARGUMENT
 
     @staticmethod
     def make_sentence_id(input_str):
         """Return a unique hash for the given input string; used as the sentence id"""
-        _id = unique_hash(input_str)
+        _id = utils.unique_hash(input_str)
         return _id
 
 
@@ -137,8 +143,8 @@ def classify_url_sentences(
     user_id: str,
     api_key: str,
     only_arguments: bool = True,
-    topic_relevance: str = TOPIC_RELEVANCE.WORD2VEC,
-    timeout: float = DEFAULT_TIMEOUT,
+    topic_relevance: str = TopicRelevance.WORD2VEC,
+    timeout: float = session.DEFAULT_TIMEOUT,
 ):
     """
     For a given URL and topic phrase, identify which sentences contain arguments
@@ -158,7 +164,7 @@ def classify_url_sentences(
         only return the sentences of the estimated arguments
         TODO: check to see if setting this true decreases the computation time on the server
     topic_relevance : str
-        use options from TOPIC_RELEVANCE enum
+        use options from TopicRelevance enum
     timeout : float
 
     Returns
@@ -177,8 +183,8 @@ def classify_url_sentences(
         "showOnlyArguments": only_arguments,  # only return sentences classified as arguments
         "userMetadata": url,
     }
-
-    json_response = fetch(payload, timeout)
+    request_session = session.get_session()
+    json_response = session.fetch(session.ApiUrl.CLASSIFY_BASE_URL, payload, timeout, request_session=request_session)
     return json_response
 
 

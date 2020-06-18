@@ -1,6 +1,24 @@
 """Utility methods"""
 
 import hashlib
+import logging
+
+LOG_FMT = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
+
+
+def get_logger(name, level=logging.INFO):
+    """Get a basic logger"""
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setLevel(level)
+
+    logger.addHandler(consoleHandler)
+
+    formatter = logging.Formatter(LOG_FMT)
+    consoleHandler.setFormatter(formatter)
+    return logger
 
 
 def enum(**named_values):

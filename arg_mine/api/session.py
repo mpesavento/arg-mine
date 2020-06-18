@@ -1,6 +1,8 @@
 import http.cookiejar
 import logging
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 from arg_mine.api import errors
 
@@ -26,11 +28,40 @@ class _BlockAll(http.cookiejar.CookiePolicy):
         return False
 
 
+class TimeoutHTTPAdapter(HTTPAdapter):
+    def __init__(self, *args, **kwargs):
+        self.timeout = DEFAULT_TIMEOUT
+        if "timeout" in kwargs:
+            self.timeout = kwargs["timeout"]
+            del kwargs["timeout"]
+        super().__init__(*args, **kwargs)
+
+    def send(self, request, **kwargs):
+        timeout = kwargs.get("timeout")
+        if timeout is None:
+            kwargs["timeout"] = self.timeout
+        return super().send(request, **kwargs)
+
+
 def get_session():
     """Return a session object"""
     # todo: add authentication here
     query_session = requests.Session()
+    # block all collection of cookies
     query_session.cookies.policy = _BlockAll()
+
+    # create retry strategy
+    retry_strategy = Retry(
+        total=3,
+        status_forcelist=[429, 500, 502, 503, 504],
+        method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],  # generally avoid having POST in here, it inserts
+        backoff_factor=1,  # {backoff factor} * (2 ** ({number of total retries} - 1))
+    )
+
+    # Mount timeout adapter for both http and https usage
+    adapter = TimeoutHTTPAdapter(timeout=DEFAULT_TIMEOUT, max_retries=retry_strategy)
+    query_session.mount("https://", adapter)
+
     return query_session
 
 
@@ -79,26 +110,27 @@ def fetch(
         response.raise_for_status()
 
     except (requests.ConnectionError, requests.Timeout) as e:
-        _logger.error("{} : {}".format(e.response.status_code, e.response.json()['error']))
         raise errors.NotResponding(
-            "Server not responding, ConnectionError or Timeout"
+            "Server not responding, ConnectionError or Timeout ({} s)".format(timeout)
         ) from e
     except requests.HTTPError as e:
-        print("****** inside HTTPError catch")
-        print(e.response.status_code)
-        print(e.response.json())
-        _logger.error("{} : {}".format(e.response.status_code, e.response.json()))
         if e.response.status_code == 400:
             error = e.response.json()
+            _logger.error("{} : {}".format(e.response.status_code, e.response.json()))
             message = error["error"]
-            print("** inside 400")
-            print(message)
             if errors.Refused.TARGET_MSG in message:
-                raise errors.Refused(message)
-            raise errors.ArgumenTextGatewayError(message) from e
+                raise errors.Refused(e.response.status_code, message)
+            raise errors.ArgumenTextGatewayError(e.response.status_code, message) from e
+        elif e.response.status_code == 500:
+            msg = (
+                "Server Error: INTERNAL SERVER ERROR for url: https://api.argumentsearch.com/en/classify" +
+                ", check payload contents?"
+            )
+            _logger.error("{} : {}".format(500, msg))
+            raise errors.InternalGatewayError(e.response.status_code, msg)
 
         msg = "ArgumentText service had internal error."
         _logger.exception(msg)
-        raise errors.Unavailable(msg) from e
+        raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
     json_response = response.json()
     return json_response
