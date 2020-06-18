@@ -1,15 +1,14 @@
 from dataclasses import dataclass
-from typing import List, Tuple, Any
+from typing import List
 import logging
-import requests
-import math
 import time
 
-from arg_mine.api import DEFAULT_TIMEOUT, CLASSIFY_BASE_URL, load_auth_tokens
+from arg_mine.api.session import DEFAULT_TIMEOUT, fetch
+from arg_mine.api.auth import load_auth_tokens
 from arg_mine.api import errors
 from arg_mine.utils import enum, unique_hash
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # TODO(MJP): this enum pattern is horrible. Find a better one.
 
@@ -179,27 +178,8 @@ def classify_url_sentences(
         "userMetadata": url,
     }
 
-    try:
-        # do the requests call
-        # TODO: add sessions to this:
-        # inject a session or the requests object, confirm that injected object has a `post` method
-        response = requests.post(CLASSIFY_BASE_URL, json=payload, timeout=timeout,)
-        response.raise_for_status()
-
-    except (requests.ConnectionError, requests.Timeout) as e:
-        raise errors.Unavailable("Server not responding") from e
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 400:
-            error = e.response.json()
-            message = error["error"]
-            if errors.Refused.TARGET_MSG in message:
-                raise errors.Refused(message)
-            raise errors.ArgumenTextGatewayError(message) from e
-
-        msg = "ArgumentText service had internal error."
-        logger.exception(msg)
-        raise errors.Unavailable(msg) from e
-    return response.json()
+    json_response = fetch(payload, timeout)
+    return json_response
 
 
 def collect_sentences_by_topic(
@@ -233,26 +213,26 @@ def collect_sentences_by_topic(
     for url_index, url in enumerate(url_list):
         attempts = 0
         if url_index and url_index % pause_every == 0:
-            logger.debug("sleeping for {} sec".format(sleep_dur))
+            _logger.debug("sleeping for {} sec".format(sleep_dur))
             time.sleep(sleep_dur)
 
         out_dict = None
         while attempts < max_attempts:
             try:
                 attempts += 1
-                logger.debug("Attempting url {}, try #{}".format(url_index, attempts))
+                _logger.debug("Attempting url {}, try #{}".format(url_index, attempts))
                 out_dict = classify_url_sentences(topic, url, user_id, api_key)
                 break  # exit out if we didnt error on anything
             except errors.Refused as e:
-                logger.warning("Refused: {}, url={}".format(e, url))
+                _logger.warning("Refused: {}, url={}".format(e, url))
                 refused_doc_list.append(url)
                 break
             except (errors.Unavailable, errors.ArgumenTextGatewayError) as e:
-                logger.error(e)
+                _logger.error(e)
             if attempts == max_attempts:
-                logger.error("Failing attempts")
+                _logger.error("Failing attempts")
         if not out_dict:
-            logger.info("Skipping {}: {}".format(url_index, url))
+            _logger.info("Skipping {}: {}".format(url_index, url))
             continue
         doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
         for sentence in out_dict["sentences"]:

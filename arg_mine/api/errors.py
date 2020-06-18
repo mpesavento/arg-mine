@@ -15,6 +15,10 @@ class Unavailable(Error):
     pass
 
 
+class NotResponding(Error):
+    """ConnectionError or Timeout"""
+
+
 class ArgumenTextGatewayError(Error):
     """Base class for gateway parsing errors (400)"""
 
@@ -27,5 +31,4 @@ class Refused(ArgumenTextGatewayError):
     Raise if source URL is responding with 404
     Filters 400 error message containing TARGET_MSG
     """
-
     TARGET_MSG = "Website could not be crawled"

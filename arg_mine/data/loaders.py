@@ -2,7 +2,7 @@ import logging
 import pandas as pd
 
 log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=log_fmt)
+# logging.basicConfig(level=logging.DEBUG, format=log_fmt)
 logger = logging.getLogger(__name__)
 
 GDELT_COL_NAMES = [

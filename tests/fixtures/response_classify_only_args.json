@@ -1,0 +1,85 @@
+{
+  "payload": {
+    "topic": "climate change",
+    "userID": "4uDdOJd9",
+    "targetUrl": "https://www.smh.com.au/politics/federal/liberals-speak-out-to-back-science-minister-on-climate-change-action-20200115-p53rs1.html",
+    "model": "default",
+    "topicRelevance": "word2vec",
+    "predictStance": true,
+    "computeAttention": false,
+    "showOnlyArguments": true,
+    "userMetadata": "https://www.smh.com.au/politics/federal/liberals-speak-out-to-back-science-minister-on-climate-change-action-20200115-p53rs1.html"
+  },
+  "response": {
+    "metadata": {
+      "computeAttention": false,
+      "language": "en",
+      "modelVersion": 0.1,
+      "predictStance": true,
+      "removeDuplicates": true,
+      "showOnlyArguments": true,
+      "sortBy": "argumentConfidence",
+      "timeArgumentPrediction": 0.478726863861084,
+      "timeAttentionComputation": -1,
+      "timeLogging": 0.1343073844909668,
+      "timePreprocessing": 3.075599670410156e-05,
+      "timeStancePrediction": -1,
+      "timeTotal": 1.1918489933013916,
+      "topic": "climate change",
+      "totalArguments": 5,
+      "totalClassifiedSentences": 37,
+      "totalContraArguments": 3,
+      "totalNonArguments": 32,
+      "totalProArguments": 2,
+      "userMetadata": "https://www.smh.com.au/politics/federal/liberals-speak-out-to-back-science-minister-on-climate-change-action-20200115-p53rs1.html"
+    },
+    "sentences": [
+      {
+        "argumentConfidence": 0.8324097394943237,
+        "argumentLabel": "argument",
+        "sentenceOriginal": "\"So she's right - there is no point wasting time discussing climate change - because we are not going to stop it from happening,\" he said of the minister's comments.",
+        "sentencePreprocessed": "\"So she's right - there is no point wasting time discussing climate change - because we are not going to stop it from happening,\" he said of the minister's comments.",
+        "sortConfidence": 0.9131057365821765,
+        "stanceConfidence": 0.9938017336700293,
+        "stanceLabel": "pro"
+      },
+      {
+        "argumentConfidence": 0.8321625888347626,
+        "argumentLabel": "argument",
+        "sentenceOriginal": "Mr Zimmerman said climate change clearly underlined the bushfires being experienced this summer.",
+        "sentencePreprocessed": "Mr Zimmerman said climate change clearly underlined the bushfires being experienced this summer.",
+        "sortConfidence": 0.8809053269273679,
+        "stanceConfidence": 0.9296480650199731,
+        "stanceLabel": "contra"
+      },
+      {
+        "argumentConfidence": 0.8090184926986694,
+        "argumentLabel": "argument",
+        "sentenceOriginal": "NSW Liberal senator Andrew Bragg said climate change was not a matter of personal belief when it should be based on the science.",
+        "sentencePreprocessed": "NSW Liberal senator Andrew Bragg said climate change was not a matter of personal belief when it should be based on the science.",
+        "sortConfidence": 0.8656550159382224,
+        "stanceConfidence": 0.9222915391777753,
+        "stanceLabel": "contra"
+      },
+      {
+        "argumentConfidence": 0.8042505085468292,
+        "argumentLabel": "argument",
+        "sentenceOriginal": "\"Karen is correct when she says every second spent discussing whether the climate is changing is wasted time \u2013 it's time that would be much better spent on mitigation and adaption strategy development.\"",
+        "sentencePreprocessed": "\"Karen is correct when she says every second spent discussing whether the climate is changing is wasted time \u2013 it's time that would be much better spent on mitigation and adaption strategy development.\"",
+        "sortConfidence": 0.793566440312085,
+        "stanceConfidence": 0.7828823720773408,
+        "stanceLabel": "contra"
+      },
+      {
+        "argumentConfidence": 0.8910331651568413,
+        "argumentLabel": "argument",
+        "sentenceOriginal": "Mr Kelly said the only \"denial\" he had seen was coming from those who denied that Australia only made up 1.3 per cent of global emissions and could not have any measurable effect on global temperatures.",
+        "sentencePreprocessed": "Mr Kelly said the only \"denial\" he had seen was coming from those who denied that Australia only made up 1.3 per cent of global emissions and could not have any measurable effect on global temperatures.",
+        "sortConfidence": 0.7078584677645311,
+        "stanceConfidence": 0.5246837703722209,
+        "stanceLabel": "pro"
+      }
+    ]
+  },
+  "status_code": 200
+}
