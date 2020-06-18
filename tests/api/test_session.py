@@ -90,8 +90,9 @@ class TestFetch(unittest.TestCase):
             mock.call(
                 session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args",
                 json=payload,
-                timeout=session.DEFAULT_TIMEOUT),
-            mock_post.call_args_list
+                timeout=session.DEFAULT_TIMEOUT,
+            ),
+            mock_post.call_args_list,
         )
 
     @mock.patch("arg_mine.api.session.requests.post")
@@ -134,7 +135,7 @@ class TestFetch(unittest.TestCase):
         with self.assertRaises(errors.ArgumenTextGatewayError):
             _ = session.fetch(
                 session.ApiUrl.CLASSIFY_BASE_URL + "/test_only_args", payload
-                    )
+            )
 
     @mock.patch("arg_mine.api.session.requests.post")
     def test_fetch_bad_payload(self, mock_post):
@@ -163,8 +164,7 @@ class TestFetch(unittest.TestCase):
         mock_resp = self._mock_response(
             status=408,
             json_data=None,
-            raise_for_status=requests.Timeout(
-                "mocked timeout"),
+            raise_for_status=requests.Timeout("mocked timeout"),
         )
         mock_post.return_value = mock_resp
 

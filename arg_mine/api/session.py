@@ -54,7 +54,12 @@ def get_session():
     retry_strategy = Retry(
         total=3,
         status_forcelist=[429, 500, 502, 503, 504],
-        method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],  # generally avoid having POST in here, it inserts
+        method_whitelist=[
+            "HEAD",
+            "GET",
+            "OPTIONS",
+            "POST",
+        ],  # generally avoid having POST in here, it inserts
         backoff_factor=1,  # {backoff factor} * (2 ** ({number of total retries} - 1))
     )
 
@@ -123,8 +128,8 @@ def fetch(
             raise errors.ArgumenTextGatewayError(e.response.status_code, message) from e
         elif e.response.status_code == 500:
             msg = (
-                "Server Error: INTERNAL SERVER ERROR for url: https://api.argumentsearch.com/en/classify" +
-                ", check payload contents?"
+                "Server Error: INTERNAL SERVER ERROR for url: https://api.argumentsearch.com/en/classify"
+                + ", check payload contents?"
             )
             _logger.error("{} : {}".format(500, msg))
             raise errors.InternalGatewayError(e.response.status_code, msg)

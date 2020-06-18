@@ -14,6 +14,7 @@ _logger = utils.get_logger(__name__, logging.DEBUG)
 
 class TopicRelevance:
     """enum for the topic relevance matching options, via "topicRelevance" in API"""
+
     MATCH_STRING = "match_string"
     N_GRAM_OVERLAP = "n_gram_overlap"
     WORD2VEC = "word2vec"
@@ -21,12 +22,14 @@ class TopicRelevance:
 
 class ArgumentLabel:
     """enum for possible argument labels"""
+
     ARGUMENT = "argument"
     NO_ARGUMENT = "no argument"
 
 
 class StanceLabel:
     """enum for possible stance labels"""
+
     PRO = "pro"
     CON = "contra"
     NA = ""
@@ -147,7 +150,7 @@ def classify_url_sentences(
     only_arguments: bool = True,
     topic_relevance: str = TopicRelevance.WORD2VEC,
     timeout: float = session.DEFAULT_TIMEOUT,
-    request_session=None
+    request_session=None,
 ):
     """
     For a given URL and topic phrase, identify which sentences contain arguments
@@ -189,13 +192,17 @@ def classify_url_sentences(
         "userMetadata": url,
     }
     request_session = request_session or session.get_session()
-    json_response = session.fetch(session.ApiUrl.CLASSIFY_BASE_URL, payload, timeout, request_session=request_session)
+    json_response = session.fetch(
+        session.ApiUrl.CLASSIFY_BASE_URL,
+        payload,
+        timeout,
+        request_session=request_session,
+    )
     return json_response
 
 
 def collect_sentences_by_topic(
-        topic: str,
-        url_list: List[AnyStr],
+    topic: str, url_list: List[AnyStr],
 ):
     """
     Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
@@ -217,7 +224,9 @@ def collect_sentences_by_topic(
     for url_index, url in enumerate(url_list):
         out_dict = None
         try:
-            _logger.debug("Attempting url {} of {}".format(url_index + 1, len(url_list)))
+            _logger.debug(
+                "Attempting url {} of {}".format(url_index + 1, len(url_list))
+            )
             out_dict = classify_url_sentences(topic, url, user_id, api_key)
         except errors.Refused as e:
             _logger.warning("Refused: {}, url={}".format(e, url))
@@ -254,9 +263,7 @@ def collect_sentences_for_url(topic, url, user_id, api_key):
 
 
 def collect_sentences_by_topic_parallel(
-        topic: str,
-        url_list: List[AnyStr],
-        proc_count: int = 4,
+    topic: str, url_list: List[AnyStr], proc_count: int = 4,
 ):
     """
     Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
