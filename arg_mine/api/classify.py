@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, AnyStr
 import logging
 import time
+import multiprocessing
+from functools import partial
 
 from arg_mine.api.auth import load_auth_tokens
 from arg_mine.api import session, errors
@@ -145,6 +147,7 @@ def classify_url_sentences(
     only_arguments: bool = True,
     topic_relevance: str = TopicRelevance.WORD2VEC,
     timeout: float = session.DEFAULT_TIMEOUT,
+    request_session=None
 ):
     """
     For a given URL and topic phrase, identify which sentences contain arguments
@@ -166,6 +169,8 @@ def classify_url_sentences(
     topic_relevance : str
         use options from TopicRelevance enum
     timeout : float
+    request_session : requests.Session
+        session to pass in, for large iterations
 
     Returns
     -------
@@ -183,13 +188,14 @@ def classify_url_sentences(
         "showOnlyArguments": only_arguments,  # only return sentences classified as arguments
         "userMetadata": url,
     }
-    request_session = session.get_session()
+    request_session = request_session or session.get_session()
     json_response = session.fetch(session.ApiUrl.CLASSIFY_BASE_URL, payload, timeout, request_session=request_session)
     return json_response
 
 
 def collect_sentences_by_topic(
-    topic, url_list, pause_every=None, sleep_dur=5, max_attempts=3
+        topic: str,
+        url_list: List[AnyStr],
 ):
     """
     Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
@@ -198,50 +204,79 @@ def collect_sentences_by_topic(
     ----------
     topic : str
     url_list : List[AnyStr]
-    pause_every : int
-        pause this many iterations
-        throttling to not DDOS the API server
-    sleep_dur : float
-        number of second to pause when pause_every is hit
-    max_attempts : int
-        maximum number of retries per url
-
 
     Returns
     -------
-    Tuple[List[ClassifyMetadata]], List[ClassifiedSentence], List[Any]]
+    Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
     """
-    pause_every = pause_every or len(url_list)
     user_id, api_key = load_auth_tokens()
+
     doc_list = []
     refused_doc_list = []
     sentence_list = []
     for url_index, url in enumerate(url_list):
-        attempts = 0
-        if url_index and url_index % pause_every == 0:
-            _logger.debug("sleeping for {} sec".format(sleep_dur))
-            time.sleep(sleep_dur)
-
         out_dict = None
-        while attempts < max_attempts:
-            try:
-                attempts += 1
-                _logger.debug("Attempting url {}, try #{}".format(url_index, attempts))
-                out_dict = classify_url_sentences(topic, url, user_id, api_key)
-                break  # exit out if we didnt error on anything
-            except errors.Refused as e:
-                _logger.warning("Refused: {}, url={}".format(e, url))
-                refused_doc_list.append(url)
-                break
-            except (errors.Unavailable, errors.ArgumenTextGatewayError) as e:
-                _logger.error(e)
-            if attempts == max_attempts:
-                _logger.error("Failing attempts")
-        if not out_dict:
-            _logger.info("Skipping {}: {}".format(url_index, url))
-            continue
+        try:
+            _logger.debug("Attempting url {} of {}".format(url_index + 1, len(url_list)))
+            out_dict = classify_url_sentences(topic, url, user_id, api_key)
+        except errors.Refused as e:
+            _logger.warning("Refused: {}, url={}".format(e, url))
+            refused_doc_list.append(url)
+        except (errors.Unavailable, errors.ArgumenTextGatewayError) as e:
+            _logger.error(e)
+
+        if out_dict:
+            doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
+            for sentence in out_dict["sentences"]:
+                sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
+
+    return doc_list, sentence_list, refused_doc_list
+
+
+def collect_sentences_for_url(topic, url, user_id, api_key):
+    doc_list = []
+    refused_doc_list = []
+    sentence_list = []
+    out_dict = None
+    try:
+        out_dict = classify_url_sentences(topic, url, user_id, api_key)
+    except errors.Refused as e:
+        _logger.warning("Refused: {}, url={}".format(e, url))
+        refused_doc_list.append(url)
+    except (errors.Unavailable, errors.ArgumenTextGatewayError) as e:
+        _logger.error(e)
+
+    if out_dict:
         doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
         for sentence in out_dict["sentences"]:
             sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
-
     return doc_list, sentence_list, refused_doc_list
+
+
+def collect_sentences_by_topic_parallel(
+        topic: str,
+        url_list: List[AnyStr],
+        proc_count: int = 4,
+):
+    """
+    Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
+
+    Parameters
+    ----------
+    topic : str
+    url_list : List[AnyStr]
+    proc_count : int
+        number of processes that we want to use for this extraction
+
+    Returns
+    -------
+    Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+    """
+    user_id, api_key = load_auth_tokens()
+
+    wrapper = partial(collect_sentences_for_url, topic, user_id, api_key)
+
+    with multiprocessing.Pool(processes=proc_count) as pool:
+        results = pool.map(wrapper, url_list)
+
+    return results
