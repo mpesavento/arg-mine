@@ -31,6 +31,9 @@ docker==4.2.1             # via -r requirements_dev.in
 docutils==0.15.2          # via awscli, botocore, sphinx
 entrypoints==0.3          # via jupyterhub, nbconvert
 flake8==3.8.2             # via -r requirements_dev.in
+gevent==20.6.2            # via grequests
+greenlet==0.4.16          # via gevent
+grequests==0.6.0          # via -r requirements.in
 idna==2.9                 # via requests
 imageio==2.8.0            # via scikit-image
 imagesize==1.2.0          # via sphinx
@@ -100,7 +103,7 @@ pywavelets==1.1.1         # via scikit-image
 pyyaml==5.3.1             # via awscli
 pyzmq==19.0.1             # via jupyter-client, notebook
 regex==2020.6.8           # via black
-requests==2.23.0          # via -r requirements.in, docker, jupyterhub, jupyterlab-server, sphinx, transifex-client
+requests==2.23.0          # via -r requirements.in, docker, grequests, jupyterhub, jupyterlab-server, sphinx, transifex-client
 retrying==1.3.3           # via plotly
 rsa==3.4.2                # via awscli
 ruamel.yaml.clib==0.2.0   # via ruamel.yaml
@@ -137,6 +140,8 @@ wcwidth==0.2.3            # via prompt-toolkit, pytest
 webencodings==0.5.1       # via bleach
 websocket-client==0.57.0  # via docker
 widgetsnbextension==3.5.1  # via ipywidgets
+zope.event==4.4           # via gevent
+zope.interface==5.1.0     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

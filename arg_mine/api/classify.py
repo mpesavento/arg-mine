@@ -272,6 +272,8 @@ def collect_sentences_by_topic_parallel(
     -------
     Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
     """
+
+    # TODO: look into using `grequests` for requests parallelization
     user_id, api_key = load_auth_tokens()
 
     wrapper = partial(collect_sentences_for_url, topic, user_id, api_key)

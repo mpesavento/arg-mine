@@ -16,6 +16,7 @@ matplotlib~=3.2.1
 pandas~=1.0.4
 plotly~=4.8.1
 requests
+grequests
 scikit-image~=0.16.2
 scikit-learn~=0.22.2
 seaborn~=0.10.1
