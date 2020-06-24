@@ -13,6 +13,7 @@ Contents:
 
    getting-started
    commands
+   setup_ec2
 
 
 
