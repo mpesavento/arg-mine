@@ -1,0 +1,26 @@
+:mod:`arg_mine.api`
+===================
+
+.. py:module:: arg_mine.api
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   auth/index.rst
+   classify/index.rst
+   errors/index.rst
+   session/index.rst
+
+
+Package Contents
+----------------
+
+.. data:: logger
+   
+
+   
+

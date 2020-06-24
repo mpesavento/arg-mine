@@ -1,0 +1,46 @@
+:mod:`arg_mine`
+===============
+
+.. py:module:: arg_mine
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   api/index.rst
+   data/index.rst
+   features/index.rst
+   models/index.rst
+   visualization/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   utils/index.rst
+
+
+Package Contents
+----------------
+
+.. data:: MODULE_DIR
+   
+
+   
+
+.. data:: PROJECT_DIR
+   
+
+   
+
+.. data:: DATA_DIR
+   
+
+   
+

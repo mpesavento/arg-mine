@@ -1,0 +1,57 @@
+:mod:`arg_mine.utils`
+=====================
+
+.. py:module:: arg_mine.utils
+
+.. autoapi-nested-parse::
+
+   Utility methods
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.utils.get_logger
+   arg_mine.utils.enum
+   arg_mine.utils.unique_hash
+
+
+.. data:: LOG_FMT
+   :annotation: = %(levelname)s:%(asctime)s:%(name)s: %(message)s
+
+   
+
+.. function:: get_logger(name, level=logging.INFO)
+
+   Get a basic logger
+
+
+.. function:: enum(**named_values)
+
+   Named enum. Doesnt need to use the Enum.NAME.value with the built in Enum
+
+   .. rubric:: Example
+
+   >>> MY_CONSTANTS = enum(FOO="foo", BAR="bar")
+   >>> MY_CONSTANTS.FOO
+   "foo"
+
+   :param named_values: key is parameter name and value is parameter value (eg string)
+   :type named_values: dict
+
+   :returns:
+   :rtype: Enum class
+
+
+.. function:: unique_hash(input_str: str) -> str
+
+   Uses MD5 to return a unique key, assuming the input string is unique
+
+

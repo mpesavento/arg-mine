@@ -1,0 +1,332 @@
+:mod:`arg_mine.api.classify`
+============================
+
+.. py:module:: arg_mine.api.classify
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.api.classify.TopicRelevance
+   arg_mine.api.classify.ArgumentLabel
+   arg_mine.api.classify.StanceLabel
+   arg_mine.api.classify.ClassifyMetadata
+   arg_mine.api.classify.ClassifiedSentence
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.api.classify.classify_url_sentences
+   arg_mine.api.classify.collect_sentences_by_topic
+   arg_mine.api.classify.collect_sentences_for_url
+   arg_mine.api.classify.collect_sentences_by_topic_parallel
+
+
+.. data:: _logger
+   
+
+   
+
+.. py:class:: TopicRelevance
+
+   enum for the topic relevance matching options, via "topicRelevance" in API
+
+   .. attribute:: MATCH_STRING
+      :annotation: = match_string
+
+      
+
+   .. attribute:: N_GRAM_OVERLAP
+      :annotation: = n_gram_overlap
+
+      
+
+   .. attribute:: WORD2VEC
+      :annotation: = word2vec
+
+      
+
+
+.. py:class:: ArgumentLabel
+
+   enum for possible argument labels
+
+   .. attribute:: ARGUMENT
+      :annotation: = argument
+
+      
+
+   .. attribute:: NO_ARGUMENT
+      :annotation: = no argument
+
+      
+
+
+.. py:class:: StanceLabel
+
+   enum for possible stance labels
+
+   .. attribute:: PRO
+      :annotation: = pro
+
+      
+
+   .. attribute:: CON
+      :annotation: = contra
+
+      
+
+   .. attribute:: NA
+      :annotation: = 
+
+      
+
+
+.. py:class:: ClassifyMetadata
+
+   data class to hold the return values from a classify API call
+
+   .. attribute:: doc_id
+      :annotation: :str
+
+      
+
+   .. attribute:: url
+      :annotation: :str
+
+      
+
+   .. attribute:: topic
+      :annotation: :str
+
+      
+
+   .. attribute:: model_version
+      :annotation: :str
+
+      
+
+   .. attribute:: language
+      :annotation: :str
+
+      
+
+   .. attribute:: time_argument_prediction
+      :annotation: :float
+
+      
+
+   .. attribute:: time_attention_computation
+      :annotation: :float
+
+      
+
+   .. attribute:: time_preprocessing
+      :annotation: :float
+
+      
+
+   .. attribute:: time_stance_prediction
+      :annotation: :float
+
+      
+
+   .. attribute:: time_logging
+      :annotation: :float
+
+      
+
+   .. attribute:: time_total
+      :annotation: :float
+
+      
+
+   .. attribute:: total_arguments
+      :annotation: :int
+
+      
+
+   .. attribute:: total_contra_arguments
+      :annotation: :int
+
+      
+
+   .. attribute:: total_pro_arguments
+      :annotation: :int
+
+      
+
+   .. attribute:: total_non_arguments
+      :annotation: :int
+
+      
+
+   .. attribute:: total_classified_sentences
+      :annotation: :int
+
+      
+
+   .. method:: from_dict(cls, metadata_dict)
+      :classmethod:
+
+
+      Load data object from a dict
+
+
+   .. method:: make_doc_id(input_str)
+      :staticmethod:
+
+
+      Return a unique hash for the given input string; used as the document id
+
+
+
+.. py:class:: ClassifiedSentence
+
+   data class to hold the return values from a classify API call
+   The kwargs in this class are optional, and are not required when parsing from a dict
+
+   .. attribute:: url
+      :annotation: :str
+
+      
+
+   .. attribute:: doc_id
+      :annotation: :str
+
+      
+
+   .. attribute:: topic
+      :annotation: :str
+
+      
+
+   .. attribute:: sentence_id
+      :annotation: :str
+
+      
+
+   .. attribute:: argument_confidence
+      :annotation: :float
+
+      
+
+   .. attribute:: argument_label
+      :annotation: :str
+
+      
+
+   .. attribute:: sentence_original
+      :annotation: :str
+
+      
+
+   .. attribute:: sentence_preprocessed
+      :annotation: :str
+
+      
+
+   .. attribute:: sort_confidence
+      :annotation: :float
+
+      
+
+   .. attribute:: stance_confidence
+      :annotation: :float = 0.0
+
+      
+
+   .. attribute:: stance_label
+      :annotation: :str
+
+      
+
+   .. method:: from_dict(cls, url, topic, sentence_dict)
+      :classmethod:
+
+
+      Load data object from dict
+
+
+   .. method:: is_argument(self)
+      :property:
+
+
+
+   .. method:: make_sentence_id(input_str)
+      :staticmethod:
+
+
+      Return a unique hash for the given input string; used as the sentence id
+
+
+
+.. function:: classify_url_sentences(topic: str, url: str, user_id: str, api_key: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)
+
+   For a given URL and topic phrase, identify which sentences contain arguments
+   vs non-arguments
+
+   It encodes the url and topic used for the query in the returned metadata object
+
+   :param topic: string of keywords used to query if sentence states argument on topic
+   :type topic: str
+   :param url: source of the content, webpage URL works well
+   :type url: str
+   :param user_id:
+   :type user_id: str
+   :param api_key:
+   :type api_key: str
+   :param only_arguments: only return the sentences of the estimated arguments
+                          TODO: check to see if setting this true decreases the computation time on the server
+   :type only_arguments: bool
+   :param topic_relevance: use options from TopicRelevance enum
+   :type topic_relevance: str
+   :param timeout:
+   :type timeout: float
+   :param request_session: session to pass in, for large iterations
+   :type request_session: requests.Session
+
+   :returns:
+   :rtype: dict
+
+
+.. function:: collect_sentences_by_topic(topic: str, url_list: List[AnyStr])
+
+   Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
+
+   :param topic:
+   :type topic: str
+   :param url_list:
+   :type url_list: List[AnyStr]
+
+   :returns:
+   :rtype: Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+
+
+.. function:: collect_sentences_for_url(topic, url, user_id, api_key)
+
+
+.. function:: collect_sentences_by_topic_parallel(topic: str, url_list: List[AnyStr], proc_count: int = 4)
+
+   Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
+
+   :param topic:
+   :type topic: str
+   :param url_list:
+   :type url_list: List[AnyStr]
+   :param proc_count: number of processes that we want to use for this extraction
+   :type proc_count: int
+
+   :returns:
+   :rtype: Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+
+

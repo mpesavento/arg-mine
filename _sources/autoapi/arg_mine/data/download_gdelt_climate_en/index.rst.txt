@@ -1,0 +1,61 @@
+:mod:`arg_mine.data.download_gdelt_climate_en`
+==============================================
+
+.. py:module:: arg_mine.data.download_gdelt_climate_en
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.data.download_gdelt_climate_en.download_file_from_url
+   arg_mine.data.download_gdelt_climate_en.download_gdelt_year
+   arg_mine.data.download_gdelt_climate_en.main
+
+
+.. data:: logger
+   
+
+   
+
+.. data:: BASE_URL_FMT
+   :annotation: = http://data.gdeltproject.org/blog/2020-climate-change-narrative/WebNewsEnglishSnippets.{year}.csv.zip
+
+   
+
+.. function:: download_file_from_url(url, target_file_path)
+
+   Download a file from the given url
+
+   :param url: target URL to download file from
+   :type url: str
+   :param target_file_path: path to download the file to
+   :type target_file_path: str
+
+   :returns:
+   :rtype: None
+
+
+.. function:: download_gdelt_year(year, base_url_fmt=BASE_URL_FMT)
+
+   Download the CSV files from the gdelt project, for a given year
+
+   :param year: numeric year to insert into base_url_fmt
+   :type year: int
+   :param base_url_fmt: the target URL to download from, formatted string with field `{year}`
+   :type base_url_fmt: str
+
+   :returns:
+   :rtype: path to the extracted CSV file
+
+
+.. function:: main()
+
+   Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
+
+

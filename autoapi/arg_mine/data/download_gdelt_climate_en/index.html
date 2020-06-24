@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>arg_mine.data.download_gdelt_climate_en &#8212; arg-mine X.Y documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine X.Y documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arg_mine.data.download_gdelt_climate_en">
+<span id="arg-mine-data-download-gdelt-climate-en"></span><h1><a class="reference internal" href="#module-arg_mine.data.download_gdelt_climate_en" title="arg_mine.data.download_gdelt_climate_en"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.data.download_gdelt_climate_en</span></code></a><a class="headerlink" href="#module-arg_mine.data.download_gdelt_climate_en" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.download_file_from_url" title="arg_mine.data.download_gdelt_climate_en.download_file_from_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_file_from_url</span></code></a>(url, target_file_path)</p></td>
+<td><p>Download a file from the given url</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.download_gdelt_year" title="arg_mine.data.download_gdelt_climate_en.download_gdelt_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_gdelt_year</span></code></a>(year, base_url_fmt=BASE_URL_FMT)</p></td>
+<td><p>Download the CSV files from the gdelt project, for a given year</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.main" title="arg_mine.data.download_gdelt_climate_en.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Download and extract GDELT data to “data/raw/2020-climate-change-narrative”</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt id="arg_mine.data.download_gdelt_climate_en.logger">
+<code class="sig-prename descclassname">arg_mine.data.download_gdelt_climate_en.</code><code class="sig-name descname">logger</code><a class="headerlink" href="#arg_mine.data.download_gdelt_climate_en.logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="arg_mine.data.download_gdelt_climate_en.BASE_URL_FMT">
+<code class="sig-prename descclassname">arg_mine.data.download_gdelt_climate_en.</code><code class="sig-name descname">BASE_URL_FMT</code><em class="property"> = http://data.gdeltproject.org/blog/2020-climate-change-narrative/WebNewsEnglishSnippets.{year}.csv.zip</em><a class="headerlink" href="#arg_mine.data.download_gdelt_climate_en.BASE_URL_FMT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.download_gdelt_climate_en.download_file_from_url">
+<code class="sig-prename descclassname">arg_mine.data.download_gdelt_climate_en.</code><code class="sig-name descname">download_file_from_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">target_file_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.download_gdelt_climate_en.download_file_from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a file from the given url</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – target URL to download file from</p></li>
+<li><p><strong>target_file_path</strong> (<em>str</em>) – path to download the file to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.download_gdelt_climate_en.download_gdelt_year">
+<code class="sig-prename descclassname">arg_mine.data.download_gdelt_climate_en.</code><code class="sig-name descname">download_gdelt_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">base_url_fmt</span><span class="o">=</span><span class="default_value">BASE_URL_FMT</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.download_gdelt_climate_en.download_gdelt_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download the CSV files from the gdelt project, for a given year</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>int</em>) – numeric year to insert into base_url_fmt</p></li>
+<li><p><strong>base_url_fmt</strong> (<em>str</em>) – the target URL to download from, formatted string with field <cite>{year}</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>path to the extracted CSV file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.download_gdelt_climate_en.main">
+<code class="sig-prename descclassname">arg_mine.data.download_gdelt_climate_en.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.download_gdelt_climate_en.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download and extract GDELT data to “data/raw/2020-climate-change-narrative”</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.data.download_gdelt_climate_en</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.logger">logger</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.BASE_URL_FMT">BASE_URL_FMT</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.download_file_from_url">download_file_from_url</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.download_gdelt_year">download_gdelt_year</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.download_gdelt_climate_en.main">main</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/autoapi/arg_mine/data/download_gdelt_climate_en/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine X.Y documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

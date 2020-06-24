@@ -1,0 +1,29 @@
+:mod:`arg_mine.data.make_dataset`
+=================================
+
+.. py:module:: arg_mine.data.make_dataset
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.data.make_dataset.main
+
+
+.. function:: main(input_filepath, output_filepath)
+
+   Runs data processing scripts to turn raw data from (../raw) into
+   cleaned data ready to be analyzed (saved in ../processed).
+
+
+.. data:: log_fmt
+   :annotation: = %(asctime)s - %(name)s - %(levelname)s - %(message)s
+
+   
+

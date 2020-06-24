@@ -1,0 +1,68 @@
+:mod:`arg_mine.api.errors`
+==========================
+
+.. py:module:: arg_mine.api.errors
+
+.. autoapi-nested-parse::
+
+   Errors for handling API
+
+
+
+Module Contents
+---------------
+
+.. py:exception:: Error
+
+   Bases: :class:`Exception`
+
+   Base class for a generic error
+
+
+.. py:exception:: Unavailable
+
+   Bases: :class:`arg_mine.api.errors.Error`
+
+   Server returns an HTTPError other than 400
+
+
+.. py:exception:: NotResponding
+
+   Bases: :class:`arg_mine.api.errors.Error`
+
+   ConnectionError or Timeout
+
+
+.. py:exception:: ArgumenTextGatewayError(code, message)
+
+   Bases: :class:`arg_mine.api.errors.Error`
+
+   Base class for gateway parsing errors (400)
+
+   .. method:: __str__(self)
+
+
+      Return str(self).
+
+
+
+.. py:exception:: Refused(code, message)
+
+   Bases: :class:`arg_mine.api.errors.ArgumenTextGatewayError`
+
+   Raise if source URL is responding with 404
+   Filters 400 error message containing TARGET_MSG
+
+   .. attribute:: TARGET_MSG
+      :annotation: = Website could not be crawled
+
+      
+
+
+.. py:exception:: InternalGatewayError(code, message)
+
+   Bases: :class:`arg_mine.api.errors.ArgumenTextGatewayError`
+
+   Raise if get 500, often get this if have bad json parameters
+
+

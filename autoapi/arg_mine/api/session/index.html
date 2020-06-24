@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>arg_mine.api.session &#8212; arg-mine X.Y documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine X.Y documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arg_mine.api.session">
+<span id="arg-mine-api-session"></span><h1><a class="reference internal" href="#module-arg_mine.api.session" title="arg_mine.api.session"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.api.session</span></code></a><a class="headerlink" href="#module-arg_mine.api.session" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.session.ApiUrl" title="arg_mine.api.session.ApiUrl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApiUrl</span></code></a>()</p></td>
+<td><p>Enum-like class for holding the target URLs</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.session._BlockAll" title="arg_mine.api.session._BlockAll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_BlockAll</span></code></a>()</p></td>
+<td><p>Defines which cookies get accepted from and returned to server.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.session.TimeoutHTTPAdapter" title="arg_mine.api.session.TimeoutHTTPAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeoutHTTPAdapter</span></code></a>(*args, **kwargs)</p></td>
+<td><p>The built-in HTTP Adapter for urllib3.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.session.get_session" title="arg_mine.api.session.get_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_session</span></code></a>()</p></td>
+<td><p>Return a session object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.session.fetch" title="arg_mine.api.session.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>(base_url: str, payload: dict, timeout: float = DEFAULT_TIMEOUT, request_session=None)</p></td>
+<td><p>Make request from base API service, with error handling</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt id="arg_mine.api.session._logger">
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">_logger</code><a class="headerlink" href="#arg_mine.api.session._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="arg_mine.api.session.DEFAULT_TIMEOUT">
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">DEFAULT_TIMEOUT</code><em class="property"> = 5</em><a class="headerlink" href="#arg_mine.api.session.DEFAULT_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="arg_mine.api.session.ApiUrl">
+<em class="property">class </em><code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">ApiUrl</code><a class="headerlink" href="#arg_mine.api.session.ApiUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum-like class for holding the target URLs</p>
+<dl class="py attribute">
+<dt id="arg_mine.api.session.ApiUrl.GATEWAY_BASE_URL">
+<code class="sig-name descname">GATEWAY_BASE_URL</code><em class="property"> = https://api.argumentsearch.com/en</em><a class="headerlink" href="#arg_mine.api.session.ApiUrl.GATEWAY_BASE_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="arg_mine.api.session.ApiUrl.CLASSIFY_BASE_URL">
+<code class="sig-name descname">CLASSIFY_BASE_URL</code><a class="headerlink" href="#arg_mine.api.session.ApiUrl.CLASSIFY_BASE_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="arg_mine.api.session.ApiUrl.CLUSTER_BASE_URL">
+<code class="sig-name descname">CLUSTER_BASE_URL</code><a class="headerlink" href="#arg_mine.api.session.ApiUrl.CLUSTER_BASE_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="arg_mine.api.session.ApiUrl.SEARCH_BASE_URL">
+<code class="sig-name descname">SEARCH_BASE_URL</code><a class="headerlink" href="#arg_mine.api.session.ApiUrl.SEARCH_BASE_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="arg_mine.api.session._BlockAll">
+<em class="property">class </em><code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">_BlockAll</code><a class="headerlink" href="#arg_mine.api.session._BlockAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">http.cookiejar.CookiePolicy</span></code></p>
+<p>Defines which cookies get accepted from and returned to server.</p>
+<p>May also modify cookies, though this is probably a bad idea.</p>
+<p>The subclass DefaultCookiePolicy defines the standard rules for Netscape
+and RFC 2965 cookies – override that if you want a customized policy.</p>
+<dl class="py method">
+<dt id="arg_mine.api.session._BlockAll.set_ok">
+<code class="sig-name descname">set_ok</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cookie</span></em>, <em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session._BlockAll.set_ok" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if (and only if) cookie should be accepted from server.</p>
+<p>Currently, pre-expired cookies never get this far – the CookieJar
+class deletes such cookies itself.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="arg_mine.api.session.TimeoutHTTPAdapter">
+<em class="property">class </em><code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">TimeoutHTTPAdapter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.TimeoutHTTPAdapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">requests.adapters.HTTPAdapter</span></code></p>
+<p>The built-in HTTP Adapter for urllib3.</p>
+<p>Provides a general-case interface for Requests sessions to contact HTTP and
+HTTPS urls by implementing the Transport Adapter interface. This class will
+usually be created by the <code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code> class under the
+covers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pool_connections</strong> – The number of urllib3 connection pools to cache.</p></li>
+<li><p><strong>pool_maxsize</strong> – The maximum number of connections to save in the pool.</p></li>
+<li><p><strong>max_retries</strong> – The maximum number of retries each connection
+should attempt. Note, this applies only to failed DNS lookups, socket
+connections and connection timeouts, never to requests where data has
+made it to the server. By default, Requests does not retry failed
+connections. If you need granular control over the conditions under
+which we retry a request, import urllib3’s <code class="docutils literal notranslate"><span class="pre">Retry</span></code> class and pass
+that instead.</p></li>
+<li><p><strong>pool_block</strong> – Whether the connection pool should block for connections.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="arg_mine.api.session.TimeoutHTTPAdapter.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.TimeoutHTTPAdapter.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends PreparedRequest object. Returns Response object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedRequest</span></code> being sent.</p></li>
+<li><p><strong>stream</strong> – (optional) Whether to stream the request content.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em> or </em><em>tuple</em><em> or </em><em>urllib3 Timeout object</em>) – (optional) How long to wait for the server to send
+data before giving up, as a float, or a <span class="xref std std-ref">(connect timeout,
+read timeout)</span> tuple.</p></li>
+<li><p><strong>verify</strong> – (optional) Either a boolean, in which case it controls whether
+we verify the server’s TLS certificate, or a string, in which case it
+must be a path to a CA bundle to use</p></li>
+<li><p><strong>cert</strong> – (optional) Any user-provided SSL certificate to be trusted.</p></li>
+<li><p><strong>proxies</strong> – (optional) The proxies dictionary to apply to the request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.api.session.get_session">
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">get_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.get_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a session object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.api.session.fetch">
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_url</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">DEFAULT_TIMEOUT</span></em>, <em class="sig-param"><span class="n">request_session</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make request from base API service, with error handling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_url</strong> (<em>str</em>) – The target URL for the API POST call, eg ApiUrl.CLASSIFY_BASE_URL</p></li>
+<li><p><strong>payload</strong> (<em>dict</em>) – Contains all of the associated parameters</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – API call timeout, in seconds</p></li>
+<li><p><strong>request_session</strong> (<em>requests.Session</em>) – Optional, uses this session to speed up repeated API calls</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict with the API response</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.Unavailable" title="arg_mine.api.errors.Unavailable"><strong>errors.Unavailable</strong></a> – when requests returns an unknown HTTPError</p></li>
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.Refused" title="arg_mine.api.errors.Refused"><strong>errors.Refused</strong></a> – when server returns a 400 and “Website could not be crawled”</p></li>
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.ArgumenTextGatewayError" title="arg_mine.api.errors.ArgumenTextGatewayError"><strong>errors.ArgumenTextGatewayError</strong></a> – when server returns a 400 and unspecified message</p></li>
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.NotResponding" title="arg_mine.api.errors.NotResponding"><strong>errors.NotResponding</strong></a> – when connection fails or times out</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.api.session</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.session._logger">_logger</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.DEFAULT_TIMEOUT">DEFAULT_TIMEOUT</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.ApiUrl">ApiUrl</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.session.ApiUrl.GATEWAY_BASE_URL">GATEWAY_BASE_URL</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.ApiUrl.CLASSIFY_BASE_URL">CLASSIFY_BASE_URL</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.ApiUrl.CLUSTER_BASE_URL">CLUSTER_BASE_URL</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.ApiUrl.SEARCH_BASE_URL">SEARCH_BASE_URL</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session._BlockAll">_BlockAll</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.session._BlockAll.set_ok">set_ok</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.TimeoutHTTPAdapter">TimeoutHTTPAdapter</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.session.TimeoutHTTPAdapter.send">send</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.get_session">get_session</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.fetch">fetch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/autoapi/arg_mine/api/session/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine X.Y documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

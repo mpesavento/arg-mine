@@ -1,0 +1,60 @@
+:mod:`arg_mine.data.loaders`
+============================
+
+.. py:module:: arg_mine.data.loaders
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.data.loaders.convert_datetime_int
+   arg_mine.data.loaders.get_gdelt_df
+
+
+.. data:: log_fmt
+   :annotation: = %(levelname)s:%(asctime)s:%(name)s: %(message)s
+
+   
+
+.. data:: logger
+   
+
+   
+
+.. data:: GDELT_COL_NAMES
+   :annotation: = ['datetime', 'title', 'headline_image_url', 'content_url', 'snippit']
+
+   
+
+.. function:: convert_datetime_int(datetime_int)
+
+   Convert an integer like `20200107101500` to a pd.Timestamp `2020.01.07T10:15:00`
+
+   :param datetime_int: long integer with date and time, 14 char long
+   :type datetime_int: int
+
+   :returns:
+   :rtype: pd.Timestamp
+
+   :raises ValueError : when int is not 14 char long:
+
+
+.. function:: get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES)
+
+   From CSV path, load a pandas dataframe with the target data
+
+   :param csv_filepath:
+   :type csv_filepath: str, path
+   :param col_names:
+   :type col_names: List[str]
+
+   :returns:
+   :rtype: pd.DataFrame
+
+

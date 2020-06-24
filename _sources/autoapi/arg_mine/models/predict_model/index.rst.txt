@@ -1,0 +1,6 @@
+:mod:`arg_mine.models.predict_model`
+====================================
+
+.. py:module:: arg_mine.models.predict_model
+
+

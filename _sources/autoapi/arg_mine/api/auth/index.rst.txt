@@ -1,0 +1,28 @@
+:mod:`arg_mine.api.auth`
+========================
+
+.. py:module:: arg_mine.api.auth
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.api.auth.load_auth_tokens
+
+
+.. function:: load_auth_tokens()
+
+   Read the ArgumentText auth tokens from the .env file
+
+   # TODO: make this into a context manager
+
+   :returns:
+   :rtype: user_id, api_key
+
+

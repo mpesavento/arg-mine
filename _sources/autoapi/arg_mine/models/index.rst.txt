@@ -1,0 +1,16 @@
+:mod:`arg_mine.models`
+======================
+
+.. py:module:: arg_mine.models
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   predict_model/index.rst
+   train_model/index.rst
+
+

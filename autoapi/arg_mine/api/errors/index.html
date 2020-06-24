@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>arg_mine.api.errors &#8212; arg-mine X.Y documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine X.Y documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arg_mine.api.errors">
+<span id="arg-mine-api-errors"></span><h1><a class="reference internal" href="#module-arg_mine.api.errors" title="arg_mine.api.errors"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.api.errors</span></code></a><a class="headerlink" href="#module-arg_mine.api.errors" title="Permalink to this headline">¶</a></h1>
+<p><p>Errors for handling API</p>
+</p>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="arg_mine.api.errors.Error">
+<em class="property">exception </em><code class="sig-prename descclassname">arg_mine.api.errors.</code><code class="sig-name descname">Error</code><a class="headerlink" href="#arg_mine.api.errors.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for a generic error</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="arg_mine.api.errors.Unavailable">
+<em class="property">exception </em><code class="sig-prename descclassname">arg_mine.api.errors.</code><code class="sig-name descname">Unavailable</code><a class="headerlink" href="#arg_mine.api.errors.Unavailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arg_mine.api.errors.Error" title="arg_mine.api.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">arg_mine.api.errors.Error</span></code></a></p>
+<p>Server returns an HTTPError other than 400</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="arg_mine.api.errors.NotResponding">
+<em class="property">exception </em><code class="sig-prename descclassname">arg_mine.api.errors.</code><code class="sig-name descname">NotResponding</code><a class="headerlink" href="#arg_mine.api.errors.NotResponding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arg_mine.api.errors.Error" title="arg_mine.api.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">arg_mine.api.errors.Error</span></code></a></p>
+<p>ConnectionError or Timeout</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="arg_mine.api.errors.ArgumenTextGatewayError">
+<em class="property">exception </em><code class="sig-prename descclassname">arg_mine.api.errors.</code><code class="sig-name descname">ArgumenTextGatewayError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.errors.ArgumenTextGatewayError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arg_mine.api.errors.Error" title="arg_mine.api.errors.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">arg_mine.api.errors.Error</span></code></a></p>
+<p>Base class for gateway parsing errors (400)</p>
+<dl class="py method">
+<dt id="arg_mine.api.errors.ArgumenTextGatewayError.__str__">
+<code class="sig-name descname">__str__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.errors.ArgumenTextGatewayError.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return str(self).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="arg_mine.api.errors.Refused">
+<em class="property">exception </em><code class="sig-prename descclassname">arg_mine.api.errors.</code><code class="sig-name descname">Refused</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.errors.Refused" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arg_mine.api.errors.ArgumenTextGatewayError" title="arg_mine.api.errors.ArgumenTextGatewayError"><code class="xref py py-class docutils literal notranslate"><span class="pre">arg_mine.api.errors.ArgumenTextGatewayError</span></code></a></p>
+<p>Raise if source URL is responding with 404
+Filters 400 error message containing TARGET_MSG</p>
+<dl class="py attribute">
+<dt id="arg_mine.api.errors.Refused.TARGET_MSG">
+<code class="sig-name descname">TARGET_MSG</code><em class="property"> = Website could not be crawled</em><a class="headerlink" href="#arg_mine.api.errors.Refused.TARGET_MSG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="arg_mine.api.errors.InternalGatewayError">
+<em class="property">exception </em><code class="sig-prename descclassname">arg_mine.api.errors.</code><code class="sig-name descname">InternalGatewayError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.errors.InternalGatewayError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arg_mine.api.errors.ArgumenTextGatewayError" title="arg_mine.api.errors.ArgumenTextGatewayError"><code class="xref py py-class docutils literal notranslate"><span class="pre">arg_mine.api.errors.ArgumenTextGatewayError</span></code></a></p>
+<p>Raise if get 500, often get this if have bad json parameters</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.api.errors</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.Error">Error</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.Unavailable">Unavailable</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.NotResponding">NotResponding</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.ArgumenTextGatewayError">ArgumenTextGatewayError</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.ArgumenTextGatewayError.__str__">__str__</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.Refused">Refused</a><ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.Refused.TARGET_MSG">TARGET_MSG</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.errors.InternalGatewayError">InternalGatewayError</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/autoapi/arg_mine/api/errors/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine X.Y documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>
