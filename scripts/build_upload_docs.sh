@@ -12,6 +12,7 @@
 set -e
 
 DEST=$(mktemp -d)
+echo "temp folder: ${DEST}"
 TARGET_BRANCH="gh-pages"  # for use in the public-facing Github pages
 #TARGET_BRANCH="doc-pages"  # for use in private pages
 REPOSITORY_NAME="arg-mine"
@@ -32,16 +33,17 @@ cd ./docs && make html && cd ../
 # get the package version number
 PACKAGE_VER=`python version.py`
 
-if [[ -d "docs/build/html" ]] && [[ -f "docs/build/html/index.html" ]]; then
+if [[ -d "docs/_build/html" ]] && [[ -f "docs/_build/html/index.html" ]]; then
     echo 'Uploading documentation to the gh-pages branch...'
-
+fi
     # first, copy all files from the html dir into the temporary repo
-    cp -R ./docs/build/html/* "$DEST"
+    cp -R ./docs/_build/html/* "$DEST"
     cd "$DEST"
     touch .nojekyll
 
-    git config user.email "mike@peztek.com"
-    git config user.name "DocGen"
+    # set git info globally; only need this if doing this in a CI context
+#    git config user.email "mike@peztek.com"
+#    git config user.name "DocGen"
 
     git add -A
 #    git commit -F - <<EOM
