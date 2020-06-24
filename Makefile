@@ -84,6 +84,9 @@ compile-reqs:
 sync-reqs:
 	pip-sync requirements_dev.txt
 
+docs:
+	./scripts/build_upload_docs.sh
+
 .PHONY: clean data lint \
 	requirements \
 	create_environment \
