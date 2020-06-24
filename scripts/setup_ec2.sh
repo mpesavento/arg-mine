@@ -15,20 +15,19 @@ sudo apt-get install -qy make
 #chmod 600 ~/.ssh/id_rsa
 # add the public key to github
 
-# append to ~/.bashrc
-cat <<EOT >> ~/.bashrc
+# append to ~/.bashrc quotes around 'EOF' escape variable expansion
+cat << 'EOF' >> ~/.bashrc
 export PATH=/home/ubuntu/.local/bin:$PATH
+export VIRTUALENVWRAPPER_PYTHON=`which ${PYTHON_INTERPRETER}`
 export WORKON_HOME=/home/ubuntu/.virtualenvs
 export PROJECT_HOME=/home/ubuntu/
-EOT
+EOF
 
 # clone the target repository
 git clone https://github.com/mpesavento/arg-mine.git
 
 # create the virtual environment
 cd ~/arg-mine
-
-
 make create_environment
 
 # build the docker image
