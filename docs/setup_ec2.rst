@@ -15,19 +15,25 @@ repository.
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     sudo usermod -aG docker ubuntu
+    rm get-docker.sh
 
 #. Install other useful utilities::
 
-    sudo apt-get install make
+    sudo apt-get install -yq make python3-pip
 
 #. Create local ssh key for github, add it to your github account::
 
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-    chmod 400 ~/.ssh/my_new_key.pem
+    ssh-keygen -t rsa -b 4096 -C "your_github_email@example.com"
+    chmod 400 ~/.ssh/id_rsa.pem
 
-#. Clone repository from github::
+#. Clone repository from github
+If using ssh (requires key)::
 
     git clone git@github.com:mpesavento/arg-mine.git
+
+If using https::
+
+    git clone https://github.com/mpesavento/arg-mine.git
 
 #. Create the virtual environment::
 
