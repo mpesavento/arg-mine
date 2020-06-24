@@ -6,6 +6,7 @@ docker
 pytest
 sphinx>=1.6
 sphinx-intl
+sphinx-autoapi
 tabulate
 transifex-client
 flake8

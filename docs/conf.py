@@ -28,7 +28,9 @@ sys.path.insert(0, os.path.abspath('.'))
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
+    'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
+    'autoapi.extension',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
@@ -48,8 +50,10 @@ source_suffix = ".rst"
 # The master toctree document.
 master_doc = "index"
 
-# General information about the project.
-project = u"arg_mine"
+# Document Python Code
+autoapi_type = 'python'
+autoapi_dirs = '../arg_mine'
+
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -67,9 +71,11 @@ def get_version():
     """
     # pipe = Popen('git describe --tags --always', stdout=PIPE, shell=True)
     pipe = Popen('python ../version.py', stdout=PIPE, shell=True)
-    version = pipe.stdout.read()
-    if version:
-        return str(version)
+    _version = str(pipe.stdout.read().decode("utf-8"))
+    if _version:
+        print("******")
+        print(_version)
+        return _version
     else:
         return 'X.Y'
 
