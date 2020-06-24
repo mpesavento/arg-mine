@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Setting up EC2 instance &#8212; arg_mine 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Commands" href="commands.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="Commands"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg_mine 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="setting-up-ec2-instance">
+<h1>Setting up EC2 instance<a class="headerlink" href="#setting-up-ec2-instance" title="Permalink to this headline">¶</a></h1>
+<p>Below we list out the necessary steps for setting up an EC2 instance
+and be able to run a docker container hosting the <a class="reference external" href="https://github.com/mpesavento/arg-mine">arg-mine</a>
+repository.</p>
+<ol class="arabic">
+<li><p>Set up the instance via the AWS console
+<a class="reference external" href="https://console.aws.amazon.com/ec2/">https://console.aws.amazon.com/ec2/</a>
+If you do not have a PEM file for secure access to the instance, create one and save it locally</p></li>
+<li><dl>
+<dt>Install docker</dt><dd><p>Download and install docker. Set the current user to have permission to access the docker daemon:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">fsSL</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">get</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">com</span> <span class="o">-</span><span class="n">o</span> <span class="n">get</span><span class="o">-</span><span class="n">docker</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">sudo</span> <span class="n">sh</span> <span class="n">get</span><span class="o">-</span><span class="n">docker</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">rm</span> <span class="n">get</span><span class="o">-</span><span class="n">docker</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">aG</span> <span class="n">docker</span> <span class="n">ubuntu</span>
+</pre></div>
+</div>
+<p>You will need to log out and log back in to get access to the docker daemon. If you do not, you
+may see a message like <code class="docutils literal notranslate"><span class="pre">ERRO[0000]</span> <span class="pre">failed</span> <span class="pre">to</span> <span class="pre">dial</span> <span class="pre">gRPC:</span> <span class="pre">cannot</span> <span class="pre">connect</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">Docker</span>
+<span class="pre">daemon.</span> <span class="pre">Is</span> <span class="pre">'docker</span> <span class="pre">daemon'</span> <span class="pre">running</span> <span class="pre">on</span> <span class="pre">this</span> <span class="pre">host?:</span> <span class="pre">dial</span> <span class="pre">unix</span> <span class="pre">/var/run/docker.sock:</span>
+<span class="pre">connect:</span> <span class="pre">permission</span> <span class="pre">denied</span></code>. If this is the case, logout and log back in to the server.</p>
+</dd>
+</dl>
+</li>
+<li><p>Install other useful utilities:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">yq</span> <span class="n">make</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span>
+</pre></div>
+</div>
+</li>
+<li><dl>
+<dt>Clone repository from github</dt><dd><p>If using https:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>If using ssh, create ssh public key in github):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">t</span> <span class="n">rsa</span> <span class="o">-</span><span class="n">b</span> <span class="mi">4096</span> <span class="o">-</span><span class="n">C</span> <span class="s2">&quot;your_github_email@example.com&quot;</span>
+<span class="n">chmod</span> <span class="mi">400</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span>
+<span class="n">cat</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="o">.</span><span class="n">pub</span>
+<span class="c1"># copy and add ssh key to your github account</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><p>Add variables to the env:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cat &lt;&lt; &#39;EOF&#39; &gt;&gt; ~/.bashrc
+export PATH=/home/ubuntu/.local/bin:$PATH
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+export WORKON_HOME=/home/ubuntu/.virtualenvs
+export PROJECT_HOME=/home/ubuntu/
+source ~/.local/bin/virtualenvwrapper.sh
+EOF
+source ~/.bashrc
+</pre></div>
+</div>
+</li>
+<li><p>Create and activate the virtual environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span>
+<span class="n">make</span> <span class="n">create_environment</span>
+<span class="n">workon</span> <span class="n">arg_mine</span>
+</pre></div>
+</div>
+</li>
+<li><dl>
+<dt>Build the docker image</dt><dd><p>Run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>This build may take a while on small machines, especially with compiling <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">lab</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>Run your target commands.</dt><dd><p>This can be hosting a notebook server (open up the appropriate port 8888 on the
+security permissions), or running dockerized commands.
+Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">jupyter</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+<p>That’s it! you have a working EC2 instance!
+From here, you can make an image to speed up development of future servers.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="commands.html"
+                        title="previous chapter">Commands</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/setup_ec2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="Commands"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg_mine 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright .
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>
