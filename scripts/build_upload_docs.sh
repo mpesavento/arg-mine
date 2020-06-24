@@ -35,7 +35,6 @@ PACKAGE_VER=`python version.py`
 
 if [[ -d "docs/_build/html" ]] && [[ -f "docs/_build/html/index.html" ]]; then
     echo 'Uploading documentation to the gh-pages branch...'
-fi
     # first, copy all files from the html dir into the temporary repo
     cp -R ./docs/_build/html/* "$DEST"
     cd "$DEST"

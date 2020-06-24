@@ -65,10 +65,11 @@ def get_version():
     """
     Returns project version as string from 'git describe' command.
     """
-    pipe = Popen('git describe --tags --always', stdout=PIPE, shell=True)
+    # pipe = Popen('git describe --tags --always', stdout=PIPE, shell=True)
+    pipe = Popen('python ../version.py', stdout=PIPE, shell=True)
     version = pipe.stdout.read()
     if version:
-        return version
+        return str(version)
     else:
         return 'X.Y'
 

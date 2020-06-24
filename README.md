@@ -2,6 +2,8 @@
 
 Uses the ArgumentText API to mine arguments from selected data sources. A part of the Great American Debate project https://www.greatamericandebate.org/
 
+You can read the full documentation here:
+http://mpesavento.github.io/arg-mine
 
 ## env var requirements
 We are using the `dotenv` package to maintain separation of required keys and submitted code. The file `.env`
@@ -48,6 +50,10 @@ make jupyter
 ```
 This will launch the jupyter lab server, with the host repository volume-mapped to the docker container, persisting all changes.
 
+To update the documentation and push the update to http://mpesavento.github.io/arg-mine:
+```
+make docs
+```
 
 ### Dependency management
 To maintain and update dependencies, we use `pip-compile` on `requirements.in`, resulting in a complete list of all dependencies.
