@@ -3,12 +3,15 @@ import logging
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import grequests
 
 from arg_mine.api import errors
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT = 5  # sec
+DEFAULT_TIMEOUT = 200  # seconds; the argumenText API sets the timeout to 200 seconds
+
+DEFAULT_POOL_SIZE = 4
 
 
 class ApiUrl:
@@ -22,13 +25,21 @@ class ApiUrl:
     SEARCH_BASE_URL = GATEWAY_BASE_URL + "/search"
 
 
-# A shared requests session for payment requests.
 class _BlockAll(http.cookiejar.CookiePolicy):
+    """
+    Block cookies from requests query
+
+    Examples
+    --------
+    >>> s = requests.Session()
+    >>> s.cookies.policy = _BlockAll()
+    """
     def set_ok(self, cookie, request):
         return False
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
+    """requests HTTPAdapter with default timeout"""
     def __init__(self, *args, **kwargs):
         self.timeout = DEFAULT_TIMEOUT
         if "timeout" in kwargs:
@@ -43,9 +54,21 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         return super().send(request, **kwargs)
 
 
-def get_session():
-    """Return a session object"""
-    # todo: add authentication here
+def get_session(timeout=DEFAULT_TIMEOUT, pool_size=DEFAULT_POOL_SIZE):
+    """
+    Get a requests Session object, with our target default parameters
+
+    Parameters
+    ----------
+    timeout : float
+        timeout in seconds for server response
+    pool_size : int
+        how many pool connections we allow within the session
+
+    Returns
+    -------
+    requests.Session
+    """
     query_session = requests.Session()
     # block all collection of cookies
     query_session.cookies.policy = _BlockAll()
@@ -59,13 +82,19 @@ def get_session():
             "GET",
             "OPTIONS",
             "POST",
-        ],  # generally avoid having POST in here, it inserts
+        ],
         backoff_factor=1,  # {backoff factor} * (2 ** ({number of total retries} - 1))
     )
 
     # Mount timeout adapter for both http and https usage
-    adapter = TimeoutHTTPAdapter(timeout=DEFAULT_TIMEOUT, max_retries=retry_strategy)
+    adapter = TimeoutHTTPAdapter(
+        timeout=timeout,
+        max_retries=retry_strategy,
+        pool_connections=pool_size,
+        pool_maxsize=pool_size
+    )
     query_session.mount("https://", adapter)
+    query_session.mount("http://", adapter)
 
     return query_session
 
@@ -139,3 +168,4 @@ def fetch(
         raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
     json_response = response.json()
     return json_response
+

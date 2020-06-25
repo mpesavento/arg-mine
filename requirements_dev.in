@@ -1,3 +1,6 @@
+# # local package
+# -e .
+
 # read all base requirements
 -r requirements.in
 
