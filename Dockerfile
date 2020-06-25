@@ -102,7 +102,7 @@ RUN \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager@^2.0.0 --no-build && \
     jupyter labextension install @bokeh/jupyter_bokeh@^2.0.0 --no-build && \
     jupyter labextension install jupyter-matplotlib@^0.7.2 --no-build && \
-    jupyter lab build -y --minimize=False && \
+    jupyter lab build -y --dev-build=False --minimize=False && \
     jupyter lab clean -y && \
     npm cache clean --force
 
