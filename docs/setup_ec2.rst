@@ -18,7 +18,8 @@ repository.
         rm get-docker.sh
         sudo usermod -aG docker ubuntu
 
-    You will need to log out and log back in to get access to the docker daemon. If you do not, you
+    You will need to log out and log back in to get access to the docker daemon. If you do not,
+    when you run a ``docker`` command you
     may see a message like ``ERRO[0000] failed to dial gRPC: cannot connect to the Docker
     daemon. Is 'docker daemon' running on this host?: dial unix /var/run/docker.sock:
     connect: permission denied``. If this is the case, logout and log back in to the server.
@@ -26,13 +27,14 @@ repository.
 #. Install other useful utilities::
 
     sudo apt-get install -yq make python3-pip
+    python3 -m pip install -q virtualenv virtualenvwrapper
 
 #. Clone repository from github
     If using https::
 
         git clone https://github.com/mpesavento/arg-mine.git
 
-    If using ssh, create ssh public key in github)::
+    If using ssh, create ssh public key in github::
 
         ssh-keygen -t rsa -b 4096 -C "your_github_email@example.com"
         chmod 400 ~/.ssh/id_rsa

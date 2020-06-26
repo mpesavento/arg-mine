@@ -1,25 +1,32 @@
 """Utility methods"""
-from typing import List, Type
+from typing import List, Type, Optional
 
 import hashlib
 import logging
 
 LOG_FMT = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
 
+_logger: Optional[logging.Logger] = None
+
 
 def get_logger(name, level=logging.INFO):
     """Get a basic logger"""
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
+    global _logger
+    if _logger is not None:
+        # raise RuntimeError('_logger is already setup!')
+        return _logger
+    _logger = logging.getLogger(name)
+    _logger.setLevel(level)
 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(level)
 
-    logger.addHandler(console_handler)
-
     formatter = logging.Formatter(LOG_FMT)
     console_handler.setFormatter(formatter)
-    return logger
+
+    _logger.addHandler(console_handler)
+    _logger.propagate = False  # otherwise root logger prints things again
+    return _logger
 
 
 def enum(**named_values):

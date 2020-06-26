@@ -3,8 +3,10 @@ from typing import List, AnyStr
 import logging
 import time
 
+import requests
 import grequests
 import pandas as pd
+import json
 
 from arg_mine.api.auth import load_auth_tokens
 from arg_mine.api import session, errors
@@ -311,19 +313,21 @@ def collect_sentences_by_topic_parallel(
 
 def exception_handler(request, exception):
     if isinstance(exception, errors.Refused):
-        _logger.warning("Refused: {}, url={}".format(exception, request.payload['url']))
-        # refused_doc_list.append(url)
+        url = json.loads(request.body.decode("utf-8"))['targetUrl']
+        _logger.warning("Refused: {}, url={}".format(exception, url))
     elif isinstance(exception, (errors.Unavailable, errors.ArgumenTextGatewayError)):
         _logger.error(exception)
-    else:
+    elif exception is not None:
         _logger.exception("Request failed request:{} \n exception:{} ".format(request, exception))
 
 
 def fetch_concurrent(topic, url_list, pool_size=5, chunk_size=100):
+    start_time = time.time()
     s = session.get_session(pool_size=pool_size)
     full_list = []
 
     for i in range(0, len(url_list), chunk_size):
+        iter_time = time.time()
         _logger.debug(">>>> iteration: {}".format(i))
         chunk_urls = url_list[i:i + chunk_size]
         unsent_requests = (
@@ -331,10 +335,64 @@ def fetch_concurrent(topic, url_list, pool_size=5, chunk_size=100):
                 session.ApiUrl.CLASSIFY_BASE_URL,
                 data=bundle_payload(topic, u),
                 session=s,
-                allow_redirects=False,
-                exception_handler=exception_handler)
+                allow_redirects=False
+            )
             for u in chunk_urls
         )
-        output = grequests.map(unsent_requests, size=100)
+        output = grequests.map(unsent_requests, size=100, exception_handler=exception_handler)
         full_list.extend(output)
+        print("iteration took {:.3} s".format(time.time() - iter_time))
+
+    print("{} URLs took {:.3} s".format(len(url_list), time.time() - start_time))
     return full_list
+
+
+def process_responses(response_list):
+    doc_list = []
+    refused_doc_list = []
+    sentence_list = []
+    for response in response_list:
+
+        try:
+            try:
+                response.raise_for_status()
+            except (requests.ConnectionError, requests.Timeout) as e:
+                raise errors.NotResponding(
+                    "Server not responding, ConnectionError or Timeout"
+                ) from e
+            except requests.HTTPError as e:
+                status_code = e.response.status_code
+                if e.response.status_code == 400:
+                    error = e.response.json()
+                    _logger.error("{} : {}".format(status_code, error))
+                    message = error["error"]
+                    if errors.Refused.TARGET_MSG in message:
+                        raise errors.Refused(status_code, message)
+                    raise errors.ArgumenTextGatewayError(status_code, message) from e
+                elif status_code == 500:
+                    msg = (
+                        "Server Error: INTERNAL SERVER ERROR for url: {}".format(session.ApiUrl.CLASSIFY_BASE_URL)
+                        + ", check payload contents?"
+                    )
+                    _logger.error("{} : {}".format(status_code, msg))
+                    raise errors.InternalGatewayError(status_code, msg)
+
+                msg = "ArgumentText service had internal error."
+                _logger.exception(msg)
+                raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
+        except Exception as e:
+            exception_handler(response.request, e)
+            # TODO: add list of docs that we couldnt access
+            continue
+
+        json_response = response.json()
+        if json_response:
+            doc_list.append(ClassifyMetadata.from_dict(json_response["metadata"]))
+            topic = json_response["metadata"]["topic"]
+            url = json_response["metadata"]["userMetadata"]
+            for sentence in json_response["sentences"]:
+                sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
+
+    docs_df = pd.DataFrame(utils.dataclasses_to_dicts(doc_list))
+    sentence_df = pd.DataFrame(utils.dataclasses_to_dicts(sentence_list))
+    return docs_df, sentence_df
