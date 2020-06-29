@@ -14,7 +14,11 @@ _logger = utils.get_logger(__name__, logging.DEBUG)
 
 
 @click.command()
-@click.option("--ndocs", default=100, help="The number of documents we want to extract from the list")
+@click.option(
+    "--ndocs",
+    default=100,
+    help="The number of documents we want to extract from the list",
+)
 def main(ndocs):
     """
     Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
@@ -33,13 +37,13 @@ def main(ndocs):
     os.makedirs(out_data_path, exist_ok=True)
 
     # probably want to shuffle the docs here
-    responses = classify.fetch_concurrent(topic, url_list=url_df.content_url.values[:ndocs], chunk_size=10)
+    responses = classify.fetch_concurrent(
+        topic, url_list=url_df.content_url.values[:ndocs], chunk_size=10
+    )
     docs_df, sentences_df = classify.process_responses(responses)
 
     docs_df.to_csv(
-        os.path.join(out_data_path, "gdelt_2020_docs.csv"),
-        header=True,
-        index=False,
+        os.path.join(out_data_path, "gdelt_2020_docs.csv"), header=True, index=False,
     )
     sentences_df.to_csv(
         os.path.join(out_data_path, "gdelt_2020_sentences.csv"),

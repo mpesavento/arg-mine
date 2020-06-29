@@ -6,10 +6,9 @@ import logging
 from dotenv import find_dotenv, load_dotenv
 
 from arg_mine import PROJECT_DIR
-from arg_mine.utils import LOG_FMT
+from arg_mine.utils import LOG_FMT, get_logger
 
-
-logger = logging.getLogger(__name__).setLevel(logging.DEBUG)  # noqa
+_logger = get_logger(__name__, logging.DEBUG)
 
 # URL taken from https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/  # noqa: E501
 BASE_URL_FMT = "http://data.gdeltproject.org/blog/2020-climate-change-narrative/WebNewsEnglishSnippets.{year}.csv.zip"
@@ -30,7 +29,7 @@ def download_file_from_url(url, target_file_path):
     -------
     None
     """
-    logger.info("downloading file from {}".format(url))
+    _logger.info("downloading file from {}".format(url))
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
     with open(target_file_path, "wb") as f:
@@ -73,13 +72,13 @@ def download_gdelt_year(year, base_url_fmt=BASE_URL_FMT):
         if os.path.exists(zip_filepath):
             os.remove(zip_filepath)
         else:
-            logger.info(
+            _logger.info(
                 "Unable to find the zip file we just extracted from: {}".format(
                     zip_filepath
                 )
             )
     else:
-        logger.info("Using cached data for '{}': {}".format(year, csv_filepath))
+        _logger.info("Using cached data for '{}': {}".format(year, csv_filepath))
 
     return csv_filepath
 
@@ -88,7 +87,7 @@ def main():
     """
     Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
     """
-    logger.info("making final data set from raw data")
+    _logger.info("making final data set from raw data")
 
     years = list(range(2015, 2021))
     # download article URL datasets from all given years

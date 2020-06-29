@@ -1,5 +1,5 @@
 """Utility methods"""
-from typing import List, Type, Optional
+from typing import List, Type, Optional  # noqa: F401
 
 import hashlib
 import logging
@@ -10,7 +10,7 @@ _logger: Optional[logging.Logger] = None
 
 
 def get_logger(name, level=logging.INFO):
-    """Get a basic logger"""
+    """Get a basic _logger"""
     global _logger
     if _logger is not None:
         # raise RuntimeError('_logger is already setup!')
@@ -25,7 +25,7 @@ def get_logger(name, level=logging.INFO):
     console_handler.setFormatter(formatter)
 
     _logger.addHandler(console_handler)
-    _logger.propagate = False  # otherwise root logger prints things again
+    _logger.propagate = False  # otherwise root _logger prints things again
     return _logger
 
 

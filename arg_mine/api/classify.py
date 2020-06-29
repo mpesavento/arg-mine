@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import List, AnyStr
 import logging
 import time
@@ -145,7 +145,13 @@ class ClassifiedSentence:
 # ==============================================================================
 # methods
 
-def bundle_payload(topic, url, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC):
+
+def bundle_payload(
+    topic,
+    url,
+    only_arguments: bool = False,
+    topic_relevance: str = TopicRelevance.WORD2VEC,
+):
     user_id, api_key = load_auth_tokens()
     payload = {
         "topic": topic,
@@ -197,7 +203,9 @@ def classify_url_sentences(
     -------
     dict
     """
-    payload = bundle_payload(topic, url, only_arguments=only_arguments, topic_relevance=topic_relevance)
+    payload = bundle_payload(
+        topic, url, only_arguments=only_arguments, topic_relevance=topic_relevance
+    )
     request_session = request_session or session.get_session()
     json_response = session.fetch(
         session.ApiUrl.CLASSIFY_BASE_URL,
@@ -236,7 +244,9 @@ def collect_sentences_by_topic(
                 _logger.debug(
                     "Attempting url {} of {}".format(url_index + 1, len(url_list))
                 )
-                out_dict = classify_url_sentences(topic, url, user_id, api_key, request_session=req_session)
+                out_dict = classify_url_sentences(
+                    topic, url, user_id, api_key, request_session=req_session
+                )
             except errors.Refused as e:
                 _logger.warning("Refused: {}, url={}".format(e, url))
                 refused_doc_list.append(url)
@@ -246,7 +256,9 @@ def collect_sentences_by_topic(
             if out_dict:
                 doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
                 for sentence in out_dict["sentences"]:
-                    sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
+                    sentence_list.append(
+                        ClassifiedSentence.from_dict(url, topic, sentence)
+                    )
 
     return doc_list, sentence_list, refused_doc_list
 
@@ -299,21 +311,23 @@ def exception_handler(request, exception):
     None
     """
     if isinstance(exception, errors.Refused):
-        url = json.loads(request.body.decode("utf-8"))['targetUrl']
+        url = json.loads(request.body.decode("utf-8"))["targetUrl"]
         _logger.warning("{}, url={}".format(exception, url))
     elif isinstance(exception, (errors.Unavailable, errors.ArgumenTextGatewayError)):
         _logger.error(exception)
     elif exception is not None:
-        _logger.exception("Request failed request:{} \n exception:{} ".format(request, exception))
+        _logger.exception(
+            "Request failed request:{} \n exception:{} ".format(request, exception)
+        )
 
 
 def fetch_concurrent(
-        topic,
-        url_list,
-        only_arguments: bool = True,
-        topic_relevance: str = TopicRelevance.WORD2VEC,
-        pool_size: int = 5,
-        chunk_size: int = 100,
+    topic,
+    url_list,
+    only_arguments: bool = False,
+    topic_relevance: str = TopicRelevance.WORD2VEC,
+    pool_size: int = 5,
+    chunk_size: int = 100,
 ):
     """
     Given a list of article URLs, iterate through them in chunks and return a list of responses
@@ -344,23 +358,36 @@ def fetch_concurrent(
     _logger.debug(">>>> starting doc extraction")
     for i in range(0, len(url_list), chunk_size):
         iter_time = time.time()
-        chunk_urls = url_list[i:i + chunk_size]
+        chunk_urls = url_list[i : i + chunk_size]  # noqa: E203
         unsent_requests = (
             grequests.post(
                 session.ApiUrl.CLASSIFY_BASE_URL,
-                json=bundle_payload(topic, u, only_arguments=only_arguments, topic_relevance=topic_relevance),
+                json=bundle_payload(
+                    topic,
+                    u,
+                    only_arguments=only_arguments,
+                    topic_relevance=topic_relevance,
+                ),
                 session=s,
-                allow_redirects=False
+                allow_redirects=False,
             )
             for u in chunk_urls
         )
         # output is a list of response objects
-        output = grequests.map(unsent_requests, size=100, exception_handler=exception_handler)
+        output = grequests.map(
+            unsent_requests, size=100, exception_handler=exception_handler
+        )
         full_list.extend(output)
-        _logger.debug("iteration {} took {:0.3} s ({} docs)".format(chunk_ix, time.time() - iter_time, chunk_size))
+        _logger.debug(
+            "iteration {} took {:0.3} s ({} docs)".format(
+                chunk_ix, time.time() - iter_time, chunk_size
+            )
+        )
         chunk_ix += 1
 
-    _logger.debug("{} URLs took {:0.3} s".format(len(url_list), time.time() - start_time))
+    _logger.debug(
+        "{} URLs took {:0.3} s".format(len(url_list), time.time() - start_time)
+    )
     return full_list
 
 
@@ -452,8 +479,10 @@ def response_error_check(response):
             raise errors.ArgumenTextGatewayError(status_code, message) from e
         elif status_code == 500:
             msg = (
-                    "Server Error: INTERNAL SERVER ERROR for url: {}".format(session.ApiUrl.CLASSIFY_BASE_URL)
-                    + ", check payload contents?"
+                "Server Error: INTERNAL SERVER ERROR for url: {}".format(
+                    session.ApiUrl.CLASSIFY_BASE_URL
+                )
+                + ", check payload contents?"
             )
             _logger.error("{} : {}".format(status_code, msg))
             raise errors.InternalGatewayError(status_code, msg)

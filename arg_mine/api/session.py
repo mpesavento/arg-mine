@@ -3,7 +3,6 @@ import logging
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import grequests
 
 from arg_mine.api import errors
 
@@ -34,12 +33,14 @@ class _BlockAll(http.cookiejar.CookiePolicy):
     >>> s = requests.Session()
     >>> s.cookies.policy = _BlockAll()
     """
+
     def set_ok(self, cookie, request):
         return False
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
     """requests HTTPAdapter with default timeout"""
+
     def __init__(self, *args, **kwargs):
         self.timeout = DEFAULT_TIMEOUT
         if "timeout" in kwargs:
@@ -77,12 +78,7 @@ def get_session(timeout=DEFAULT_TIMEOUT, pool_size=DEFAULT_POOL_SIZE):
     retry_strategy = Retry(
         total=3,
         status_forcelist=[429, 500, 502, 503, 504],
-        method_whitelist=[
-            "HEAD",
-            "GET",
-            "OPTIONS",
-            "POST",
-        ],
+        method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
         backoff_factor=1,  # {backoff factor} * (2 ** ({number of total retries} - 1))
     )
 
@@ -91,7 +87,7 @@ def get_session(timeout=DEFAULT_TIMEOUT, pool_size=DEFAULT_POOL_SIZE):
         timeout=timeout,
         max_retries=retry_strategy,
         pool_connections=pool_size,
-        pool_maxsize=pool_size
+        pool_maxsize=pool_size,
     )
     query_session.mount("https://", adapter)
     query_session.mount("http://", adapter)
@@ -168,4 +164,3 @@ def fetch(
         raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
     json_response = response.json()
     return json_response
-
