@@ -145,7 +145,7 @@ class ClassifiedSentence:
 # ==============================================================================
 # methods
 
-def bundle_payload(topic, url, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC):
+def bundle_payload(topic, url, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC):
     user_id, api_key = load_auth_tokens()
     payload = {
         "topic": topic,
@@ -165,8 +165,6 @@ def bundle_payload(topic, url, only_arguments: bool = True, topic_relevance: str
 def classify_url_sentences(
     topic: str,
     url: str,
-    user_id: str,
-    api_key: str,
     only_arguments: bool = True,
     topic_relevance: str = TopicRelevance.WORD2VEC,
     timeout: float = session.DEFAULT_TIMEOUT,
@@ -287,104 +285,118 @@ def collect_sentences_for_url(topic, url, user_id, api_key):
     return doc_list, sentence_list, refused_doc_list
 
 
-def collect_sentences_by_topic_parallel(
-        topic: str,
-        url_list: List[AnyStr],
-        pool_size: int = 4,
-):
+def exception_handler(request, exception):
     """
-    Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
+    catch raised exceptions and log them
 
     Parameters
     ----------
-    topic : str
-    url_list : List[AnyStr]
-    pool_size : int
-        number of processes that we want to use for this extraction
+    request : request.Request
+    exception : Optional[Exception]
 
     Returns
     -------
-    Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+    None
     """
-
-    user_id, api_key = load_auth_tokens()
-    pass
-
-
-def exception_handler(request, exception):
     if isinstance(exception, errors.Refused):
         url = json.loads(request.body.decode("utf-8"))['targetUrl']
-        _logger.warning("Refused: {}, url={}".format(exception, url))
+        _logger.warning("{}, url={}".format(exception, url))
     elif isinstance(exception, (errors.Unavailable, errors.ArgumenTextGatewayError)):
         _logger.error(exception)
     elif exception is not None:
         _logger.exception("Request failed request:{} \n exception:{} ".format(request, exception))
 
 
-def fetch_concurrent(topic, url_list, pool_size=5, chunk_size=100):
+def fetch_concurrent(
+        topic,
+        url_list,
+        only_arguments: bool = True,
+        topic_relevance: str = TopicRelevance.WORD2VEC,
+        pool_size: int = 5,
+        chunk_size: int = 100,
+):
+    """
+    Given a list of article URLs, iterate through them in chunks and return a list of responses
+
+    TODO: parse the chunks and write to storage files, in case of memory errors
+
+    Parameters
+    ----------
+    topic : str
+    url_list : List[AnyStr]
+    only_arguments : bool
+        only return the sentences of the estimated arguments
+        TODO: check to see if setting this true decreases the computation time on the server
+    topic_relevance : str
+        use options from TopicRelevance enum
+    pool_size : int
+    chunk_size : int
+
+    Returns
+    -------
+    list
+    """
     start_time = time.time()
     s = session.get_session(pool_size=pool_size)
     full_list = []
 
+    chunk_ix = 0
+    _logger.debug(">>>> starting doc extraction")
     for i in range(0, len(url_list), chunk_size):
         iter_time = time.time()
-        _logger.debug(">>>> iteration: {}".format(i))
         chunk_urls = url_list[i:i + chunk_size]
         unsent_requests = (
             grequests.post(
                 session.ApiUrl.CLASSIFY_BASE_URL,
-                data=bundle_payload(topic, u),
+                json=bundle_payload(topic, u, only_arguments=only_arguments, topic_relevance=topic_relevance),
                 session=s,
                 allow_redirects=False
             )
             for u in chunk_urls
         )
+        # output is a list of response objects
         output = grequests.map(unsent_requests, size=100, exception_handler=exception_handler)
         full_list.extend(output)
-        print("iteration took {:.3} s".format(time.time() - iter_time))
+        _logger.debug("iteration {} took {:0.3} s ({} docs)".format(chunk_ix, time.time() - iter_time, chunk_size))
+        chunk_ix += 1
 
-    print("{} URLs took {:.3} s".format(len(url_list), time.time() - start_time))
+    _logger.debug("{} URLs took {:0.3} s".format(len(url_list), time.time() - start_time))
     return full_list
 
 
 def process_responses(response_list):
+    """
+    Take a list of classify responses, convert them to docs and sentences, and create associate dataframes
+
+    Parameters
+    ----------
+    response_list : List[requests.Response]
+
+    Returns
+    -------
+    Tuple[pd.DataFrame, pd.DataFrame]
+        docs_df, sentences_df
+    """
+
     doc_list = []
-    refused_doc_list = []
     sentence_list = []
     for response in response_list:
+        if response is None:
+            # we weren't able to get a result from the server
+            continue
 
         try:
-            try:
-                response.raise_for_status()
-            except (requests.ConnectionError, requests.Timeout) as e:
-                raise errors.NotResponding(
-                    "Server not responding, ConnectionError or Timeout"
-                ) from e
-            except requests.HTTPError as e:
-                status_code = e.response.status_code
-                if e.response.status_code == 400:
-                    error = e.response.json()
-                    _logger.error("{} : {}".format(status_code, error))
-                    message = error["error"]
-                    if errors.Refused.TARGET_MSG in message:
-                        raise errors.Refused(status_code, message)
-                    raise errors.ArgumenTextGatewayError(status_code, message) from e
-                elif status_code == 500:
-                    msg = (
-                        "Server Error: INTERNAL SERVER ERROR for url: {}".format(session.ApiUrl.CLASSIFY_BASE_URL)
-                        + ", check payload contents?"
-                    )
-                    _logger.error("{} : {}".format(status_code, msg))
-                    raise errors.InternalGatewayError(status_code, msg)
-
-                msg = "ArgumentText service had internal error."
-                _logger.exception(msg)
-                raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
+            # trigger any exceptions that happened for this doc url
+            response_error_check(response)
         except Exception as e:
-            exception_handler(response.request, e)
+            if hasattr(response, "request"):
+                exception_handler(response.request, e)
+            else:
+                _logger.exception(errors.Unavailable(e))
             # TODO: add list of docs that we couldnt access
             continue
 
+        # parse the response output
         json_response = response.json()
         if json_response:
             doc_list.append(ClassifyMetadata.from_dict(json_response["metadata"]))
@@ -396,3 +408,56 @@ def process_responses(response_list):
     docs_df = pd.DataFrame(utils.dataclasses_to_dicts(doc_list))
     sentence_df = pd.DataFrame(utils.dataclasses_to_dicts(sentence_list))
     return docs_df, sentence_df
+
+
+def response_error_check(response):
+    """
+    Trigger any Exceptions that happened during a document URL request
+    Convert raised exceptions to internal exception types for consistency
+
+    Parameters
+    ----------
+    response : requests.Response
+
+    Returns
+    -------
+    none
+
+    Raises
+    ------
+    errors.Unavailable
+        when requests returns an unknown HTTPError
+    errors.Refused
+        when server returns a 400 and "Website could not be crawled"
+    errors.ArgumenTextGatewayError
+        when server returns a 400 and unspecified message
+    errors.NotResponding
+        when connection fails or times out
+
+    """
+    try:
+        response.raise_for_status()
+    except (requests.ConnectionError, requests.Timeout) as e:
+        raise errors.NotResponding(
+            "Server not responding, ConnectionError or Timeout"
+        ) from e
+    except requests.HTTPError as e:
+        status_code = e.response.status_code
+        if e.response.status_code == 400:
+            error = e.response.json()
+            _logger.error("{} : {}".format(status_code, error))
+            message = error["error"]
+            if errors.Refused.TARGET_MSG in message:
+                raise errors.Refused(status_code, message)
+            raise errors.ArgumenTextGatewayError(status_code, message) from e
+        elif status_code == 500:
+            msg = (
+                    "Server Error: INTERNAL SERVER ERROR for url: {}".format(session.ApiUrl.CLASSIFY_BASE_URL)
+                    + ", check payload contents?"
+            )
+            _logger.error("{} : {}".format(status_code, msg))
+            raise errors.InternalGatewayError(status_code, msg)
+
+        msg = "ArgumentText service had internal error."
+        _logger.exception(msg)
+        raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
