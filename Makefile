@@ -131,7 +131,15 @@ test:
 
 ## Make Dataset
 data:
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+	$(PYTHON_INTERPRETER) arg_mine/data/make_dataset.py data/raw data/processed
+
+
+get-gdelt:
+	$(PYTHON_INTERPRETER) arg_mine/data/download_gdelt_climate_en.py
+
+test-extract-gdelt:
+	$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=1000
+
 
 
 #################################################################################
