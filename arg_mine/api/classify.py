@@ -379,14 +379,14 @@ def fetch_concurrent(
         )
         full_list.extend(output)
         _logger.debug(
-            "iteration {} took {:0.3} s ({} docs)".format(
+            "iteration {} took {:0.3f} s ({} docs)".format(
                 chunk_ix, time.time() - iter_time, chunk_size
             )
         )
         chunk_ix += 1
 
     _logger.debug(
-        "{} URLs took {:0.3} s".format(len(url_list), time.time() - start_time)
+        "{} URLs took {:0.3f} s".format(len(url_list), time.time() - start_time)
     )
     return full_list
 
