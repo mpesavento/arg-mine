@@ -19,7 +19,12 @@ _logger = utils.get_logger(__name__, logging.DEBUG)
     default=100,
     help="The number of documents we want to extract from the list",
 )
-def main(ndocs):
+@click.option(
+    "--chunk-size",
+    default=100,
+    help="how many articles to process in each iteration"
+)
+def main(ndocs, chunk_size):
     """
     Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
     """
@@ -38,7 +43,7 @@ def main(ndocs):
 
     # probably want to shuffle the docs here
     responses = classify.fetch_concurrent(
-        topic, url_list=url_df.content_url.values[:ndocs], chunk_size=10
+        topic, url_list=url_df.content_url.values[:ndocs], chunk_size=chunk_size
     )
     docs_df, sentences_df = classify.process_responses(responses)
 
