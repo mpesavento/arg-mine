@@ -1,24 +1,32 @@
 """Utility methods"""
+from typing import List, Type, Optional  # noqa: F401
 
 import hashlib
 import logging
 
 LOG_FMT = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
 
+_logger: Optional[logging.Logger] = None
+
 
 def get_logger(name, level=logging.INFO):
-    """Get a basic logger"""
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
+    """Get a basic _logger"""
+    global _logger
+    if _logger is not None:
+        # raise RuntimeError('_logger is already setup!')
+        return _logger
+    _logger = logging.getLogger(name)
+    _logger.setLevel(level)
 
-    consoleHandler = logging.StreamHandler()
-    consoleHandler.setLevel(level)
-
-    logger.addHandler(consoleHandler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(level)
 
     formatter = logging.Formatter(LOG_FMT)
-    consoleHandler.setFormatter(formatter)
-    return logger
+    console_handler.setFormatter(formatter)
+
+    _logger.addHandler(console_handler)
+    _logger.propagate = False  # otherwise root _logger prints things again
+    return _logger
 
 
 def enum(**named_values):
@@ -47,3 +55,25 @@ def unique_hash(input_str: str) -> str:
     """Uses MD5 to return a unique key, assuming the input string is unique"""
     # assuming default UTF-8
     return hashlib.md5(input_str.encode()).hexdigest()
+
+
+def dataclasses_to_dicts(data):
+    """    Converts a list of dataclass instances to a list of dictionaries
+    Parameters
+    ----------
+    data : List[Type[dataclass]]
+    Returns
+    --------
+    list_dict : List[dict]
+    Examples
+    --------
+    >>> @dataclass
+    >>> class Point:
+    ...     x: int
+    ...     y: int
+    >>> dataclasses_to_dicts([Point(1,2), Point(2,3)])
+    [{"x":1,"y":2},{"x":2,"y":3}]
+    """
+    from dataclasses import asdict
+
+    return list(map(asdict, data))
