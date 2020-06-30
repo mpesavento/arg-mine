@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, AnyStr
+from typing import List, AnyStr, Iterable
 import logging
 import time
 
@@ -300,6 +300,7 @@ def collect_sentences_for_url(topic, url, user_id, api_key):
 def exception_handler(request, exception):
     """
     catch raised exceptions and log them
+    Returns any missing urls
 
     Parameters
     ----------
@@ -308,17 +309,20 @@ def exception_handler(request, exception):
 
     Returns
     -------
-    None
+    Optional[AnyStr]
     """
+    url_404 = None
     if isinstance(exception, errors.Refused):
         url = json.loads(request.body.decode("utf-8"))["targetUrl"]
-        _logger.warning("{}, url={}".format(exception, url))
+        # _logger.warning("{}, url={}".format(exception, url))
+        url_404 = url
     elif isinstance(exception, (errors.Unavailable, errors.ArgumenTextGatewayError)):
         _logger.error(exception)
     elif exception is not None:
         _logger.exception(
             "Request failed request:{} \n exception:{} ".format(request, exception)
         )
+    return url_404
 
 
 def fetch_concurrent(
@@ -348,11 +352,11 @@ def fetch_concurrent(
 
     Returns
     -------
-    list
+    List[requests.Response]
     """
     start_time = time.time()
     s = session.get_session(pool_size=pool_size)
-    full_list = []
+    response_list = []
 
     chunk_ix = 0
     _logger.debug(">>>> starting doc extraction")
@@ -377,7 +381,7 @@ def fetch_concurrent(
         output = grequests.map(
             unsent_requests, size=100, exception_handler=exception_handler
         )
-        full_list.extend(output)
+        response_list.extend(output)
         _logger.debug(
             "iteration {} took {:0.3f} s ({} docs)".format(
                 chunk_ix, time.time() - iter_time, chunk_size
@@ -388,7 +392,7 @@ def fetch_concurrent(
     _logger.debug(
         "{} URLs took {:0.3f} s".format(len(url_list), time.time() - start_time)
     )
-    return full_list
+    return response_list
 
 
 def process_responses(response_list):
@@ -397,7 +401,7 @@ def process_responses(response_list):
 
     Parameters
     ----------
-    response_list : List[requests.Response]
+    response_list : Iterable[requests.Response]
 
     Returns
     -------
@@ -407,6 +411,7 @@ def process_responses(response_list):
 
     doc_list = []
     sentence_list = []
+    missing_url_list = []
     for response in response_list:
         if response is None:
             # we weren't able to get a result from the server
@@ -417,7 +422,9 @@ def process_responses(response_list):
             response_error_check(response)
         except Exception as e:
             if hasattr(response, "request"):
-                exception_handler(response.request, e)
+                url_404 = exception_handler(response.request, e)
+                if url_404:
+                    missing_url_list.append(url_404)
             else:
                 _logger.exception(errors.Unavailable(e))
             # TODO: add list of docs that we couldnt access
@@ -434,7 +441,7 @@ def process_responses(response_list):
 
     docs_df = pd.DataFrame(utils.dataclasses_to_dicts(doc_list))
     sentence_df = pd.DataFrame(utils.dataclasses_to_dicts(sentence_list))
-    return docs_df, sentence_df
+    return docs_df, sentence_df, missing_url_list
 
 
 def response_error_check(response):

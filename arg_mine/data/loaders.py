@@ -10,7 +10,7 @@ GDELT_COL_NAMES = [
     "title",
     "headline_image_url",
     "content_url",
-    "snippit",  # contextual snippits
+    "labeled_argument",
 ]
 
 

@@ -45,7 +45,7 @@ def main(ndocs, chunk_size):
     responses = classify.fetch_concurrent(
         topic, url_list=url_df.content_url.values[:ndocs], chunk_size=chunk_size
     )
-    docs_df, sentences_df = classify.process_responses(responses)
+    docs_df, sentences_df, missing_docs = classify.process_responses(responses)
 
     # save outputs to CSV
     docs_df.to_csv(
