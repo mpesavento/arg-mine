@@ -47,6 +47,7 @@ def main(ndocs, chunk_size):
     )
     docs_df, sentences_df = classify.process_responses(responses)
 
+    # save outputs to CSV
     docs_df.to_csv(
         os.path.join(out_data_path, "gdelt_2020_docs.csv"), header=True, index=False,
     )
