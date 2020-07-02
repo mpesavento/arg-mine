@@ -126,7 +126,7 @@ class ClassifiedSentence:
             argument_label=sentence_dict["argumentLabel"],
             sentence_original=sentence_dict["sentenceOriginal"],
             sentence_preprocessed=sentence_dict["sentencePreprocessed"],
-            sort_confidence=sentence_dict["sortConfidence"],
+            sort_confidence=sentence_dict.get("sortConfidence", None),
             stance_confidence=sentence_dict.get("stanceConfidence", 0.0),
             stance_label=sentence_dict.get("stanceLabel", StanceLabel.NA),
         )
