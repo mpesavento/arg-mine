@@ -163,6 +163,7 @@ def bundle_payload(
         "predictStance": True,  # we don't want to predict stance without context
         "computeAttention": False,  # doesnt work for BERT-based models (the default model)
         "showOnlyArguments": only_arguments,  # only return sentences classified as arguments
+        "sortBy": "none",
         "userMetadata": url,
     }
     return payload

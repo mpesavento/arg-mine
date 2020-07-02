@@ -10,6 +10,7 @@ python-dotenv
 ipywidgets
 ipympl
 matplotlib~=3.2.1
+nltk>=3.5
 pandas~=1.0.4
 plotly~=4.8.1
 requests

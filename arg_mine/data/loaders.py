@@ -5,18 +5,19 @@ log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
 # logging.basicConfig(level=logging.DEBUG, format=log_fmt)
 logger = logging.getLogger(__name__)
 
-GDELT_COL_NAMES = [
+GDELT_COL_NAMES = (
     "datetime",
     "title",
     "headline_image_url",
     "content_url",
     "labeled_argument",
-]
+)
 
 
 def convert_datetime_int(datetime_int):
     """
-    Convert an integer like `20200107101500` to a pd.Timestamp `2020.01.07T10:15:00`
+    Convert an integer in format `YYYYMMDDHHMMSS` to pd.Timestamp
+     eg, `20200107101500` to `2020.01.07T10:15:00`
 
     Parameters
     ----------
@@ -52,7 +53,7 @@ def convert_datetime_int(datetime_int):
 
 def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     """
-    From CSV path, load a pandas dataframe with the target data
+    From CSV path, load a pandas dataframe with the GDELT URL dataset
 
     Parameters
     ----------
