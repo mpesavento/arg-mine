@@ -59,6 +59,11 @@ repository.
     make create_environment
     workon arg_mine
 
+#. Install the dev requirements in the host environment (eg virtualenv)::
+
+    make requirements
+    pip3 install -e .
+
 #. Build the docker image
     Run::
 

@@ -79,14 +79,22 @@ def label_doc_sentences_with_context(url_row, docs_df, sentences_df):
     doc_id = match_doc_id(content_url, docs_df)
     doc_sentences = get_doc_sentences(doc_id, sentences_df)
 
-    # tokenize the GT argument
+    # sanitize, removing odd punctuation
+    snippit = snippit.replace("[", "").replace("]", "")
+    snippit = snippit.replace("(", "").replace("]", "")
 
+    # tokenize the GT argument
     arg_tokens = tokenize.sent_tokenize(snippit)
     # arg_tokens = snippit.split(".") if isinstance(snippit, str) else None
     # arg_tokens = [s.strip() for s in arg_tokens]  # strip spaces, doesn't find matches without this
 
     for token in arg_tokens:
-        matches = doc_sentences[doc_sentences.sentence_original.str.contains(token)]['sentence_id']
+        try:
+            matches = doc_sentences[doc_sentences.sentence_original.str.contains(token)]['sentence_id']
+        except Exception as e:
+            _logger.info("** errant token: {}".format(token))
+            _logger.info("ALL TOKENS: {}".format(arg_tokens))
+            raise e
         if matches.empty:
             _logger.debug("No matches found for token in doc {}: '{}'".format(doc_id, token))
             continue
