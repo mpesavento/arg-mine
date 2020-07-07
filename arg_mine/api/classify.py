@@ -6,6 +6,7 @@ import time
 import requests
 import grequests
 import pandas as pd
+import numpy as np
 import json
 
 from arg_mine.api.auth import load_auth_tokens
@@ -424,11 +425,11 @@ def process_responses(response_list):
         except Exception as e:
             if hasattr(response, "request"):
                 url_404 = exception_handler(response.request, e)
+                # TODO: add list of docs that we couldnt access
                 if url_404:
                     missing_url_list.append(url_404)
             else:
                 _logger.exception(errors.Unavailable(e))
-            # TODO: add list of docs that we couldnt access
             continue
 
         # parse the response output
@@ -480,10 +481,11 @@ def response_error_check(response):
         status_code = e.response.status_code
         if e.response.status_code == 400:
             error = e.response.json()
-            _logger.error("{} : {}".format(status_code, error))
             message = error["error"]
             if errors.Refused.TARGET_MSG in message:
+                _logger.debug("{} : {}".format(status_code, error))
                 raise errors.Refused(status_code, message)
+            _logger.error("{} : {}".format(status_code, error))
             raise errors.ArgumenTextGatewayError(status_code, message) from e
         elif status_code == 500:
             msg = (

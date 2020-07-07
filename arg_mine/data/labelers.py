@@ -5,9 +5,9 @@ import logging
 import pandas as pd
 from nltk import tokenize
 
-from arg_mine.utils import get_logger
+from arg_mine import utils
 
-_logger = get_logger(__name__, logging.DEBUG)
+_logger = utils.get_logger(__name__, logging.DEBUG)
 
 # keywords used for context identification in GDELT dataset
 GDELT_KEYWORDS = [
@@ -16,7 +16,7 @@ GDELT_KEYWORDS = [
     "climate crisis",
     "greenhouse gas",
     "greenhouse gases",
-    "carbon tax"
+    "carbon tax",
 ]
 
 
@@ -33,7 +33,7 @@ def match_doc_id(url, docs_df):
     -------
     str
     """
-    return docs_df[url == docs_df['url']]['doc_id'].iloc[0]
+    return docs_df[url == docs_df["url"]]["doc_id"].iloc[0]
 
 
 def get_doc_sentences(doc_id, sentences_df):
@@ -74,52 +74,64 @@ def label_doc_sentences_with_context(url_row, docs_df, sentences_df):
     -------
 
     """
-    content_url = url_row['content_url']
-    snippit = url_row['labeled_argument']
+    content_url = url_row["content_url"]
+    snippit = url_row["topic_context"]
     doc_id = match_doc_id(content_url, docs_df)
     doc_sentences = get_doc_sentences(doc_id, sentences_df)
 
     # sanitize, removing odd punctuation
     snippit = snippit.replace("[", "").replace("]", "")
-    snippit = snippit.replace("(", "").replace("]", "")
+    snippit = snippit.replace("(", "").replace(")", "")
 
-    # tokenize the GT argument
+    # tokenize the GT context into sentences
     arg_tokens = tokenize.sent_tokenize(snippit)
-    # arg_tokens = snippit.split(".") if isinstance(snippit, str) else None
-    # arg_tokens = [s.strip() for s in arg_tokens]  # strip spaces, doesn't find matches without this
 
     for token in arg_tokens:
         try:
-            matches = doc_sentences[doc_sentences.sentence_original.str.contains(token)]['sentence_id']
+            matches = doc_sentences[
+                doc_sentences.sentence_original.str.contains(token)
+            ]["sentence_id"]
         except Exception as e:
-            _logger.info("** errant token: {}".format(token))
+            _logger.info("**** errant token: '{}'".format(token))
             _logger.info("ALL TOKENS: {}".format(arg_tokens))
+            _logger.info("{} : {}".format(utils.unique_hash(content_url), content_url))
             raise e
+
         if matches.empty:
-            _logger.debug("No matches found for token in doc {}: '{}'".format(doc_id, token))
+            # _logger.debug("No matches found for token in doc {}, {}: '{}'".format(doc_id, content_url, token))
             continue
         # only look at the first match
-        sentences_df.loc[sentences_df['sentence_id'] == matches.values[0], 'has_labeled_arg'] = True
+        sentences_df.loc[
+            sentences_df["sentence_id"] == matches.values[0], "has_labeled_arg"
+        ] = True
     return sentences_df
 
 
-def label_gdelt_sentences(url_df, docs_df, sentences_df, label_col_name='has_context'):
+def label_gdelt_context(url_df, docs_df, sentences_df, label_col_name="has_context"):
+    """
+    Add column `label_col_name` to sentences_df, with whether or not the sentence
+    was part of the context label from GDELT
 
+    Parameters
+    ----------
+    url_df
+    docs_df
+    sentences_df
+    label_col_name
+
+    Returns
+    -------
+
+    """
     # preload label column if doesnt exist
     if label_col_name not in sentences_df.columns:
         sentences_df[label_col_name] = False
 
     # filter the url_df to just the entries in the docs
-    url_df_crop = url_df[url_df['content_url'].isin(docs_df.url.values)]
+    url_df_crop = url_df[url_df["content_url"].isin(docs_df.url.values)]
 
     for row_ix, url_row in url_df_crop.iterrows():
         # does modification of sentences_df in place
         label_doc_sentences_with_context(url_row, docs_df, sentences_df)
 
     return sentences_df
-
-
-
-
-
-

@@ -1,16 +1,16 @@
 import logging
 import pandas as pd
 
-log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
-# logging.basicConfig(level=logging.DEBUG, format=log_fmt)
-logger = logging.getLogger(__name__)
+from arg_mine import utils
+
+_logger = utils.get_logger(__name__, logging.DEBUG)
 
 GDELT_COL_NAMES = (
     "datetime",
     "title",
     "headline_image_url",
     "content_url",
-    "labeled_argument",
+    "topic_context",
 )
 
 
@@ -65,7 +65,7 @@ def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     pd.DataFrame
     """
     # convert csv to dataframe. should probably do this in a separate step, and just return the path here.
-    logger.info("reading data from: {}".format(csv_filepath))
+    _logger.info("reading data from: {}".format(csv_filepath))
     df = pd.read_csv(csv_filepath, header=0, names=col_names, index_col=False)
     df["timestamp"] = df.datetime.apply(convert_datetime_int)
     return df

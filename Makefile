@@ -131,14 +131,35 @@ test:
 
 ## Make Dataset
 data:
-	$(PYTHON_INTERPRETER) arg_mine/data/make_dataset.py data/raw data/processed
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} \
+		$(PYTHON_INTERPRETER) arg_mine/data/make_dataset.py data/raw data/processed
 
 
 get-gdelt:
-	$(PYTHON_INTERPRETER) arg_mine/data/download_gdelt_climate_en.py
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} \
+		$(PYTHON_INTERPRETER) arg_mine/data/download_gdelt_climate_en.py
+
+extract-gdelt:
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} \
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=10000 --batch-size=1000
 
 test-extract-gdelt:
-	$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=1000
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} \
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=42
+
+batch-extract-gdelt:
+	docker run --rm -it \
+		${DOCKER_RUN_OPTS} \
+		${PROJECT_NAME} \
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=100 --batch-size=10
 
 
 

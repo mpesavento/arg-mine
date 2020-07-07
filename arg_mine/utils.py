@@ -20,13 +20,12 @@ def get_logger(name, level=logging.INFO):
     else:
         logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
+
         console_handler = logging.StreamHandler()
         console_handler.setLevel(level)
         formatter = logging.Formatter(LOG_FMT)
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
-        # maybe not necessary?
-        # logger.propagate = False  # otherwise root _logger prints things again
 
         loggers[name] = logger
 
