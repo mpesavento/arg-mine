@@ -424,8 +424,8 @@ def process_responses(response_list):
             response_error_check(response)
         except Exception as e:
             if hasattr(response, "request"):
+                # list the docs that the API couldnt access
                 url_404 = exception_handler(response.request, e)
-                # TODO: add list of docs that we couldnt access
                 if url_404:
                     missing_url_list.append(url_404)
             else:
