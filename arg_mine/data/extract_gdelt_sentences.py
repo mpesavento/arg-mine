@@ -106,7 +106,11 @@ def main(ndocs, chunk_size, batch_size):
             )
 
     else:
-        _logger.info("Running {} documents from {} docs in file: {}".format(ndocs, total_n_docs, csv_filepath))
+        _logger.info(
+            "Running {} documents from {} docs in file: {}".format(
+                ndocs, total_n_docs, csv_filepath
+            )
+        )
         # probably want to shuffle the docs here
         responses = classify.fetch_concurrent(
             topic, url_list=url_df.content_url.values[:ndocs], chunk_size=chunk_size
