@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = gdelt-2020-data
+BUCKET = arg-mine-gdelt-data
 PROFILE = default
 PROJECT_NAME = arg_mine
 PYTHON_INTERPRETER = python3
@@ -35,20 +35,22 @@ lint:
 
 
 ## Upload Data to S3
+# ignore any hidden files starting with "."
 sync_data_to_s3:
-	ifeq (default,$(PROFILE))
-		aws s3 sync data/ s3://$(BUCKET)/data/
-	else
-		aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE)
-	endif
+ifeq (default, $(PROFILE))
+	aws s3 sync data/ s3://${BUCKET}/data/ --dryrun \
+		--exclude "*/.DS_Store" --exclude "*/.gitignore" --exclude "*/.gitkeep"
+else
+	aws s3 sync data/ s3://${BUCKET}/data/
+endif
 
 ## Download Data from S3
 sync_data_from_s3:
-	ifeq (default,$(PROFILE))
-		aws s3 sync s3://$(BUCKET)/data/ data/
-	else
-		aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
-	endif
+ifeq (default, $(PROFILE))
+	aws s3 sync s3://$(BUCKET)/data/ data/
+else
+	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
+endif
 
 ## Set up python interpreter environment
 create_environment:
