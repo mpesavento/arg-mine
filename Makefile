@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-#BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
+BUCKET = gdelt-2020-data
 PROFILE = default
 PROJECT_NAME = arg_mine
 PYTHON_INTERPRETER = python3
@@ -147,19 +147,19 @@ extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=10000 --batch-size=1000
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=1000
 
 test-extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=1000
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=42
 
 batch-extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=100 --batch-size=10
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=10000 --batch-size=1000
 
 
 

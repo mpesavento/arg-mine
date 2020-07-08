@@ -19,3 +19,6 @@ scikit-image~=0.16.2
 scikit-learn~=0.22.2
 seaborn~=0.10.1
 statsmodels~=0.11.1
+
+## to add, will add tf/pytorch
+#transformers

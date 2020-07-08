@@ -483,7 +483,8 @@ def response_error_check(response):
             error = e.response.json()
             message = error["error"]
             if errors.Refused.TARGET_MSG in message:
-                _logger.debug("{} : {}".format(status_code, error))
+                # for now, dont want to display every time we get a missing article
+                # _logger.debug("{} : {}".format(status_code, error))
                 raise errors.Refused(status_code, message)
             _logger.error("{} : {}".format(status_code, error))
             raise errors.ArgumenTextGatewayError(status_code, message) from e
