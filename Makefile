@@ -38,7 +38,7 @@ lint:
 # ignore any hidden files starting with "."
 sync_data_to_s3:
 ifeq (default, $(PROFILE))
-	aws s3 sync data/ s3://${BUCKET}/data/ --dryrun \
+	aws s3 sync data/ s3://${BUCKET}/data/ \
 		--exclude "*/.DS_Store" --exclude "*/.gitignore" --exclude "*/.gitkeep"
 else
 	aws s3 sync data/ s3://${BUCKET}/data/
