@@ -1,12 +1,11 @@
 from dataclasses import dataclass
-from typing import List, AnyStr, Iterable
+from typing import List, AnyStr, Iterable  # noqa: F401
 import logging
 import time
 
 import requests
 import grequests
 import pandas as pd
-import numpy as np
 import json
 
 from arg_mine.api.auth import load_auth_tokens

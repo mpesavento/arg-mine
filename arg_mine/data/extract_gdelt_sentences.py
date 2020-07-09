@@ -67,28 +67,23 @@ def main(ndocs, chunk_size, batch_size):
         )
 
         # we write and append in batches
-        for batch_ix, doc_ix in enumerate(
-            range(0, url_df[:ndocs].shape[0], batch_size)
-        ):
-            _logger.debug(
-                "Running batch {} [{}-{}]".format(
-                    batch_ix, doc_ix, doc_ix + batch_size - 1
-                )
-            )
+        for batch_ix, doc_ix in enumerate(range(0, len(url_list), batch_size)):
+            start_ix = doc_ix
+            end_ix = doc_ix + batch_size - 1  # NOTE this is inclusive!!!
+            _logger.debug("Running batch {} [{}-{}]".format(batch_ix, start_ix, end_ix))
             responses = classify.fetch_concurrent(
-                topic,
-                url_list=url_list[doc_ix : doc_ix + batch_size],
-                chunk_size=chunk_size,
+                topic, url_list=url_list[start_ix : end_ix + 1], chunk_size=chunk_size,  # noqa: E203
             )
             docs_df, sentences_df, missing_docs = classify.process_responses(responses)
 
+            ndigit = len(str(len(url_list)))
             # save outputs to CSV
-            filename = "gdelt_2020_{data}_docs{start}-{end}.csv"
+            filename = "gdelt_2020_{data}_docs{start:0{ndigit}d}-{end:0{ndigit}d}.csv"
             docs_df.to_csv(
                 os.path.join(
                     out_data_path,
                     filename.format(
-                        data="docs", start=doc_ix, end=doc_ix + batch_size - 1
+                        data="docs", start=start_ix, end=end_ix, ndigit=ndigit
                     ),
                 ),
                 header=True,
@@ -98,7 +93,7 @@ def main(ndocs, chunk_size, batch_size):
                 os.path.join(
                     out_data_path,
                     filename.format(
-                        data="sentences", start=doc_ix, end=doc_ix + batch_size - 1
+                        data="sentences", start=start_ix, end=end_ix, ndigit=ndigit
                     ),
                 ),
                 header=True,

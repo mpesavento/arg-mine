@@ -1,8 +1,10 @@
 """Utility methods"""
 from typing import List, Type, Optional  # noqa: F401
-import datetime
+from urllib.parse import urlparse
 import hashlib
 import logging
+
+import pandas as pd  # noqa: F401
 
 LOG_FMT = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
 
@@ -80,3 +82,7 @@ def dataclasses_to_dicts(data):
     from dataclasses import asdict
 
     return list(map(asdict, data))
+
+
+def get_url_hostnames(urls: pd.Series):
+    return [u.netloc for u in urls.apply(urlparse)]

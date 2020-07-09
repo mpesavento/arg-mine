@@ -2,7 +2,7 @@
 Tools for adding ground truth labels to datasets
 """
 import logging
-import pandas as pd
+import pandas as pd  # noqa: F401, datatype
 from nltk import tokenize
 
 from arg_mine import utils
@@ -80,13 +80,19 @@ def label_doc_sentences_with_context(url_row, docs_df, sentences_df):
     doc_sentences = get_doc_sentences(doc_id, sentences_df)
 
     # sanitize, removing odd punctuation
+    # TODO: sanitizing is getting more and more complicated!
     snippit = snippit.replace("[", "").replace("]", "")
     snippit = snippit.replace("(", "").replace(")", "")
+    snippit = snippit.replace("/", "").replace("\\", "")
+    snippit = snippit.replace("+", "")
+    snippit = snippit.replace("*", "").strip()
 
     # tokenize the GT context into sentences
     arg_tokens = tokenize.sent_tokenize(snippit)
 
     for token in arg_tokens:
+        if len(token) < 2:
+            continue
         try:
             matches = doc_sentences[
                 doc_sentences.sentence_original.str.contains(token)
@@ -131,7 +137,8 @@ def label_gdelt_context(url_df, docs_df, sentences_df, label_col_name="has_conte
     url_df_crop = url_df[url_df["content_url"].isin(docs_df.url.values)]
 
     for row_ix, url_row in url_df_crop.iterrows():
-        # does modification of sentences_df in place
-        label_doc_sentences_with_context(url_row, docs_df, sentences_df)
+        if url_row.notna()["topic_context"]:
+            # does modification of sentences_df in place
+            label_doc_sentences_with_context(url_row, docs_df, sentences_df)
 
     return sentences_df

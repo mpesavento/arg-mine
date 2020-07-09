@@ -1,4 +1,6 @@
+import glob
 import logging
+import os
 import pandas as pd
 
 from arg_mine import utils
@@ -69,3 +71,24 @@ def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     df = pd.read_csv(csv_filepath, header=0, names=col_names, index_col=False)
     df["timestamp"] = df.datetime.apply(convert_datetime_int)
     return df
+
+
+def concat_csvs(filename_glob, base_path):
+    """
+    Given a globbed filename (eg "my_files_doc*.csv"), concatenate the returned
+    CSVs into a DataFrame
+
+    Parameters
+    ----------
+    filename_glob : str
+        filename matching the target files, needs to match the requirements from `glob` module
+    base_path : str
+        where to start looking for the files
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    filepath_list = sorted(glob.glob(os.path.join(base_path, filename_glob)))
+    concat_df = pd.concat([pd.read_csv(filename) for filename in filepath_list], axis=0)
+    return concat_df
