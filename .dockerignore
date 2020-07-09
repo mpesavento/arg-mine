@@ -1,0 +1,6 @@
+# ignore build and test files
+.tox
+.pytest_cache
+data/**
+notebooks/**
+.git

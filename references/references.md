@@ -30,6 +30,21 @@ bibtex reference:
 }
 ```
 
+# BERT
+Below we list some references to the MLP models and utilities used
+
+## NLP transformers
+https://github.com/huggingface/transformers  
+Tensorflow & PyTorch set of utilities for transforming text
+into something useable by the models
+
+## BERT primary reference
+[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)
+
+[documentation](https://huggingface.co/transformers/model_doc/bert.html)
+
+
+
 ## Sentence-BERT
 Used in the clustering algorithm
 https://www.groundai.com/project/sentence-bert-sentence-embeddings-using-siamese-bert-networks/1

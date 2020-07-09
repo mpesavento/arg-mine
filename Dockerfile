@@ -38,14 +38,14 @@ RUN apt-get install -yq --no-install-recommends \
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 
 # Configure environment
-ENV CONDA_DIR=/opt/conda \
-    SHELL=/bin/bash \
+ENV SHELL=/bin/bash \
     NB_USER=$NB_USER \
     NB_UID=$NB_UID \
     NB_GID=$NB_GID \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8
+    LANGUAGE=en_US.UTF-8 \
+    CONDA_DIR=/opt/conda
 
 # Copy a script that we will use to correct permissions after running certain commands
 COPY scripts/fix-permissions /usr/local/bin/fix-permissions
@@ -110,7 +110,10 @@ RUN \
 ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
     fix-permissions /home/$NB_USER
-ENV PYTHONPATH /opt/workspace
+
+# run the post install script for package management and updating
+COPY scripts/python_post_install.sh /root/
+RUN sh /root/python_post_install.sh
 
 # # create SSL cert
 # RUN mkdir certs
@@ -125,3 +128,5 @@ ENV PYTHONPATH /opt/workspace
 #     -out notebook.pem \
 #     && chmod 600 notebook.pem
 
+# add our volume-mapped code to the python path
+ENV PYTHONPATH /opt/workspace

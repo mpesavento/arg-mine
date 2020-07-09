@@ -1,32 +1,37 @@
 """Utility methods"""
 from typing import List, Type, Optional  # noqa: F401
-
+from urllib.parse import urlparse
 import hashlib
 import logging
+
+import pandas as pd  # noqa: F401
 
 LOG_FMT = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
 
 _logger: Optional[logging.Logger] = None
 
+# registry of loggers used in get_logger
+loggers = {}
+
 
 def get_logger(name, level=logging.INFO):
-    """Get a basic _logger"""
-    global _logger
-    if _logger is not None:
-        # raise RuntimeError('_logger is already setup!')
-        return _logger
-    _logger = logging.getLogger(name)
-    _logger.setLevel(level)
+    global loggers
 
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(level)
+    if loggers.get(name):
+        return loggers.get(name)
+    else:
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter(LOG_FMT)
-    console_handler.setFormatter(formatter)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(level)
+        formatter = logging.Formatter(LOG_FMT)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
 
-    _logger.addHandler(console_handler)
-    _logger.propagate = False  # otherwise root _logger prints things again
-    return _logger
+        loggers[name] = logger
+
+        return logger
 
 
 def enum(**named_values):
@@ -77,3 +82,7 @@ def dataclasses_to_dicts(data):
     from dataclasses import asdict
 
     return list(map(asdict, data))
+
+
+def get_url_hostnames(urls: pd.Series):
+    return [u.netloc for u in urls.apply(urlparse)]

@@ -16,7 +16,7 @@ certifi==2020.4.5.1       # via requests
 certipy==0.1.3            # via jupyterhub
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
-click==7.1.2              # via -r requirements.in
+click==7.1.2              # via -r requirements.in, nltk
 colorama==0.4.3           # via awscli
 cryptography==2.9.2       # via pyopenssl
 cycler==0.10.0            # via matplotlib
@@ -37,7 +37,7 @@ ipywidgets==7.5.1         # via -r requirements.in, ipympl
 jedi==0.17.0              # via ipython
 jinja2==2.11.2            # via jupyterhub, jupyterlab, jupyterlab-server, nbconvert, notebook
 jmespath==0.10.0          # via botocore
-joblib==0.15.1            # via scikit-learn
+joblib==0.15.1            # via nltk, scikit-learn
 json5==0.9.5              # via jupyterlab-server
 jsonschema==3.2.0         # via jupyter-telemetry, jupyterlab-server, nbformat
 jupyter-client==6.1.3     # via ipykernel, notebook
@@ -54,6 +54,7 @@ mistune==0.8.4            # via nbconvert
 nbconvert==5.6.1          # via notebook
 nbformat==5.0.6           # via ipywidgets, nbconvert, notebook
 networkx==2.4             # via scikit-image
+nltk==3.5                 # via -r requirements.in
 notebook==6.0.3           # via -r requirements.in, jupyterlab, jupyterlab-server, widgetsnbextension
 numpy==1.18.5             # via imageio, matplotlib, pandas, patsy, pywavelets, scikit-learn, scipy, seaborn, statsmodels
 oauthlib==3.1.0           # via jupyterhub
@@ -84,6 +85,7 @@ pytz==2020.1              # via pandas
 pywavelets==1.1.1         # via scikit-image
 pyyaml==5.3.1             # via awscli
 pyzmq==19.0.1             # via jupyter-client, notebook
+regex==2020.6.8           # via nltk
 requests==2.23.0          # via -r requirements.in, grequests, jupyterhub, jupyterlab-server
 retrying==1.3.3           # via plotly
 rsa==3.4.2                # via awscli
@@ -101,6 +103,7 @@ statsmodels==0.11.1       # via -r requirements.in
 terminado==0.8.3          # via notebook
 testpath==0.4.4           # via nbconvert
 tornado==6.0.4            # via ipykernel, jupyter-client, jupyterhub, jupyterlab, notebook, terminado
+tqdm==4.47.0              # via nltk
 traitlets==4.3.3          # via ipykernel, ipython, ipywidgets, jupyter-client, jupyter-core, jupyter-telemetry, jupyterhub, nbconvert, nbformat, notebook
 urllib3==1.25.9           # via botocore, requests
 wcwidth==0.2.3            # via prompt-toolkit

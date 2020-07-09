@@ -1,22 +1,25 @@
+import glob
 import logging
+import os
 import pandas as pd
 
-log_fmt = "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
-# logging.basicConfig(level=logging.DEBUG, format=log_fmt)
-logger = logging.getLogger(__name__)
+from arg_mine import utils
 
-GDELT_COL_NAMES = [
+_logger = utils.get_logger(__name__, logging.DEBUG)
+
+GDELT_COL_NAMES = (
     "datetime",
     "title",
     "headline_image_url",
     "content_url",
-    "snippit",  # contextual snippits
-]
+    "topic_context",
+)
 
 
 def convert_datetime_int(datetime_int):
     """
-    Convert an integer like `20200107101500` to a pd.Timestamp `2020.01.07T10:15:00`
+    Convert an integer in format `YYYYMMDDHHMMSS` to pd.Timestamp
+     eg, `20200107101500` to `2020.01.07T10:15:00`
 
     Parameters
     ----------
@@ -52,7 +55,7 @@ def convert_datetime_int(datetime_int):
 
 def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     """
-    From CSV path, load a pandas dataframe with the target data
+    From CSV path, load a pandas dataframe with the GDELT URL dataset
 
     Parameters
     ----------
@@ -64,7 +67,28 @@ def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     pd.DataFrame
     """
     # convert csv to dataframe. should probably do this in a separate step, and just return the path here.
-    logger.info("reading data from: {}".format(csv_filepath))
+    _logger.info("reading data from: {}".format(csv_filepath))
     df = pd.read_csv(csv_filepath, header=0, names=col_names, index_col=False)
     df["timestamp"] = df.datetime.apply(convert_datetime_int)
     return df
+
+
+def concat_csvs(filename_glob, base_path):
+    """
+    Given a globbed filename (eg "my_files_doc*.csv"), concatenate the returned
+    CSVs into a DataFrame
+
+    Parameters
+    ----------
+    filename_glob : str
+        filename matching the target files, needs to match the requirements from `glob` module
+    base_path : str
+        where to start looking for the files
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    filepath_list = sorted(glob.glob(os.path.join(base_path, filename_glob)))
+    concat_df = pd.concat([pd.read_csv(filename) for filename in filepath_list], axis=0)
+    return concat_df
