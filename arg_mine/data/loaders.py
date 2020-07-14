@@ -4,6 +4,7 @@ import os
 import pandas as pd
 
 from arg_mine import utils
+from arg_mine import DATA_DIR
 
 _logger = utils.get_logger(__name__, logging.DEBUG)
 
@@ -70,6 +71,13 @@ def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     _logger.info("reading data from: {}".format(csv_filepath))
     df = pd.read_csv(csv_filepath, header=0, names=col_names, index_col=False)
     df["timestamp"] = df.datetime.apply(convert_datetime_int)
+    return df
+
+
+def load_processed_csv(filename, project='gdelt-climate-change-docs'):
+    csv_filepath = os.path.join(DATA_DIR, "processed", project, filename)
+    _logger.info("reading data from: {}".format(csv_filepath))
+    df = pd.read_csv(csv_filepath)
     return df
 
 
