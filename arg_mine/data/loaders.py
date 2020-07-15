@@ -74,10 +74,15 @@ def get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES):
     return df
 
 
-def load_processed_csv(filename, project='gdelt-climate-change-docs'):
+def load_processed_csv(filename, project='gdelt-climate-change-docs', drop_nan_cols=None):
     csv_filepath = os.path.join(DATA_DIR, "processed", project, filename)
     _logger.info("reading data from: {}".format(csv_filepath))
     df = pd.read_csv(csv_filepath)
+
+    if drop_nan_cols:
+        if isinstance(drop_nan_cols, str):
+            drop_nan_cols = [drop_nan_cols]
+        df.dropna(subset=drop_nan_cols, inplace=True)
     return df
 
 
@@ -99,4 +104,7 @@ def concat_csvs(filename_glob, base_path):
     """
     filepath_list = sorted(glob.glob(os.path.join(base_path, filename_glob)))
     concat_df = pd.concat([pd.read_csv(filename) for filename in filepath_list], axis=0)
+    # TODO: make this drop more generic when we have more than one type of processed data
+    concat_df.dropna(subset=['sentence_original'], inplace=True)
+
     return concat_df
