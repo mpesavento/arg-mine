@@ -43,6 +43,9 @@ into something useable by the models
 
 [documentation](https://huggingface.co/transformers/model_doc/bert.html)
 
+### Semantic Role Labeling (SRL)
+Identifying conspiracy theories vs real theories
+https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0233879
 
 
 ## Sentence-BERT
