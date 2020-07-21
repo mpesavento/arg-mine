@@ -72,7 +72,9 @@ def main(ndocs, chunk_size, batch_size):
             end_ix = doc_ix + batch_size - 1  # NOTE this is inclusive!!!
             _logger.debug("Running batch {} [{}-{}]".format(batch_ix, start_ix, end_ix))
             responses = classify.fetch_concurrent(
-                topic, url_list=url_list[start_ix : end_ix + 1], chunk_size=chunk_size,  # noqa: E203
+                topic,
+                url_list=url_list[start_ix : end_ix + 1],
+                chunk_size=chunk_size,  # noqa: E203
             )
             docs_df, sentences_df, missing_docs = classify.process_responses(responses)
 

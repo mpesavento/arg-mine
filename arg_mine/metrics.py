@@ -9,7 +9,7 @@ def summary_stats(y_label, y_pred, y_score, name=None):
 
     stats = dict()
     # Accuracy is sum of diagonal divided by total observations
-    stats['accuracy'] = np.trace(cf) / float(np.sum(cf))
+    stats["accuracy"] = np.trace(cf) / float(np.sum(cf))
 
     # if it is a binary confusion matrix, show some more stats
     # Metrics for Binary Confusion Matrices
@@ -24,4 +24,3 @@ def summary_stats(y_label, y_pred, y_score, name=None):
     stats["roc_auc"] = auc(fpr, tpr)
 
     return pd.DataFrame(stats, index=[name])
-

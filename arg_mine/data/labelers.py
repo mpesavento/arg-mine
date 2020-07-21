@@ -54,7 +54,9 @@ def get_doc_sentences(doc_id, sentences_df):
     return sentences_df[sentences_df.doc_id == doc_id]
 
 
-def label_doc_sentences_with_context(url_row, docs_df, sentences_df, label_col_name=CONTEXT_LABEL):
+def label_doc_sentences_with_context(
+    url_row, docs_df, sentences_df, label_col_name=CONTEXT_LABEL
+):
     """
     Ugly way to label which sentences are used in context of the GDELT keywords
 
