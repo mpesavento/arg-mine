@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import roc_curve, auc
 
 
 def make_confusion_matrix(
@@ -115,3 +116,52 @@ def make_confusion_matrix(
         plt.title(title)
 
     return plt.gcf()
+
+
+def make_roc_curve(y_label, y_score, selected_thresh=0.5, ax=None):
+    """
+    Create plot for the Receiver Operating Characteristic (ROC) curve
+    Highlights the selected threshold on the curve
+    Only works for binary classification
+
+    Parameters
+    ----------
+    y_label: np.array
+        ground truth labels
+    y_score: np.array
+        1D array with the confidence scores from the model predictions
+    selected_thresh: float
+        what threshold you want to highlight
+
+    ax: AxesSubplot
+        optional, plots on given axis, or creates new figure otherwise
+
+    Returns
+    -------
+    AxesSubplot
+    """
+    fpr, tpr, thresholds = roc_curve(y_label, y_score)
+    roc_auc = auc(fpr, tpr)
+    thresh_ix = np.argmin(np.abs(thresholds - selected_thresh))
+    thresh_fpr = fpr[thresh_ix]
+    thresh_tpr = tpr[thresh_ix]
+    if not ax:
+        fig, ax = plt.subplots(figsize=(6, 6))
+    lw = 2
+    ax.plot([0, 1], [0, 1], color='gray', lw=lw, linestyle='--')
+    ax.plot(
+        fpr, tpr,
+        lw=lw, label='ROC curve (AUC = {:0.2f})'.format(roc_auc))
+    ax.plot(
+        thresh_fpr, thresh_tpr,
+        'ro',
+        alpha=0.5,
+        label="threshold ({}): FPR={:0.3f}, TPR={:0.3f}".format(selected_thresh, thresh_fpr, thresh_tpr))
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.set_title('ROC curve')
+    plt.legend(loc="lower right")
+    ax.set_aspect('equal', 'box')
+    return ax
