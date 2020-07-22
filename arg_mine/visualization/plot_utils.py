@@ -192,14 +192,17 @@ def make_precision_recall_curve(y_label, y_score, selected_thresh=0.5, ax=None):
         fig, ax = plt.subplots(figsize=(6, 6))
     ax.plot(recall, precision, label="precision-recall curve")
     ax.plot(
-        thresh_recall, thresh_precision, 'ro',
+        thresh_recall,
+        thresh_precision,
+        "ro",
         label="threshold ({}): precision={:0.3f}, recall={:0.3f}".format(
-         selected_thresh, thresh_precision, thresh_recall
-        ))
+            selected_thresh, thresh_precision, thresh_recall
+        ),
+    )
     plt.legend(loc="lower left")
     ax.set_xlim((0, 1.0))
     ax.set_ylim((0, 1.05))
-    ax.set_aspect('equal', 'box')
+    ax.set_aspect("equal", "box")
     ax.set_xlabel("recall")
     ax.set_ylabel("precision")
     ax.set_title("Precision-recall")
