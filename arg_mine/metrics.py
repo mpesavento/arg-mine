@@ -3,8 +3,27 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 
 
-def summary_stats(y_label, y_pred, y_score, name=None):
-    name = name or "model stats"
+def summary_stats(y_label, y_pred, y_score, name="model stats"):
+    """
+    Aggregate the summary stats for a binary classification problem
+
+    Parameters
+    ----------
+    y_label : np.array
+        array of true labels per sample (eg 0/1)
+    y_pred : np.array
+        array of predicted labels per sample (eg 0/1)
+        Note that this may change depending on the target threshold value from the score
+    y_score : np.array
+        array of prediction probability, or confidence, per sample
+    name : str, optional
+        name for these summary stats, saved as index in output
+
+    Returns
+    -------
+    pd.DataFrame
+        single row dataframe
+    """
     cf = confusion_matrix(y_label, y_pred)
 
     stats = dict()
