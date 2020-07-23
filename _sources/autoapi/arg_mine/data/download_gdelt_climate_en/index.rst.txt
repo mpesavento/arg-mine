@@ -18,7 +18,7 @@ Functions
    arg_mine.data.download_gdelt_climate_en.main
 
 
-.. data:: logger
+.. data:: _logger
    
 
    

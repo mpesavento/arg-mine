@@ -15,26 +15,24 @@ Functions
 
    arg_mine.data.loaders.convert_datetime_int
    arg_mine.data.loaders.get_gdelt_df
+   arg_mine.data.loaders.load_processed_csv
+   arg_mine.data.loaders.concat_csvs
 
 
-.. data:: log_fmt
-   :annotation: = %(levelname)s:%(asctime)s:%(name)s: %(message)s
-
-   
-
-.. data:: logger
+.. data:: _logger
    
 
    
 
 .. data:: GDELT_COL_NAMES
-   :annotation: = ['datetime', 'title', 'headline_image_url', 'content_url', 'snippit']
+   :annotation: = ['datetime', 'title', 'headline_image_url', 'content_url', 'topic_context']
 
    
 
 .. function:: convert_datetime_int(datetime_int)
 
-   Convert an integer like `20200107101500` to a pd.Timestamp `2020.01.07T10:15:00`
+   Convert an integer in format `YYYYMMDDHHMMSS` to pd.Timestamp
+    eg, `20200107101500` to `2020.01.07T10:15:00`
 
    :param datetime_int: long integer with date and time, 14 char long
    :type datetime_int: int
@@ -47,12 +45,29 @@ Functions
 
 .. function:: get_gdelt_df(csv_filepath, col_names=GDELT_COL_NAMES)
 
-   From CSV path, load a pandas dataframe with the target data
+   From CSV path, load a pandas dataframe with the GDELT URL dataset
 
    :param csv_filepath:
    :type csv_filepath: str, path
    :param col_names:
    :type col_names: List[str]
+
+   :returns:
+   :rtype: pd.DataFrame
+
+
+.. function:: load_processed_csv(filename, project='gdelt-climate-change-docs', drop_nan_cols=None)
+
+
+.. function:: concat_csvs(filename_glob, base_path)
+
+   Given a globbed filename (eg "my_files_doc*.csv"), concatenate the returned
+   CSVs into a DataFrame
+
+   :param filename_glob: filename matching the target files, needs to match the requirements from `glob` module
+   :type filename_glob: str
+   :param base_path: where to start looking for the files
+   :type base_path: str
 
    :returns:
    :rtype: pd.DataFrame

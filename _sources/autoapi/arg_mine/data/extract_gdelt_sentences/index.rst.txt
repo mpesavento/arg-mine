@@ -1,0 +1,28 @@
+:mod:`arg_mine.data.extract_gdelt_sentences`
+============================================
+
+.. py:module:: arg_mine.data.extract_gdelt_sentences
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.data.extract_gdelt_sentences.main
+
+
+.. data:: _logger
+   
+
+   
+
+.. function:: main(ndocs, chunk_size, batch_size)
+
+   Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
+
+

@@ -49,32 +49,36 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.loaders.convert_datetime_int" title="arg_mine.data.loaders.convert_datetime_int"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_datetime_int</span></code></a>(datetime_int)</p></td>
-<td><p>Convert an integer like <cite>20200107101500</cite> to a pd.Timestamp <cite>2020.01.07T10:15:00</cite></p></td>
+<td><p>Convert an integer in format <cite>YYYYMMDDHHMMSS</cite> to pd.Timestamp</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.loaders.get_gdelt_df" title="arg_mine.data.loaders.get_gdelt_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_gdelt_df</span></code></a>(csv_filepath, col_names=GDELT_COL_NAMES)</p></td>
-<td><p>From CSV path, load a pandas dataframe with the target data</p></td>
+<td><p>From CSV path, load a pandas dataframe with the GDELT URL dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.loaders.load_processed_csv" title="arg_mine.data.loaders.load_processed_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_processed_csv</span></code></a>(filename, project=’gdelt-climate-change-docs’, drop_nan_cols=None)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.loaders.concat_csvs" title="arg_mine.data.loaders.concat_csvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concat_csvs</span></code></a>(filename_glob, base_path)</p></td>
+<td><p>Given a globbed filename (eg “my_files_doc*.csv”), concatenate the returned</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py data">
-<dt id="arg_mine.data.loaders.log_fmt">
-<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">log_fmt</code><em class="property"> = %(levelname)s:%(asctime)s:%(name)s: %(message)s</em><a class="headerlink" href="#arg_mine.data.loaders.log_fmt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt id="arg_mine.data.loaders.logger">
-<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">logger</code><a class="headerlink" href="#arg_mine.data.loaders.logger" title="Permalink to this definition">¶</a></dt>
+<dt id="arg_mine.data.loaders._logger">
+<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">_logger</code><a class="headerlink" href="#arg_mine.data.loaders._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
 <dt id="arg_mine.data.loaders.GDELT_COL_NAMES">
-<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">GDELT_COL_NAMES</code><em class="property"> = ['datetime', 'title', 'headline_image_url', 'content_url', 'snippit']</em><a class="headerlink" href="#arg_mine.data.loaders.GDELT_COL_NAMES" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">GDELT_COL_NAMES</code><em class="property"> = ['datetime', 'title', 'headline_image_url', 'content_url', 'topic_context']</em><a class="headerlink" href="#arg_mine.data.loaders.GDELT_COL_NAMES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="arg_mine.data.loaders.convert_datetime_int">
 <code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">convert_datetime_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datetime_int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.loaders.convert_datetime_int" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert an integer like <cite>20200107101500</cite> to a pd.Timestamp <cite>2020.01.07T10:15:00</cite></p>
+<dd><dl class="simple">
+<dt>Convert an integer in format <cite>YYYYMMDDHHMMSS</cite> to pd.Timestamp</dt><dd><p>eg, <cite>20200107101500</cite> to <cite>2020.01.07T10:15:00</cite></p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>datetime_int</strong> (<em>int</em>) – long integer with date and time, 14 char long</p>
@@ -92,12 +96,38 @@
 <dl class="py function">
 <dt id="arg_mine.data.loaders.get_gdelt_df">
 <code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">get_gdelt_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">csv_filepath</span></em>, <em class="sig-param"><span class="n">col_names</span><span class="o">=</span><span class="default_value">GDELT_COL_NAMES</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.loaders.get_gdelt_df" title="Permalink to this definition">¶</a></dt>
-<dd><p>From CSV path, load a pandas dataframe with the target data</p>
+<dd><p>From CSV path, load a pandas dataframe with the GDELT URL dataset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>csv_filepath</strong> (<em>str</em><em>, </em><em>path</em>) – </p></li>
 <li><p><strong>col_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.loaders.load_processed_csv">
+<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">load_processed_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">project</span><span class="o">=</span><span class="default_value">'gdelt-climate-change-docs'</span></em>, <em class="sig-param"><span class="n">drop_nan_cols</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.loaders.load_processed_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.loaders.concat_csvs">
+<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">concat_csvs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename_glob</span></em>, <em class="sig-param"><span class="n">base_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.loaders.concat_csvs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a globbed filename (eg “my_files_doc*.csv”), concatenate the returned
+CSVs into a DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename_glob</strong> (<em>str</em>) – filename matching the target files, needs to match the requirements from <cite>glob</cite> module</p></li>
+<li><p><strong>base_path</strong> (<em>str</em>) – where to start looking for the files</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -124,10 +154,7 @@
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.data.loaders</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
-<li><a class="reference internal" href="#arg_mine.data.loaders.log_fmt">log_fmt</a></li>
-</ul>
-<ul>
-<li><a class="reference internal" href="#arg_mine.data.loaders.logger">logger</a></li>
+<li><a class="reference internal" href="#arg_mine.data.loaders._logger">_logger</a></li>
 </ul>
 <ul>
 <li><a class="reference internal" href="#arg_mine.data.loaders.GDELT_COL_NAMES">GDELT_COL_NAMES</a></li>
@@ -137,6 +164,12 @@
 </ul>
 <ul>
 <li><a class="reference internal" href="#arg_mine.data.loaders.get_gdelt_df">get_gdelt_df</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.loaders.load_processed_csv">load_processed_csv</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.loaders.concat_csvs">concat_csvs</a></li>
 </ul>
 </li>
 </ul>

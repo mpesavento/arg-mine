@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>arg_mine.visualization.plot_utils &#8212; arg-mine 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arg_mine.visualization.plot_utils">
+<span id="arg-mine-visualization-plot-utils"></span><h1><a class="reference internal" href="#module-arg_mine.visualization.plot_utils" title="arg_mine.visualization.plot_utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.visualization.plot_utils</span></code></a><a class="headerlink" href="#module-arg_mine.visualization.plot_utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.visualization.plot_utils.make_confusion_matrix" title="arg_mine.visualization.plot_utils.make_confusion_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_confusion_matrix</span></code></a>(cf, group_names=None, categories=’auto’, count=True, percent=True, cbar=True, xyticks=True, xyplotlabels=True, sum_stats=True, figsize=None, cmap=’Blues’, title=None)</p></td>
+<td><p>This function will make a pretty plot of an sklearn Confusion Matrix cm using a Seaborn heatmap visualization.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.visualization.plot_utils.make_roc_curve" title="arg_mine.visualization.plot_utils.make_roc_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_roc_curve</span></code></a>(y_label, y_score, selected_thresh=0.5, ax=None)</p></td>
+<td><p>Create plot for the Receiver Operating Characteristic (ROC) curve</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.visualization.plot_utils.make_precision_recall_curve" title="arg_mine.visualization.plot_utils.make_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_precision_recall_curve</span></code></a>(y_label, y_score, selected_thresh=0.5, ax=None)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt id="arg_mine.visualization.plot_utils.make_confusion_matrix">
+<code class="sig-prename descclassname">arg_mine.visualization.plot_utils.</code><code class="sig-name descname">make_confusion_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cf</span></em>, <em class="sig-param"><span class="n">group_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">categories</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">count</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">percent</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cbar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">xyticks</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">xyplotlabels</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sum_stats</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">'Blues'</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.visualization.plot_utils.make_confusion_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will make a pretty plot of an sklearn Confusion Matrix cm using a Seaborn heatmap visualization.</p>
+<p>Method borrowed from <a class="reference external" href="https://github.com/DTrimarchi10/confusion_matrix/blob/master/cf_matrix.py">https://github.com/DTrimarchi10/confusion_matrix/blob/master/cf_matrix.py</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cf</strong> (<em>confusion matrix to be passed in</em>) – </p></li>
+<li><p><strong>group_names</strong> (<em>List of strings that represent the labels row by row to be shown in each square.</em>) – </p></li>
+<li><p><strong>categories</strong> (<em>List of strings containing the categories to be displayed on the x</em><em>,</em><em>y axis. Default is 'auto'</em>) – </p></li>
+<li><p><strong>count</strong> (<em>If True</em><em>, </em><em>show the raw number in the confusion matrix. Default is True.</em>) – </p></li>
+<li><p><strong>percent</strong> (<em>If True</em><em>, </em><em>show the proportions for each category. Default is True.</em>) – </p></li>
+<li><p><strong>cbar</strong> (<em>If True</em><em>, </em><em>show the color bar. The cbar values are based off the values in the confusion matrix.</em>) – Default is True.</p></li>
+<li><p><strong>xyticks</strong> (<em>If True</em><em>, </em><em>show x and y ticks. Default is True.</em>) – </p></li>
+<li><p><strong>xyplotlabels</strong> (<em>If True</em><em>, </em><em>show 'True Label' and 'Predicted Label' on the figure. Default is True.</em>) – </p></li>
+<li><p><strong>sum_stats</strong> (<em>If True</em><em>, </em><em>display summary statistics below the figure. Default is True.</em>) – </p></li>
+<li><p><strong>figsize</strong> (<em>Tuple representing the figure size. Default will be the matplotlib rcParams value.</em>) – </p></li>
+<li><p><strong>cmap</strong> (<em>Colormap of the values displayed from matplotlib.pyplot.cm. Default is 'Blues'</em>) – See <a class="reference external" href="http://matplotlib.org/examples/color/colormaps_reference.html">http://matplotlib.org/examples/color/colormaps_reference.html</a></p></li>
+<li><p><strong>title</strong> (<em>Title for the heatmap. Default is None.</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>handle to current figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.visualization.plot_utils.make_roc_curve">
+<code class="sig-prename descclassname">arg_mine.visualization.plot_utils.</code><code class="sig-name descname">make_roc_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_label</span></em>, <em class="sig-param"><span class="n">y_score</span></em>, <em class="sig-param"><span class="n">selected_thresh</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.visualization.plot_utils.make_roc_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create plot for the Receiver Operating Characteristic (ROC) curve
+Highlights the selected threshold on the curve
+Only works for binary classification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_label</strong> (<em>np.array</em>) – ground truth labels</p></li>
+<li><p><strong>y_score</strong> (<em>np.array</em>) – 1D array with the confidence scores from the model predictions</p></li>
+<li><p><strong>selected_thresh</strong> (<em>float</em>) – what threshold you want to highlight</p></li>
+<li><p><strong>ax</strong> (<em>AxesSubplot</em>) – optional, plots on given axis, or creates new figure otherwise</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>AxesSubplot</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.visualization.plot_utils.make_precision_recall_curve">
+<code class="sig-prename descclassname">arg_mine.visualization.plot_utils.</code><code class="sig-name descname">make_precision_recall_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_label</span></em>, <em class="sig-param"><span class="n">y_score</span></em>, <em class="sig-param"><span class="n">selected_thresh</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.visualization.plot_utils.make_precision_recall_curve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.visualization.plot_utils</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#arg_mine.visualization.plot_utils.make_confusion_matrix">make_confusion_matrix</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.visualization.plot_utils.make_roc_curve">make_roc_curve</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.visualization.plot_utils.make_precision_recall_curve">make_precision_recall_curve</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/autoapi/arg_mine/visualization/plot_utils/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

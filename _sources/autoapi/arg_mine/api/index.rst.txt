@@ -16,11 +16,3 @@ Submodules
    session/index.rst
 
 
-Package Contents
-----------------
-
-.. data:: logger
-   
-
-   
-

@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>arg_mine.data.labelers &#8212; arg-mine 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arg_mine.data.labelers">
+<span id="arg-mine-data-labelers"></span><h1><a class="reference internal" href="#module-arg_mine.data.labelers" title="arg_mine.data.labelers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.data.labelers</span></code></a><a class="headerlink" href="#module-arg_mine.data.labelers" title="Permalink to this headline">¶</a></h1>
+<p><p>Tools for adding ground truth labels to datasets</p>
+</p>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.labelers.match_doc_id" title="arg_mine.data.labelers.match_doc_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_doc_id</span></code></a>(url, docs_df)</p></td>
+<td><p>Return the first matching row with the target URL</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.labelers.get_doc_sentences" title="arg_mine.data.labelers.get_doc_sentences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_doc_sentences</span></code></a>(doc_id, sentences_df)</p></td>
+<td><p>Given a unique document ID, return all sentences from that document</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.labelers.label_doc_sentences_with_context" title="arg_mine.data.labelers.label_doc_sentences_with_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_doc_sentences_with_context</span></code></a>(url_row, docs_df, sentences_df, label_col_name=CONTEXT_LABEL)</p></td>
+<td><p>Ugly way to label which sentences are used in context of the GDELT keywords</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.labelers.label_gdelt_context" title="arg_mine.data.labelers.label_gdelt_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_gdelt_context</span></code></a>(url_df, docs_df, sentences_df, label_col_name=CONTEXT_LABEL)</p></td>
+<td><p>Add column <cite>label_col_name</cite> to sentences_df, with whether or not the sentence</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt id="arg_mine.data.labelers._logger">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">_logger</code><a class="headerlink" href="#arg_mine.data.labelers._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="arg_mine.data.labelers.GDELT_KEYWORDS">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">GDELT_KEYWORDS</code><em class="property"> = ['climate change', 'global warming', 'climate crisis', 'greenhouse gas', 'greenhouse gases', 'carbon tax']</em><a class="headerlink" href="#arg_mine.data.labelers.GDELT_KEYWORDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="arg_mine.data.labelers.CONTEXT_LABEL">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">CONTEXT_LABEL</code><em class="property"> = has_context</em><a class="headerlink" href="#arg_mine.data.labelers.CONTEXT_LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.labelers.match_doc_id">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">match_doc_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">docs_df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.labelers.match_doc_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the first matching row with the target URL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – </p></li>
+<li><p><strong>docs_df</strong> (<em>pd.DataFrame</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.labelers.get_doc_sentences">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">get_doc_sentences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc_id</span></em>, <em class="sig-param"><span class="n">sentences_df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.labelers.get_doc_sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a unique document ID, return all sentences from that document</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>doc_id</strong> (<em>str</em>) – </p></li>
+<li><p><strong>sentences_df</strong> (<em>pd.DataFrame</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.labelers.label_doc_sentences_with_context">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">label_doc_sentences_with_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url_row</span></em>, <em class="sig-param"><span class="n">docs_df</span></em>, <em class="sig-param"><span class="n">sentences_df</span></em>, <em class="sig-param"><span class="n">label_col_name</span><span class="o">=</span><span class="default_value">CONTEXT_LABEL</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.labelers.label_doc_sentences_with_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ugly way to label which sentences are used in context of the GDELT keywords</p>
+<p>CAVEATS:
+- Context snippit is ~100 characters before and after the keyword, incl whole word.</p>
+<blockquote>
+<div><p>This means that the context may have a single word as one of the tokens,
+which may give false positives.
+THIS IS BAD to use for ground truth data.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>this is modifying the sentences_df in place!!</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url_row</strong> (<em>pd.Series</em>) – </p></li>
+<li><p><strong>docs_df</strong> (<em>pd.DataFrame</em>) – </p></li>
+<li><p><strong>sentences_df</strong> (<em>pd.DataFrame</em>) – </p></li>
+<li><p><strong>label_col_name</strong> (<em>str</em>) – name to use for the label column</p></li>
+<li><p><strong>NOTE</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.data.labelers.label_gdelt_context">
+<code class="sig-prename descclassname">arg_mine.data.labelers.</code><code class="sig-name descname">label_gdelt_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url_df</span></em>, <em class="sig-param"><span class="n">docs_df</span></em>, <em class="sig-param"><span class="n">sentences_df</span></em>, <em class="sig-param"><span class="n">label_col_name</span><span class="o">=</span><span class="default_value">CONTEXT_LABEL</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.labelers.label_gdelt_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add column <cite>label_col_name</cite> to sentences_df, with whether or not the sentence
+was part of the context label from GDELT</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url_df</strong> – </p></li>
+<li><p><strong>docs_df</strong> – </p></li>
+<li><p><strong>sentences_df</strong> – </p></li>
+<li><p><strong>label_col_name</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.data.labelers</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers._logger">_logger</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers.GDELT_KEYWORDS">GDELT_KEYWORDS</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers.CONTEXT_LABEL">CONTEXT_LABEL</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers.match_doc_id">match_doc_id</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers.get_doc_sentences">get_doc_sentences</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers.label_doc_sentences_with_context">label_doc_sentences_with_context</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.labelers.label_gdelt_context">label_gdelt_context</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/autoapi/arg_mine/data/labelers/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

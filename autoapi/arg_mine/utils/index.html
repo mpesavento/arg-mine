@@ -51,13 +51,19 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.utils.get_logger" title="arg_mine.utils.get_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logger</span></code></a>(name, level=logging.INFO)</p></td>
-<td><p>Get a basic logger</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.utils.enum" title="arg_mine.utils.enum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enum</span></code></a>(**named_values)</p></td>
 <td><p>Named enum. Doesnt need to use the Enum.NAME.value with the built in Enum</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.utils.unique_hash" title="arg_mine.utils.unique_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_hash</span></code></a>(input_str: str)</p></td>
 <td><p>Uses MD5 to return a unique key, assuming the input string is unique</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.utils.dataclasses_to_dicts" title="arg_mine.utils.dataclasses_to_dicts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataclasses_to_dicts</span></code></a>(data)</p></td>
+<td><p>Converts a list of dataclass instances to a list of dictionaries</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.utils.get_url_hostnames" title="arg_mine.utils.get_url_hostnames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_url_hostnames</span></code></a>(urls: pd.Series)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -66,11 +72,20 @@
 <code class="sig-prename descclassname">arg_mine.utils.</code><code class="sig-name descname">LOG_FMT</code><em class="property"> = %(levelname)s:%(asctime)s:%(name)s: %(message)s</em><a class="headerlink" href="#arg_mine.utils.LOG_FMT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py data">
+<dt id="arg_mine.utils._logger">
+<code class="sig-prename descclassname">arg_mine.utils.</code><code class="sig-name descname">_logger</code><em class="property"> :Optional[logging.Logger]</em><a class="headerlink" href="#arg_mine.utils._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="arg_mine.utils.loggers">
+<code class="sig-prename descclassname">arg_mine.utils.</code><code class="sig-name descname">loggers</code><a class="headerlink" href="#arg_mine.utils.loggers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt id="arg_mine.utils.get_logger">
 <code class="sig-prename descclassname">arg_mine.utils.</code><code class="sig-name descname">get_logger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">logging.INFO</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.utils.get_logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a basic logger</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="arg_mine.utils.enum">
@@ -101,6 +116,36 @@
 <dd><p>Uses MD5 to return a unique key, assuming the input string is unique</p>
 </dd></dl>
 
+<dl class="py function">
+<dt id="arg_mine.utils.dataclasses_to_dicts">
+<code class="sig-prename descclassname">arg_mine.utils.</code><code class="sig-name descname">dataclasses_to_dicts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.utils.dataclasses_to_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of dataclass instances to a list of dictionaries
+:param data:
+:type data: List[Type[dataclass]]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>list_dict</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[dict]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@dataclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Point</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">:</span> <span class="nb">int</span>
+<span class="gp">... </span>    <span class="n">y</span><span class="p">:</span> <span class="nb">int</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataclasses_to_dicts</span><span class="p">([</span><span class="n">Point</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">Point</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)])</span>
+<span class="go">[{&quot;x&quot;:1,&quot;y&quot;:2},{&quot;x&quot;:2,&quot;y&quot;:3}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.utils.get_url_hostnames">
+<code class="sig-prename descclassname">arg_mine.utils.</code><code class="sig-name descname">get_url_hostnames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urls</span><span class="p">:</span> <span class="n">pd.Series</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.utils.get_url_hostnames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 </div>
 </div>
@@ -119,6 +164,12 @@
 <li><a class="reference internal" href="#arg_mine.utils.LOG_FMT">LOG_FMT</a></li>
 </ul>
 <ul>
+<li><a class="reference internal" href="#arg_mine.utils._logger">_logger</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.utils.loggers">loggers</a></li>
+</ul>
+<ul>
 <li><a class="reference internal" href="#arg_mine.utils.get_logger">get_logger</a></li>
 </ul>
 <ul>
@@ -126,6 +177,12 @@
 </ul>
 <ul>
 <li><a class="reference internal" href="#arg_mine.utils.unique_hash">unique_hash</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.utils.dataclasses_to_dicts">dataclasses_to_dicts</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.utils.get_url_hostnames">get_url_hostnames</a></li>
 </ul>
 </li>
 </ul>

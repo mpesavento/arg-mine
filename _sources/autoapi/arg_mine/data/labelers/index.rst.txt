@@ -1,0 +1,101 @@
+:mod:`arg_mine.data.labelers`
+=============================
+
+.. py:module:: arg_mine.data.labelers
+
+.. autoapi-nested-parse::
+
+   Tools for adding ground truth labels to datasets
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.data.labelers.match_doc_id
+   arg_mine.data.labelers.get_doc_sentences
+   arg_mine.data.labelers.label_doc_sentences_with_context
+   arg_mine.data.labelers.label_gdelt_context
+
+
+.. data:: _logger
+   
+
+   
+
+.. data:: GDELT_KEYWORDS
+   :annotation: = ['climate change', 'global warming', 'climate crisis', 'greenhouse gas', 'greenhouse gases', 'carbon tax']
+
+   
+
+.. data:: CONTEXT_LABEL
+   :annotation: = has_context
+
+   
+
+.. function:: match_doc_id(url, docs_df)
+
+   Return the first matching row with the target URL
+
+   :param url:
+   :type url: str
+   :param docs_df:
+   :type docs_df: pd.DataFrame
+
+   :returns:
+   :rtype: str
+
+
+.. function:: get_doc_sentences(doc_id, sentences_df)
+
+   Given a unique document ID, return all sentences from that document
+
+   :param doc_id:
+   :type doc_id: str
+   :param sentences_df:
+   :type sentences_df: pd.DataFrame
+
+   :returns:
+   :rtype: pd.DataFrame
+
+
+.. function:: label_doc_sentences_with_context(url_row, docs_df, sentences_df, label_col_name=CONTEXT_LABEL)
+
+   Ugly way to label which sentences are used in context of the GDELT keywords
+
+   CAVEATS:
+   - Context snippit is ~100 characters before and after the keyword, incl whole word.
+       This means that the context may have a single word as one of the tokens,
+       which may give false positives.
+       THIS IS BAD to use for ground truth data.
+   - this is modifying the sentences_df in place!!
+
+
+   :param url_row:
+   :type url_row: pd.Series
+   :param docs_df:
+   :type docs_df: pd.DataFrame
+   :param sentences_df:
+   :type sentences_df: pd.DataFrame
+   :param label_col_name: name to use for the label column
+   :type label_col_name: str
+   :param NOTE:
+
+
+.. function:: label_gdelt_context(url_df, docs_df, sentences_df, label_col_name=CONTEXT_LABEL)
+
+   Add column `label_col_name` to sentences_df, with whether or not the sentence
+   was part of the context label from GDELT
+
+   :param url_df:
+   :param docs_df:
+   :param sentences_df:
+   :param label_col_name:
+
+

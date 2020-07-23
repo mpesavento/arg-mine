@@ -11,6 +11,8 @@ Submodules
    :maxdepth: 1
 
    download_gdelt_climate_en/index.rst
+   extract_gdelt_sentences/index.rst
+   labelers/index.rst
    loaders/index.rst
    make_dataset/index.rst
 

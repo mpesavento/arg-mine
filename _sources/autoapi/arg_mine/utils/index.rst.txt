@@ -21,6 +21,8 @@ Functions
    arg_mine.utils.get_logger
    arg_mine.utils.enum
    arg_mine.utils.unique_hash
+   arg_mine.utils.dataclasses_to_dicts
+   arg_mine.utils.get_url_hostnames
 
 
 .. data:: LOG_FMT
@@ -28,9 +30,17 @@ Functions
 
    
 
-.. function:: get_logger(name, level=logging.INFO)
+.. data:: _logger
+   :annotation: :Optional[logging.Logger]
 
-   Get a basic logger
+   
+
+.. data:: loggers
+   
+
+   
+
+.. function:: get_logger(name, level=logging.INFO)
 
 
 .. function:: enum(**named_values)
@@ -53,5 +63,27 @@ Functions
 .. function:: unique_hash(input_str: str) -> str
 
    Uses MD5 to return a unique key, assuming the input string is unique
+
+
+.. function:: dataclasses_to_dicts(data)
+
+   Converts a list of dataclass instances to a list of dictionaries
+   :param data:
+   :type data: List[Type[dataclass]]
+
+   :returns: **list_dict**
+   :rtype: List[dict]
+
+   .. rubric:: Examples
+
+   >>> @dataclass
+   >>> class Point:
+   ...     x: int
+   ...     y: int
+   >>> dataclasses_to_dicts([Point(1,2), Point(2,3)])
+   [{"x":1,"y":2},{"x":2,"y":3}]
+
+
+.. function:: get_url_hostnames(urls: pd.Series)
 
 

@@ -74,17 +74,29 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.classify_url_sentences" title="arg_mine.api.classify.classify_url_sentences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_url_sentences</span></code></a>(topic: str, url: str, user_id: str, api_key: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)</p></td>
-<td><p>For a given URL and topic phrase, identify which sentences contain arguments</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_by_topic" title="arg_mine.api.classify.collect_sentences_by_topic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_sentences_by_topic</span></code></a>(topic: str, url_list: List[AnyStr])</p></td>
-<td><p>Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_for_url" title="arg_mine.api.classify.collect_sentences_for_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_sentences_for_url</span></code></a>(topic, url, user_id, api_key)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.bundle_payload" title="arg_mine.api.classify.bundle_payload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bundle_payload</span></code></a>(topic, url, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_by_topic_parallel" title="arg_mine.api.classify.collect_sentences_by_topic_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_sentences_by_topic_parallel</span></code></a>(topic: str, url_list: List[AnyStr], proc_count: int = 4)</p></td>
-<td><p>Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.classify_url_sentences" title="arg_mine.api.classify.classify_url_sentences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_url_sentences</span></code></a>(topic: str, url: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)</p></td>
+<td><p>For a given URL and topic phrase, identify which sentences contain arguments</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_by_topic" title="arg_mine.api.classify.collect_sentences_by_topic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_sentences_by_topic</span></code></a>(topic: str, url_list: List[AnyStr])</p></td>
+<td><p>Serially iterate over a list of URLs for a given topic</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_for_url" title="arg_mine.api.classify.collect_sentences_for_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_sentences_for_url</span></code></a>(topic, url, user_id, api_key)</p></td>
+<td><p>Thin wrapper function for getting the ClassifyMetadata and ClassifiedSentence objects for a url</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.exception_handler" title="arg_mine.api.classify.exception_handler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exception_handler</span></code></a>(request, exception)</p></td>
+<td><p>catch raised exceptions and log them</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.fetch_concurrent" title="arg_mine.api.classify.fetch_concurrent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch_concurrent</span></code></a>(topic, url_list, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC, pool_size: int = 5, chunk_size: int = 100)</p></td>
+<td><p>Given a list of article URLs, iterate through them in chunks and return a list of responses</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.process_responses" title="arg_mine.api.classify.process_responses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_responses</span></code></a>(response_list)</p></td>
+<td><p>Take a list of classify responses, convert them to docs and sentences, and create associate dataframes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.response_error_check" title="arg_mine.api.classify.response_error_check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">response_error_check</span></code></a>(response)</p></td>
+<td><p>Trigger any Exceptions that happened during a document URL request</p></td>
 </tr>
 </tbody>
 </table>
@@ -329,8 +341,13 @@ The kwargs in this class are optional, and are not required when parsing from a 
 </dd></dl>
 
 <dl class="py function">
+<dt id="arg_mine.api.classify.bundle_payload">
+<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">bundle_payload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">only_arguments</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">topic_relevance</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">TopicRelevance.WORD2VEC</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.bundle_payload" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="arg_mine.api.classify.classify_url_sentences">
-<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">classify_url_sentences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">url</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">user_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">api_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">only_arguments</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">topic_relevance</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">TopicRelevance.WORD2VEC</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">session.DEFAULT_TIMEOUT</span></em>, <em class="sig-param"><span class="n">request_session</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.classify_url_sentences" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">classify_url_sentences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">url</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">only_arguments</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">topic_relevance</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">TopicRelevance.WORD2VEC</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">session.DEFAULT_TIMEOUT</span></em>, <em class="sig-param"><span class="n">request_session</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.classify_url_sentences" title="Permalink to this definition">¶</a></dt>
 <dd><p>For a given URL and topic phrase, identify which sentences contain arguments
 vs non-arguments</p>
 <p>It encodes the url and topic used for the query in the returned metadata object</p>
@@ -360,7 +377,8 @@ TODO: check to see if setting this true decreases the computation time on the se
 <dl class="py function">
 <dt id="arg_mine.api.classify.collect_sentences_by_topic">
 <code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">collect_sentences_by_topic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">url_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>AnyStr<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.collect_sentences_by_topic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not</p>
+<dd><p>Serially iterate over a list of URLs for a given topic
+return whether or not the token/sentence is an argument or not</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -380,18 +398,14 @@ TODO: check to see if setting this true decreases the computation time on the se
 <dl class="py function">
 <dt id="arg_mine.api.classify.collect_sentences_for_url">
 <code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">collect_sentences_for_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">user_id</span></em>, <em class="sig-param"><span class="n">api_key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.collect_sentences_for_url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="arg_mine.api.classify.collect_sentences_by_topic_parallel">
-<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">collect_sentences_by_topic_parallel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">url_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>AnyStr<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">proc_count</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.collect_sentences_by_topic_parallel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not</p>
+<dd><p>Thin wrapper function for getting the ClassifyMetadata and ClassifiedSentence objects for a url</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>topic</strong> (<em>str</em>) – </p></li>
-<li><p><strong>url_list</strong> (<em>List</em><em>[</em><em>AnyStr</em><em>]</em>) – </p></li>
-<li><p><strong>proc_count</strong> (<em>int</em>) – number of processes that we want to use for this extraction</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – </p></li>
+<li><p><strong>user_id</strong> (<em>str</em>) – </p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -399,6 +413,96 @@ TODO: check to see if setting this true decreases the computation time on the se
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Tuple[List[<a class="reference internal" href="#arg_mine.api.classify.ClassifyMetadata" title="arg_mine.api.classify.ClassifyMetadata">ClassifyMetadata</a>],  List[<a class="reference internal" href="#arg_mine.api.classify.ClassifiedSentence" title="arg_mine.api.classify.ClassifiedSentence">ClassifiedSentence</a>], List[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.api.classify.exception_handler">
+<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">exception_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">exception</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.exception_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>catch raised exceptions and log them
+Returns any missing urls</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>request.Request</em>) – </p></li>
+<li><p><strong>exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[AnyStr]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.api.classify.fetch_concurrent">
+<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">fetch_concurrent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span></em>, <em class="sig-param"><span class="n">url_list</span></em>, <em class="sig-param"><span class="n">only_arguments</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">topic_relevance</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">TopicRelevance.WORD2VEC</span></em>, <em class="sig-param"><span class="n">pool_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">chunk_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">100</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.fetch_concurrent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of article URLs, iterate through them in chunks and return a list of responses</p>
+<p>TODO: parse the chunks and write to storage files, in case of memory errors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> (<em>str</em>) – </p></li>
+<li><p><strong>url_list</strong> (<em>List</em><em>[</em><em>AnyStr</em><em>]</em>) – </p></li>
+<li><p><strong>only_arguments</strong> (<em>bool</em>) – only return the sentences of the estimated arguments
+TODO: check to see if setting this true decreases the computation time on the server</p></li>
+<li><p><strong>topic_relevance</strong> (<em>str</em>) – use options from TopicRelevance enum</p></li>
+<li><p><strong>pool_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>chunk_size</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[requests.Response]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.api.classify.process_responses">
+<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">process_responses</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">response_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.process_responses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of classify responses, convert them to docs and sentences, and create associate dataframes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>response_list</strong> (<em>Iterable</em><em>[</em><em>requests.Response</em><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>docs_df, sentences_df</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[pd.DataFrame, pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="arg_mine.api.classify.response_error_check">
+<code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">response_error_check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.response_error_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigger any Exceptions that happened during a document URL request
+Convert raised exceptions to internal exception types for consistency</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>response</strong> (<em>requests.Response</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>none</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.Unavailable" title="arg_mine.api.errors.Unavailable"><strong>errors.Unavailable</strong></a> – when requests returns an unknown HTTPError</p></li>
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.Refused" title="arg_mine.api.errors.Refused"><strong>errors.Refused</strong></a> – when server returns a 400 and “Website could not be crawled”</p></li>
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.ArgumenTextGatewayError" title="arg_mine.api.errors.ArgumenTextGatewayError"><strong>errors.ArgumenTextGatewayError</strong></a> – when server returns a 400 and unspecified message</p></li>
+<li><p><a class="reference internal" href="../errors/index.html#arg_mine.api.errors.NotResponding" title="arg_mine.api.errors.NotResponding"><strong>errors.NotResponding</strong></a> – when connection fails or times out</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -557,6 +661,9 @@ TODO: check to see if setting this true decreases the computation time on the se
 </li>
 </ul>
 <ul>
+<li><a class="reference internal" href="#arg_mine.api.classify.bundle_payload">bundle_payload</a></li>
+</ul>
+<ul>
 <li><a class="reference internal" href="#arg_mine.api.classify.classify_url_sentences">classify_url_sentences</a></li>
 </ul>
 <ul>
@@ -566,7 +673,16 @@ TODO: check to see if setting this true decreases the computation time on the se
 <li><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_for_url">collect_sentences_for_url</a></li>
 </ul>
 <ul>
-<li><a class="reference internal" href="#arg_mine.api.classify.collect_sentences_by_topic_parallel">collect_sentences_by_topic_parallel</a></li>
+<li><a class="reference internal" href="#arg_mine.api.classify.exception_handler">exception_handler</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.classify.fetch_concurrent">fetch_concurrent</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.classify.process_responses">process_responses</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.classify.response_error_check">response_error_check</a></li>
 </ul>
 </li>
 </ul>

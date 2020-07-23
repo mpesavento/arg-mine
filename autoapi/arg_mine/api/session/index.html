@@ -52,10 +52,10 @@
 <td><p>Enum-like class for holding the target URLs</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.session._BlockAll" title="arg_mine.api.session._BlockAll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_BlockAll</span></code></a>()</p></td>
-<td><p>Defines which cookies get accepted from and returned to server.</p></td>
+<td><p>Block cookies from requests query</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.session.TimeoutHTTPAdapter" title="arg_mine.api.session.TimeoutHTTPAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeoutHTTPAdapter</span></code></a>(*args, **kwargs)</p></td>
-<td><p>The built-in HTTP Adapter for urllib3.</p></td>
+<td><p>requests HTTPAdapter with default timeout</p></td>
 </tr>
 </tbody>
 </table>
@@ -68,8 +68,8 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.session.get_session" title="arg_mine.api.session.get_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_session</span></code></a>()</p></td>
-<td><p>Return a session object</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.session.get_session" title="arg_mine.api.session.get_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_session</span></code></a>(timeout=DEFAULT_TIMEOUT, pool_size=DEFAULT_POOL_SIZE)</p></td>
+<td><p>Get a requests Session object, with our target default parameters</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.session.fetch" title="arg_mine.api.session.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>(base_url: str, payload: dict, timeout: float = DEFAULT_TIMEOUT, request_session=None)</p></td>
 <td><p>Make request from base API service, with error handling</p></td>
@@ -83,7 +83,12 @@
 
 <dl class="py data">
 <dt id="arg_mine.api.session.DEFAULT_TIMEOUT">
-<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">DEFAULT_TIMEOUT</code><em class="property"> = 5</em><a class="headerlink" href="#arg_mine.api.session.DEFAULT_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">DEFAULT_TIMEOUT</code><em class="property"> = 200</em><a class="headerlink" href="#arg_mine.api.session.DEFAULT_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="arg_mine.api.session.DEFAULT_POOL_SIZE">
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">DEFAULT_POOL_SIZE</code><em class="property"> = 4</em><a class="headerlink" href="#arg_mine.api.session.DEFAULT_POOL_SIZE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
@@ -116,10 +121,12 @@
 <dt id="arg_mine.api.session._BlockAll">
 <em class="property">class </em><code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">_BlockAll</code><a class="headerlink" href="#arg_mine.api.session._BlockAll" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">http.cookiejar.CookiePolicy</span></code></p>
-<p>Defines which cookies get accepted from and returned to server.</p>
-<p>May also modify cookies, though this is probably a bad idea.</p>
-<p>The subclass DefaultCookiePolicy defines the standard rules for Netscape
-and RFC 2965 cookies – override that if you want a customized policy.</p>
+<p>Block cookies from requests query</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">_BlockAll</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt id="arg_mine.api.session._BlockAll.set_ok">
 <code class="sig-name descname">set_ok</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cookie</span></em>, <em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session._BlockAll.set_ok" title="Permalink to this definition">¶</a></dt>
@@ -134,34 +141,7 @@ class deletes such cookies itself.</p>
 <dt id="arg_mine.api.session.TimeoutHTTPAdapter">
 <em class="property">class </em><code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">TimeoutHTTPAdapter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.TimeoutHTTPAdapter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">requests.adapters.HTTPAdapter</span></code></p>
-<p>The built-in HTTP Adapter for urllib3.</p>
-<p>Provides a general-case interface for Requests sessions to contact HTTP and
-HTTPS urls by implementing the Transport Adapter interface. This class will
-usually be created by the <code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code> class under the
-covers.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pool_connections</strong> – The number of urllib3 connection pools to cache.</p></li>
-<li><p><strong>pool_maxsize</strong> – The maximum number of connections to save in the pool.</p></li>
-<li><p><strong>max_retries</strong> – The maximum number of retries each connection
-should attempt. Note, this applies only to failed DNS lookups, socket
-connections and connection timeouts, never to requests where data has
-made it to the server. By default, Requests does not retry failed
-connections. If you need granular control over the conditions under
-which we retry a request, import urllib3’s <code class="docutils literal notranslate"><span class="pre">Retry</span></code> class and pass
-that instead.</p></li>
-<li><p><strong>pool_block</strong> – Whether the connection pool should block for connections.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">requests</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>requests HTTPAdapter with default timeout</p>
 <dl class="py method">
 <dt id="arg_mine.api.session.TimeoutHTTPAdapter.send">
 <code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.TimeoutHTTPAdapter.send" title="Permalink to this definition">¶</a></dt>
@@ -191,8 +171,22 @@ must be a path to a CA bundle to use</p></li>
 
 <dl class="py function">
 <dt id="arg_mine.api.session.get_session">
-<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">get_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.get_session" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a session object</p>
+<code class="sig-prename descclassname">arg_mine.api.session.</code><code class="sig-name descname">get_session</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">DEFAULT_TIMEOUT</span></em>, <em class="sig-param"><span class="n">pool_size</span><span class="o">=</span><span class="default_value">DEFAULT_POOL_SIZE</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.session.get_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a requests Session object, with our target default parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<em>float</em>) – timeout in seconds for server response</p></li>
+<li><p><strong>pool_size</strong> (<em>int</em>) – how many pool connections we allow within the session</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requests.Session</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -245,6 +239,9 @@ must be a path to a CA bundle to use</p></li>
 </ul>
 <ul>
 <li><a class="reference internal" href="#arg_mine.api.session.DEFAULT_TIMEOUT">DEFAULT_TIMEOUT</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.api.session.DEFAULT_POOL_SIZE">DEFAULT_POOL_SIZE</a></li>
 </ul>
 <ul>
 <li><a class="reference internal" href="#arg_mine.api.session.ApiUrl">ApiUrl</a><ul>

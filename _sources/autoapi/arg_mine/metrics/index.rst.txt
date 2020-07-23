@@ -1,0 +1,36 @@
+:mod:`arg_mine.metrics`
+=======================
+
+.. py:module:: arg_mine.metrics
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   arg_mine.metrics.summary_stats
+
+
+.. function:: summary_stats(y_label, y_pred, y_score, name='model stats')
+
+   Aggregate the summary stats for a binary classification problem
+
+   :param y_label: array of true labels per sample (eg 0/1)
+   :type y_label: np.array
+   :param y_pred: array of predicted labels per sample (eg 0/1)
+                  Note that this may change depending on the target threshold value from the score
+   :type y_pred: np.array
+   :param y_score: array of prediction probability, or confidence, per sample
+   :type y_score: np.array
+   :param name: name for these summary stats, saved as index in output
+   :type name: str, optional
+
+   :returns: single row dataframe
+   :rtype: pd.DataFrame
+
+

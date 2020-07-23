@@ -33,7 +33,12 @@ Functions
    
 
 .. data:: DEFAULT_TIMEOUT
-   :annotation: = 5
+   :annotation: = 200
+
+   
+
+.. data:: DEFAULT_POOL_SIZE
+   :annotation: = 4
 
    
 
@@ -66,12 +71,12 @@ Functions
 
    Bases: :class:`http.cookiejar.CookiePolicy`
 
-   Defines which cookies get accepted from and returned to server.
+   Block cookies from requests query
 
-   May also modify cookies, though this is probably a bad idea.
+   .. rubric:: Examples
 
-   The subclass DefaultCookiePolicy defines the standard rules for Netscape
-   and RFC 2965 cookies -- override that if you want a customized policy.
+   >>> s = requests.Session()
+   >>> s.cookies.policy = _BlockAll()
 
    .. method:: set_ok(self, cookie, request)
 
@@ -87,30 +92,7 @@ Functions
 
    Bases: :class:`requests.adapters.HTTPAdapter`
 
-   The built-in HTTP Adapter for urllib3.
-
-   Provides a general-case interface for Requests sessions to contact HTTP and
-   HTTPS urls by implementing the Transport Adapter interface. This class will
-   usually be created by the :class:`Session <Session>` class under the
-   covers.
-
-   :param pool_connections: The number of urllib3 connection pools to cache.
-   :param pool_maxsize: The maximum number of connections to save in the pool.
-   :param max_retries: The maximum number of retries each connection
-       should attempt. Note, this applies only to failed DNS lookups, socket
-       connections and connection timeouts, never to requests where data has
-       made it to the server. By default, Requests does not retry failed
-       connections. If you need granular control over the conditions under
-       which we retry a request, import urllib3's ``Retry`` class and pass
-       that instead.
-   :param pool_block: Whether the connection pool should block for connections.
-
-   Usage::
-
-     >>> import requests
-     >>> s = requests.Session()
-     >>> a = requests.adapters.HTTPAdapter(max_retries=3)
-     >>> s.mount('http://', a)
+   requests HTTPAdapter with default timeout
 
    .. method:: send(self, request, **kwargs)
 
@@ -132,9 +114,17 @@ Functions
 
 
 
-.. function:: get_session()
+.. function:: get_session(timeout=DEFAULT_TIMEOUT, pool_size=DEFAULT_POOL_SIZE)
 
-   Return a session object
+   Get a requests Session object, with our target default parameters
+
+   :param timeout: timeout in seconds for server response
+   :type timeout: float
+   :param pool_size: how many pool connections we allow within the session
+   :type pool_size: int
+
+   :returns:
+   :rtype: requests.Session
 
 
 .. function:: fetch(base_url: str, payload: dict, timeout: float = DEFAULT_TIMEOUT, request_session=None)

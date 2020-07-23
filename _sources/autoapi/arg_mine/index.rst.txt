@@ -23,6 +23,7 @@ Submodules
    :titlesonly:
    :maxdepth: 1
 
+   metrics/index.rst
    utils/index.rst
 
 
@@ -40,6 +41,16 @@ Package Contents
    
 
 .. data:: DATA_DIR
+   
+
+   
+
+.. data:: REPORTS_DIR
+   
+
+   
+
+.. data:: FIGURES_DIR
    
 
    

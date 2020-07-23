@@ -25,10 +25,14 @@ Functions
 
 .. autoapisummary::
 
+   arg_mine.api.classify.bundle_payload
    arg_mine.api.classify.classify_url_sentences
    arg_mine.api.classify.collect_sentences_by_topic
    arg_mine.api.classify.collect_sentences_for_url
-   arg_mine.api.classify.collect_sentences_by_topic_parallel
+   arg_mine.api.classify.exception_handler
+   arg_mine.api.classify.fetch_concurrent
+   arg_mine.api.classify.process_responses
+   arg_mine.api.classify.response_error_check
 
 
 .. data:: _logger
@@ -270,7 +274,10 @@ Functions
 
 
 
-.. function:: classify_url_sentences(topic: str, url: str, user_id: str, api_key: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)
+.. function:: bundle_payload(topic, url, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC)
+
+
+.. function:: classify_url_sentences(topic: str, url: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)
 
    For a given URL and topic phrase, identify which sentences contain arguments
    vs non-arguments
@@ -301,7 +308,8 @@ Functions
 
 .. function:: collect_sentences_by_topic(topic: str, url_list: List[AnyStr])
 
-   Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
+   Serially iterate over a list of URLs for a given topic
+   return whether or not the token/sentence is an argument or not
 
    :param topic:
    :type topic: str
@@ -314,19 +322,84 @@ Functions
 
 .. function:: collect_sentences_for_url(topic, url, user_id, api_key)
 
+   Thin wrapper function for getting the ClassifyMetadata and ClassifiedSentence objects for a url
 
-.. function:: collect_sentences_by_topic_parallel(topic: str, url_list: List[AnyStr], proc_count: int = 4)
+   :param topic:
+   :type topic: str
+   :param url:
+   :type url: str
+   :param user_id:
+   :type user_id: str
+   :param api_key:
+   :type api_key: str
 
-   Iterate over a list of URLs for a given topic, return whether or not the token/sentence is an argument or not
+   :returns:
+   :rtype: Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+
+
+.. function:: exception_handler(request, exception)
+
+   catch raised exceptions and log them
+   Returns any missing urls
+
+   :param request:
+   :type request: request.Request
+   :param exception:
+   :type exception: Optional[Exception]
+
+   :returns:
+   :rtype: Optional[AnyStr]
+
+
+.. function:: fetch_concurrent(topic, url_list, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC, pool_size: int = 5, chunk_size: int = 100)
+
+   Given a list of article URLs, iterate through them in chunks and return a list of responses
+
+   TODO: parse the chunks and write to storage files, in case of memory errors
 
    :param topic:
    :type topic: str
    :param url_list:
    :type url_list: List[AnyStr]
-   :param proc_count: number of processes that we want to use for this extraction
-   :type proc_count: int
+   :param only_arguments: only return the sentences of the estimated arguments
+                          TODO: check to see if setting this true decreases the computation time on the server
+   :type only_arguments: bool
+   :param topic_relevance: use options from TopicRelevance enum
+   :type topic_relevance: str
+   :param pool_size:
+   :type pool_size: int
+   :param chunk_size:
+   :type chunk_size: int
 
    :returns:
-   :rtype: Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+   :rtype: List[requests.Response]
+
+
+.. function:: process_responses(response_list)
+
+   Take a list of classify responses, convert them to docs and sentences, and create associate dataframes
+
+   :param response_list:
+   :type response_list: Iterable[requests.Response]
+
+   :returns: docs_df, sentences_df
+   :rtype: Tuple[pd.DataFrame, pd.DataFrame]
+
+
+.. function:: response_error_check(response)
+
+   Trigger any Exceptions that happened during a document URL request
+   Convert raised exceptions to internal exception types for consistency
+
+   :param response:
+   :type response: requests.Response
+
+   :returns:
+   :rtype: none
+
+   :raises errors.Unavailable: when requests returns an unknown HTTPError
+   :raises errors.Refused: when server returns a 400 and "Website could not be crawled"
+   :raises errors.ArgumenTextGatewayError: when server returns a 400 and unspecified message
+   :raises errors.NotResponding: when connection fails or times out
 
 
