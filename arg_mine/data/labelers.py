@@ -19,6 +19,8 @@ GDELT_KEYWORDS = [
     "carbon tax",
 ]
 
+CONTEXT_LABEL = "has_context"
+
 
 def match_doc_id(url, docs_df):
     """
@@ -52,7 +54,9 @@ def get_doc_sentences(doc_id, sentences_df):
     return sentences_df[sentences_df.doc_id == doc_id]
 
 
-def label_doc_sentences_with_context(url_row, docs_df, sentences_df):
+def label_doc_sentences_with_context(
+    url_row, docs_df, sentences_df, label_col_name=CONTEXT_LABEL
+):
     """
     Ugly way to label which sentences are used in context of the GDELT keywords
 
@@ -69,6 +73,10 @@ def label_doc_sentences_with_context(url_row, docs_df, sentences_df):
     url_row : pd.Series
     docs_df : pd.DataFrame
     sentences_df : pd.DataFrame
+    label_col_name : str
+        name to use for the label column
+
+    NOTE:
 
     Returns
     -------
@@ -108,12 +116,14 @@ def label_doc_sentences_with_context(url_row, docs_df, sentences_df):
             continue
         # only look at the first match
         sentences_df.loc[
-            sentences_df["sentence_id"] == matches.values[0], "has_labeled_arg"
+            sentences_df["sentence_id"] == matches.values[0], label_col_name
         ] = True
+    # fill all rows that aren't true with False
+    sentences_df.fillna(value=False, inplace=True)
     return sentences_df
 
 
-def label_gdelt_context(url_df, docs_df, sentences_df, label_col_name="has_context"):
+def label_gdelt_context(url_df, docs_df, sentences_df, label_col_name=CONTEXT_LABEL):
     """
     Add column `label_col_name` to sentences_df, with whether or not the sentence
     was part of the context label from GDELT
