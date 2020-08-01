@@ -17,6 +17,7 @@ def make_confusion_matrix(
     figsize=None,
     cmap="Blues",
     title=None,
+    ax=None,
 ):
     """
     This function will make a pretty plot of an sklearn Confusion Matrix cm using a Seaborn heatmap visualization.
@@ -50,10 +51,11 @@ def make_confusion_matrix(
                    See http://matplotlib.org/examples/color/colormaps_reference.html
 
     title:         Title for the heatmap. Default is None.
+    ax:             matplotlib axis to use, Default is None (create new figure)
 
     Returns
     -------
-    handle to current figure
+    handle to current axis
     """
 
     # CODE TO GENERATE TEXT INSIDE EACH SQUARE
@@ -110,7 +112,8 @@ def make_confusion_matrix(
         categories = False
 
     # MAKE THE HEATMAP VISUALIZATION
-    plt.figure(figsize=figsize)
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
     sns.heatmap(
         cf,
         annot=box_labels,
@@ -119,18 +122,21 @@ def make_confusion_matrix(
         cbar=cbar,
         xticklabels=categories,
         yticklabels=categories,
+        ax=ax
     )
 
     if xyplotlabels:
-        plt.ylabel("True label")
-        plt.xlabel("Predicted label" + stats_text)
+        ax.set_ylabel("True label")
+        ax.set_xlabel("Predicted label" + stats_text)
     else:
-        plt.xlabel(stats_text)
+        ax.set_xlabel(stats_text)
 
     if title:
-        plt.title(title)
+        ax.set_title(title)
 
-    return plt.gcf()
+    ax.set_aspect('equal', 'box')
+
+    return ax
 
 
 def make_roc_curve(y_label, y_score, selected_thresh=0.5, ax=None):
@@ -178,7 +184,7 @@ def make_roc_curve(y_label, y_score, selected_thresh=0.5, ax=None):
     ax.set_xlabel("False Positive Rate")
     ax.set_ylabel("True Positive Rate")
     ax.set_title("ROC curve")
-    plt.legend(loc="lower right")
+    ax.legend(loc="lower right")
     ax.set_aspect("equal", "box")
     return ax
 
@@ -199,7 +205,7 @@ def make_precision_recall_curve(y_label, y_score, selected_thresh=0.5, ax=None):
             selected_thresh, thresh_precision, thresh_recall
         ),
     )
-    plt.legend(loc="lower left")
+    ax.legend(loc="lower left")
     ax.set_xlim((0, 1.0))
     ax.set_ylim((0, 1.05))
     ax.set_aspect("equal", "box")
