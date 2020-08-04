@@ -25,8 +25,7 @@ file with following required secrets. These will then be available as environmen
 Each of these should have the corresponding values in the appropriate place.
 
 * Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.
-* Obtain your ArgumentText keys by filling out the form __here__ **add this link once the server is back up!**
-
+* Obtain your ArgumentText keys by filling out the registration form `here <https://api.argumentsearch.com/en/api_registration>`_
 
 These env vars can be loaded into the environment inside a script or notebook via::
 
@@ -72,6 +71,8 @@ This will prompt you for your:
 
 ``make`` commands
 -----------------
+All of the make commands require that you are already using the project development environment,
+either via ``conda`` or ``virtualenv``.
 
 To build a docker image with all dependencies, run::
 
@@ -103,12 +104,13 @@ Note that this will overwrite any previous documentation and publish the new con
 **TODO**
 Make a command to view documentation locally without publishing it
 
+
 Dependency management
 ---------------------
 To maintain and update dependencies, we use ``pip-compile`` on ``requirements.in``, resulting in a complete list of all dependencies.
 This list keeps the explicit dependencies small, and deals with possible version conflicts rapidly.
 
-To update dependencies, inside the dev environment (arg-mine in conda or virtualenv) run::
+To update dependencies, inside the dev environment (``arg-mine`` in conda or virtualenv) run::
 
     make compile-reqs
 

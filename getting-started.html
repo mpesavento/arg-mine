@@ -64,7 +64,7 @@ file with following required secrets. These will then be available as environmen
 <p>Each of these should have the corresponding values in the appropriate place.</p>
 <ul class="simple">
 <li><p>Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.</p></li>
-<li><p>Obtain your ArgumentText keys by filling out the form __here__ <strong>add this link once the server is back up!</strong></p></li>
+<li><p>Obtain your ArgumentText keys by filling out the registration form <a class="reference external" href="https://api.argumentsearch.com/en/api_registration">here</a></p></li>
 </ul>
 <p>These env vars can be loaded into the environment inside a script or notebook via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
@@ -109,6 +109,8 @@ Follow these instructions for installation.</p>
 </div>
 <div class="section" id="make-commands">
 <h2><code class="docutils literal notranslate"><span class="pre">make</span></code> commands<a class="headerlink" href="#make-commands" title="Permalink to this headline">¶</a></h2>
+<p>All of the make commands require that you are already using the project development environment,
+either via <code class="docutils literal notranslate"><span class="pre">conda</span></code> or <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code>.</p>
 <p>To build a docker image with all dependencies, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">build</span>
 </pre></div>
@@ -139,7 +141,7 @@ Make a command to view documentation locally without publishing it</p>
 <h2>Dependency management<a class="headerlink" href="#dependency-management" title="Permalink to this headline">¶</a></h2>
 <p>To maintain and update dependencies, we use <code class="docutils literal notranslate"><span class="pre">pip-compile</span></code> on <code class="docutils literal notranslate"><span class="pre">requirements.in</span></code>, resulting in a complete list of all dependencies.
 This list keeps the explicit dependencies small, and deals with possible version conflicts rapidly.</p>
-<p>To update dependencies, inside the dev environment (arg-mine in conda or virtualenv) run:</p>
+<p>To update dependencies, inside the dev environment (<code class="docutils literal notranslate"><span class="pre">arg-mine</span></code> in conda or virtualenv) run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="nb">compile</span><span class="o">-</span><span class="n">reqs</span>
 </pre></div>
 </div>
