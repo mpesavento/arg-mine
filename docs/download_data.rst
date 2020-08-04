@@ -45,7 +45,5 @@ This will download all years of the dataset into the repositories
 ``data/raw/2020-climate-change-narrative`` folder, extract the zip files into the CSV files,
 and remove the leftover zip files.
 
-To see more information on the raw download process, see :ref:`download_gdelt_climate_en`
-
-:: warning:: This download will consume 7 MB of your harddrive space.
+This download will consume 7 MB of your harddrive space.
 
