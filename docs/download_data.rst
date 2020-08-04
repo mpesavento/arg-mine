@@ -34,6 +34,9 @@ and following the identified keyword.
 In this study, we are not using the context; we are only using the list of URLs to extract sentences
 from each document using the `ArgumentText API <https://api.argumentsearch.com/en/doc>`_.
 
+To see more information on the raw download process, see `download_gdelt_climate_en`_
+
+
 Download GDELT
 ^^^^^^^^^^^^^^^
 You can manually download the .zip files from the `GDELT dataset`_ webpage.

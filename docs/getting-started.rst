@@ -48,7 +48,7 @@ To set up a virtual environment for development (assuming you have conda install
 This will create an environment in conda, if conda is installed, or a virtualenv if not. This
 will also install all dev requirements into the env.
 
-A full server set up from scratch can be found in the documentation at `setup_ec2`_
+A full server set up from scratch can be found in the documentation at :doc:`setup_ec2`_
 
 
 Setting up AWS credentials
@@ -107,8 +107,10 @@ Make a command to view documentation locally without publishing it
 
 Dependency management
 ---------------------
-To maintain and update dependencies, we use ``pip-compile`` on ``requirements.in``, resulting in a complete list of all dependencies.
-This list keeps the explicit dependencies small, and deals with possible version conflicts rapidly.
+To maintain and update dependencies, we use ``pip-compile`` on ``requirements.in``,
+resulting in a complete list of all dependencies.
+This list keeps the explicit dependencies small, and deals with possible version
+conflicts rapidly.
 
 To update dependencies, inside the dev environment (``arg-mine`` in conda or virtualenv) run::
 
