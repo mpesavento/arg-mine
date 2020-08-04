@@ -14,6 +14,7 @@ Contents:
    getting-started
    commands
    setup_ec2
+   download_data
 
 
 
