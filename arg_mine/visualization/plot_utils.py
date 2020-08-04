@@ -122,7 +122,7 @@ def make_confusion_matrix(
         cbar=cbar,
         xticklabels=categories,
         yticklabels=categories,
-        ax=ax
+        ax=ax,
     )
 
     if xyplotlabels:
@@ -134,7 +134,7 @@ def make_confusion_matrix(
     if title:
         ax.set_title(title)
 
-    ax.set_aspect('equal', 'box')
+    ax.set_aspect("equal", "box")
 
     return ax
 

@@ -131,15 +131,7 @@ test:
 # PROJECT RULES                                                                 #
 #################################################################################
 
-## Make Dataset
-data:
-	docker run --rm -it \
-		${DOCKER_RUN_OPTS} \
-		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/make_dataset.py data/raw data/processed
-
-
-get-gdelt:
+download-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
