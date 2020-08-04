@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Getting started &#8212; arg-mine 0.1.0 documentation</title>
+    <title>Getting Started &#8212; arg-mine 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -45,10 +45,107 @@
           <div class="body" role="main">
             
   <div class="section" id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>This is where you describe how to get set up on a clean install, including the
-commands necessary to get the raw data (using the <cite>sync_data_from_s3</cite> command,
-for example), and then how to make the cleaned, final data sets.</p>
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>Uses the ArgumentText API to mine arguments from selected data sources.
+A part of the Great American Debate project <a class="reference external" href="https://www.greatamericandebate.org/">https://www.greatamericandebate.org/</a></p>
+<p>You can read the full documentation here:
+<a class="reference external" href="http://mpesavento.github.io/arg-mine">http://mpesavento.github.io/arg-mine</a></p>
+<div class="section" id="environment-variables">
+<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>We are using the <code class="docutils literal notranslate"><span class="pre">dotenv</span></code> package to maintain separation of required keys and submitted code. The file <cite>.env.example</cite>
+is part of the base repo. To use this file, make a copy named <code class="docutils literal notranslate"><span class="pre">.env</span></code> at the project root, and edit the
+file with following required secrets. These will then be available as environment variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ARGUMENTEXT_USERID</span><span class="o">=&lt;</span><span class="n">your_userid</span><span class="o">&gt;</span>
+<span class="n">ARGUMENTEXT_KEY</span><span class="o">=&lt;</span><span class="n">your_key</span><span class="o">&gt;</span>
+<span class="n">AWS_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">your_key</span><span class="o">&gt;</span>
+<span class="n">AWS_SECRET_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">your_key</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Each of these should have the corresponding values in the appropriate place.</p>
+<ul class="simple">
+<li><p>Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.</p></li>
+<li><p>Obtain your ArgumentText keys by filling out the form __here__ <strong>add this link once the server is back up!</strong></p></li>
+</ul>
+<p>These env vars can be loaded into the environment inside a script or notebook via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
+<span class="n">load_dotenv</span><span class="p">(</span><span class="n">find_dotenv</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>and accessed via (for example):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ARGUMENTEXT_USERID&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="project-set-up">
+<h2>Project set up<a class="headerlink" href="#project-set-up" title="Permalink to this headline">¶</a></h2>
+<p>To set up a virtual environment for development (assuming you have conda installed, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">create</span><span class="o">-</span><span class="n">environment</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">arg</span><span class="o">-</span><span class="n">mine</span>
+<span class="n">make</span> <span class="n">requirements</span>
+</pre></div>
+</div>
+<p>This will create an environment in conda, if conda is installed, or a virtualenv if not. This
+will also install all dev requirements into the env.</p>
+<p>A full server set up from scratch can be found in the documentation at <a href="#id1"><span class="problematic" id="id2">`setup_ec2`_</span></a></p>
+</div>
+<div class="section" id="setting-up-aws-credentials">
+<h2>Setting up AWS credentials<a class="headerlink" href="#setting-up-aws-credentials" title="Permalink to this headline">¶</a></h2>
+<p>To set up the AWS command line interface (<cite>cli</cite>) with your credentials, first make sure
+the AWS CLI has been installed. Currently, we recommend installing version 2:
+<a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html">https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html</a>
+Follow these instructions for installation.</p>
+<p>Once installed, you need to add your secrets to the CLI. In a terminal, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aws</span> <span class="n">configure</span>
+</pre></div>
+</div>
+<p>This will prompt you for your:</p>
+<ul class="simple">
+<li><p>AWS access key</p></li>
+<li><p>AWS secret key</p></li>
+<li><p>AWS region (currently <cite>us-east-2</cite>)</p></li>
+<li><p>output format (default is json, recommended)</p></li>
+</ul>
+</div>
+<div class="section" id="make-commands">
+<h2><code class="docutils literal notranslate"><span class="pre">make</span></code> commands<a class="headerlink" href="#make-commands" title="Permalink to this headline">¶</a></h2>
+<p>To build a docker image with all dependencies, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>Running this command requires <code class="docutils literal notranslate"><span class="pre">docker</span></code> to be installed. See the
+<a class="reference external" href="https://docs.docker.com/get-docker/">OS-dependent installation instructions</a> here
+for more info on how to do this.</p>
+<p>This <code class="docutils literal notranslate"><span class="pre">build</span></code> command may take a while, as it needs to download all dependencies and
+compile the jupyter lab server.</p>
+<p>To access the bash terminal in the docker container, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">shell</span>
+</pre></div>
+</div>
+<p>To run a jupyter lab server from a docker container, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">jupyter</span>
+</pre></div>
+</div>
+<p>This will launch the jupyter lab server, with the host repository volume-mapped to the docker container, persisting all changes.</p>
+<p>To update the documentation and push the update to <a class="reference external" href="http://mpesavento.github.io/arg-mine">http://mpesavento.github.io/arg-mine</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">docs</span>
+</pre></div>
+</div>
+<p>Note that this will overwrite any previous documentation and publish the new content live.</p>
+<p><strong>TODO</strong>
+Make a command to view documentation locally without publishing it</p>
+</div>
+<div class="section" id="dependency-management">
+<h2>Dependency management<a class="headerlink" href="#dependency-management" title="Permalink to this headline">¶</a></h2>
+<p>To maintain and update dependencies, we use <code class="docutils literal notranslate"><span class="pre">pip-compile</span></code> on <code class="docutils literal notranslate"><span class="pre">requirements.in</span></code>, resulting in a complete list of all dependencies.
+This list keeps the explicit dependencies small, and deals with possible version conflicts rapidly.</p>
+<p>To update dependencies, inside the dev environment (arg-mine in conda or virtualenv) run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="nb">compile</span><span class="o">-</span><span class="n">reqs</span>
+</pre></div>
+</div>
+<p>This will compile the <code class="docutils literal notranslate"><span class="pre">requirements.in</span></code> and create a fully updated static <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>,
+with a complete list of available packages and package versions that are known to work.</p>
+</div>
 </div>
 
 
@@ -57,6 +154,18 @@ for example), and then how to make the cleaned, final data sets.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+<li><a class="reference internal" href="#project-set-up">Project set up</a></li>
+<li><a class="reference internal" href="#setting-up-aws-credentials">Setting up AWS credentials</a></li>
+<li><a class="reference internal" href="#make-commands"><code class="docutils literal notranslate"><span class="pre">make</span></code> commands</a></li>
+<li><a class="reference internal" href="#dependency-management">Dependency management</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">arg_mine documentation</a></p>
