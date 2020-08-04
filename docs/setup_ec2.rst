@@ -1,3 +1,5 @@
+.. setup_ec2
+
 Setting up EC2 instance
 ==========================
 
