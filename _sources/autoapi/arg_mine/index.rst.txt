@@ -12,8 +12,6 @@ Subpackages
 
    api/index.rst
    data/index.rst
-   features/index.rst
-   models/index.rst
    visualization/index.rst
 
 

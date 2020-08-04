@@ -18,7 +18,7 @@ Functions
    arg_mine.visualization.plot_utils.make_precision_recall_curve
 
 
-.. function:: make_confusion_matrix(cf, group_names=None, categories='auto', count=True, percent=True, cbar=True, xyticks=True, xyplotlabels=True, sum_stats=True, figsize=None, cmap='Blues', title=None)
+.. function:: make_confusion_matrix(cf, group_names=None, categories='auto', count=True, percent=True, cbar=True, xyticks=True, xyplotlabels=True, sum_stats=True, figsize=None, cmap='Blues', title=None, ax=None)
 
    This function will make a pretty plot of an sklearn Confusion Matrix cm using a Seaborn heatmap visualization.
 
@@ -48,9 +48,11 @@ Functions
    :type cmap: Colormap of the values displayed from matplotlib.pyplot.cm. Default is 'Blues'
    :param title:
    :type title: Title for the heatmap. Default is None.
+   :param ax:
+   :type ax: matplotlib axis to use, Default is None (create new figure)
 
    :returns:
-   :rtype: handle to current figure
+   :rtype: handle to current axis
 
 
 .. function:: make_roc_curve(y_label, y_score, selected_thresh=0.5, ax=None)

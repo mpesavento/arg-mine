@@ -3,6 +3,11 @@
 
 .. py:module:: arg_mine.data.download_gdelt_climate_en
 
+.. autoapi-nested-parse::
+
+   .. _download_gdelt_climate_en:
+
+
 
 Module Contents
 ---------------

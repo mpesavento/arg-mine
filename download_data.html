@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Downloading existing datasets &#8212; arg-mine 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="downloading-existing-datasets">
+<h1>Downloading existing datasets<a class="headerlink" href="#downloading-existing-datasets" title="Permalink to this headline">¶</a></h1>
+<p>Some data has already been downloaded and made rapidly accessible to the
+<code class="docutils literal notranslate"><span class="pre">arg-mine</span></code> application. This data can be downloaded via synchronizing to the
+AWS S3 project bucket.</p>
+<p><strong>Project data bucket URI</strong>
+(why is this not bolding, or line breaking??
+<a class="reference external" href="https://s3.console.aws.amazon.com/s3/buckets/arg-mine-gdelt-data/">https://s3.console.aws.amazon.com/s3/buckets/arg-mine-gdelt-data/</a></p>
+<p>The datasets currently exist in two stages: <code class="docutils literal notranslate"><span class="pre">raw</span></code> and <code class="docutils literal notranslate"><span class="pre">processed</span></code>.</p>
+<div class="section" id="raw-data">
+<h2>Raw data<a class="headerlink" href="#raw-data" title="Permalink to this headline">¶</a></h2>
+<p>This is the
+<a class="reference external" href="https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/">GDELT dataset</a>,
+which encompasses online media stories from global sources over the time span of 2015-2020.
+The data consists mainly of a list of URLs to the target articles, the title of the article, and
+a “label” containing the context from the article with one of the key phrases used to create the dataset.</p>
+<p>The dataset was created by doing a search for the inclusive OR of the following keywords:</p>
+<ul class="simple">
+<li><p>climate change</p></li>
+<li><p>global warming</p></li>
+<li><p>climate crisis</p></li>
+<li><p>greenhouse gas</p></li>
+<li><p>greenhouse gases</p></li>
+<li><p>carbon tax</p></li>
+</ul>
+<p>The included context contains the keyword, and approximately 100 characters preceding
+and following the identified keyword.</p>
+<p>In this study, we are not using the context; we are only using the list of URLs to extract sentences
+from each document using the <a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText API</a>.</p>
+<div class="section" id="download-gdelt">
+<h3>Download GDELT<a class="headerlink" href="#download-gdelt" title="Permalink to this headline">¶</a></h3>
+<p>You can manually download the .zip files from the <a class="reference external" href="https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/">GDELT dataset</a> webpage.
+A simpler way to do this would be to run the makefile command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">download</span><span class="o">-</span><span class="n">gdelt</span>
+</pre></div>
+</div>
+<p>This will download all years of the dataset into the repositories
+<code class="docutils literal notranslate"><span class="pre">data/raw/2020-climate-change-narrative</span></code> folder, extract the zip files into the CSV files,
+and remove the leftover zip files.</p>
+<p>This download will consume 7 MB of your harddrive space.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Downloading existing datasets</a><ul>
+<li><a class="reference internal" href="#raw-data">Raw data</a><ul>
+<li><a class="reference internal" href="#download-gdelt">Download GDELT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/download_data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>
