@@ -15,7 +15,7 @@ Contents:
    setup_ec2
    download_data
    extract_arguments
-   references
+   modeling_references
 
 
 
