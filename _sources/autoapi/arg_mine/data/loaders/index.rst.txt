@@ -59,15 +59,16 @@ Functions
 .. function:: load_processed_csv(filename, project='gdelt-climate-change-docs', drop_nan_cols=None)
 
 
-.. function:: concat_csvs(filename_glob, base_path)
+.. function:: concat_csvs(filename_glob, read_path)
 
    Given a globbed filename (eg "my_files_doc*.csv"), concatenate the returned
    CSVs into a DataFrame
 
    :param filename_glob: filename matching the target files, needs to match the requirements from `glob` module
+                         Eg: ``"gdelt_2020_docs_docs*.csv"`` will find all files matching that pattern
    :type filename_glob: str
-   :param base_path: where to start looking for the files
-   :type base_path: str
+   :param read_path: base path to start looking for the files
+   :type read_path: str
 
    :returns:
    :rtype: pd.DataFrame

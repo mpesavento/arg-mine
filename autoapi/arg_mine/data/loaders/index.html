@@ -57,7 +57,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.loaders.load_processed_csv" title="arg_mine.data.loaders.load_processed_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_processed_csv</span></code></a>(filename, project=’gdelt-climate-change-docs’, drop_nan_cols=None)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.loaders.concat_csvs" title="arg_mine.data.loaders.concat_csvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concat_csvs</span></code></a>(filename_glob, base_path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.data.loaders.concat_csvs" title="arg_mine.data.loaders.concat_csvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concat_csvs</span></code></a>(filename_glob, read_path)</p></td>
 <td><p>Given a globbed filename (eg “my_files_doc*.csv”), concatenate the returned</p></td>
 </tr>
 </tbody>
@@ -120,14 +120,15 @@
 
 <dl class="py function">
 <dt id="arg_mine.data.loaders.concat_csvs">
-<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">concat_csvs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename_glob</span></em>, <em class="sig-param"><span class="n">base_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.loaders.concat_csvs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">arg_mine.data.loaders.</code><code class="sig-name descname">concat_csvs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename_glob</span></em>, <em class="sig-param"><span class="n">read_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.loaders.concat_csvs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a globbed filename (eg “my_files_doc*.csv”), concatenate the returned
 CSVs into a DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename_glob</strong> (<em>str</em>) – filename matching the target files, needs to match the requirements from <cite>glob</cite> module</p></li>
-<li><p><strong>base_path</strong> (<em>str</em>) – where to start looking for the files</p></li>
+<li><p><strong>filename_glob</strong> (<em>str</em>) – filename matching the target files, needs to match the requirements from <cite>glob</cite> module
+Eg: <code class="docutils literal notranslate"><span class="pre">&quot;gdelt_2020_docs_docs*.csv&quot;</span></code> will find all files matching that pattern</p></li>
+<li><p><strong>read_path</strong> (<em>str</em>) – base path to start looking for the files</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

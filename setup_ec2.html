@@ -45,14 +45,30 @@
           <div class="body" role="main">
             
   <div class="section" id="setting-up-ec2-instance">
-<h1>Setting up EC2 instance<a class="headerlink" href="#setting-up-ec2-instance" title="Permalink to this headline">¶</a></h1>
+<span id="setup-ec2"></span><h1>Setting up EC2 instance<a class="headerlink" href="#setting-up-ec2-instance" title="Permalink to this headline">¶</a></h1>
 <p>Below we list out the necessary steps for setting up an EC2 instance
 and be able to run a docker container hosting the <a class="reference external" href="https://github.com/mpesavento/arg-mine">arg-mine</a>
 repository.</p>
+<div class="section" id="start-up-the-instance">
+<h2>Start up the instance<a class="headerlink" href="#start-up-the-instance" title="Permalink to this headline">¶</a></h2>
+<p>First you will want to start up the instance via the AWS console and the EC2 panel.
+Once it is started, authenticate via ssh, and install additional utilities</p>
 <ol class="arabic">
-<li><p>Set up the instance via the AWS console
-<a class="reference external" href="https://console.aws.amazon.com/ec2/">https://console.aws.amazon.com/ec2/</a>
-If you do not have a PEM file for secure access to the instance, create one and save it locally</p></li>
+<li><dl>
+<dt>Set up the instance via the AWS console</dt><dd><p><a class="reference external" href="https://console.aws.amazon.com/ec2/">https://console.aws.amazon.com/ec2/</a></p>
+<p>If you do not have a PEM file for secure access to the instance, create one and save it locally,
+Eg, save as <code class="docutils literal notranslate"><span class="pre">~/.ssh/gad_ec2_key.pem</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>Loc in to the instance via ssh</dt><dd><p>Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="o">-</span><span class="n">i</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">my_pem_key</span><span class="o">.</span><span class="n">pem</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
 <li><dl>
 <dt>Install docker</dt><dd><p>Download and install docker. Set the current user to have permission to access the docker daemon:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">fsSL</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">get</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">com</span> <span class="o">-</span><span class="n">o</span> <span class="n">get</span><span class="o">-</span><span class="n">docker</span><span class="o">.</span><span class="n">sh</span>
@@ -75,12 +91,18 @@ may see a message like <code class="docutils literal notranslate"><span class="p
 </pre></div>
 </div>
 </li>
+</ol>
+</div>
+<div class="section" id="set-up-the-repository-and-code-environment">
+<h2>Set up the repository and code environment<a class="headerlink" href="#set-up-the-repository-and-code-environment" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
 <li><dl>
 <dt>Clone repository from github</dt><dd><p>If using https:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
-<p>If using ssh, create ssh public key in github:</p>
+<p>If using ssh, create ssh public key in github. This ssh key will only exist
+for the instance you create:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">t</span> <span class="n">rsa</span> <span class="o">-</span><span class="n">b</span> <span class="mi">4096</span> <span class="o">-</span><span class="n">C</span> <span class="s2">&quot;your_github_email@example.com&quot;</span>
 <span class="n">chmod</span> <span class="mi">400</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span>
 <span class="n">cat</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="o">.</span><span class="n">pub</span>
@@ -116,6 +138,11 @@ source ~/.bashrc
 </pre></div>
 </div>
 </li>
+</ol>
+</div>
+<div class="section" id="set-up-the-docker-image-and-commands">
+<h2>Set up the docker image and commands<a class="headerlink" href="#set-up-the-docker-image-and-commands" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
 <li><dl>
 <dt>Build the docker image</dt><dd><p>Run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">build</span>
@@ -136,8 +163,14 @@ Eg:</p>
 </dl>
 </li>
 </ol>
+<div class="section" id="next">
+<h3>Next<a class="headerlink" href="#next" title="Permalink to this headline">¶</a></h3>
 <p>That’s it! you have a working EC2 instance!
-From here, you can make an image to speed up development of future servers.</p>
+From here, you can make a docker image to speed up development of future application servers.</p>
+<p>In our next section, we will go over how to download the raw data.
+<span class="xref std std-ref">download_data</span></p>
+</div>
+</div>
 </div>
 
 
@@ -146,6 +179,19 @@ From here, you can make an image to speed up development of future servers.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Setting up EC2 instance</a><ul>
+<li><a class="reference internal" href="#start-up-the-instance">Start up the instance</a></li>
+<li><a class="reference internal" href="#set-up-the-repository-and-code-environment">Set up the repository and code environment</a></li>
+<li><a class="reference internal" href="#set-up-the-docker-image-and-commands">Set up the docker image and commands</a><ul>
+<li><a class="reference internal" href="#next">Next</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="commands.html"
                         title="previous chapter">Commands</a></p>

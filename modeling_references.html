@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Modeling primary literature &#8212; arg-mine 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Extracting arguments from GDELT documents" href="extract_arguments.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extract_arguments.html" title="Extracting arguments from GDELT documents"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="modeling-primary-literature">
+<h1>Modeling primary literature<a class="headerlink" href="#modeling-primary-literature" title="Permalink to this headline">¶</a></h1>
+<p>What did we use for this project?</p>
+<div class="section" id="gdelt">
+<h2>GDELT<a class="headerlink" href="#gdelt" title="Permalink to this headline">¶</a></h2>
+<p>GDELT Datasets:</p>
+<p>TV:
+<a class="reference external" href="https://blog.gdeltproject.org/a-new-dataset-for-exploring-climate-change-narratives-on-television-news-2009-2020/">https://blog.gdeltproject.org/a-new-dataset-for-exploring-climate-change-narratives-on-television-news-2009-2020/</a></p>
+<p>Online News:
+<a class="reference external" href="https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/">https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/</a></p>
+</div>
+<div class="section" id="argument-unit-recognition-and-classification">
+<h2>Argument Unit Recognition and Classification<a class="headerlink" href="#argument-unit-recognition-and-classification" title="Permalink to this headline">¶</a></h2>
+<p>paper: <a class="reference external" href="https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf">https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf</a></p>
+<p>dataset: <a class="reference external" href="https://github.com/trtm/AURC">https://github.com/trtm/AURC</a></p>
+<p>bibtex reference:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">trautmann2020fine</span><span class="p">,</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">Fine</span><span class="o">-</span><span class="n">Grained</span> <span class="n">Argument</span> <span class="n">Unit</span> <span class="n">Recognition</span> <span class="ow">and</span> <span class="n">Classification</span><span class="p">},</span>
+  <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Dietrich</span> <span class="n">Trautmann</span> <span class="ow">and</span>
+            <span class="n">Johannes</span> <span class="n">Daxenberger</span> <span class="ow">and</span>
+            <span class="n">Christian</span> <span class="n">Stab</span> <span class="ow">and</span>
+            <span class="n">Hinrich</span> <span class="n">Schutze</span> <span class="ow">and</span>
+            <span class="n">Iryna</span> <span class="n">Gurevych</span><span class="p">},</span>
+  <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">The</span> <span class="n">Thirty</span><span class="o">-</span><span class="n">Fourth</span> <span class="p">{</span><span class="n">AAAI</span><span class="p">}</span> <span class="n">Conference</span> <span class="n">on</span> <span class="n">Artificial</span> <span class="n">Intelligence</span><span class="p">,</span> <span class="p">{</span><span class="n">AAAI</span><span class="p">}</span> <span class="mi">2020</span><span class="p">},</span>
+  <span class="n">publisher</span> <span class="o">=</span> <span class="p">{{</span><span class="n">AAAI</span><span class="p">}</span> <span class="n">Press</span><span class="p">},</span>
+  <span class="n">month</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">},</span>
+  <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2020</span><span class="p">},</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">aaai</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">Papers</span><span class="o">/</span><span class="n">AAAI</span><span class="o">/</span><span class="mi">2020</span><span class="n">GB</span><span class="o">/</span><span class="n">AAAI</span><span class="o">-</span><span class="n">TrautmannD</span><span class="o">.</span><span class="mf">7498.</span><span class="n">pdf</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bert">
+<h2>BERT<a class="headerlink" href="#bert" title="Permalink to this headline">¶</a></h2>
+<p>Below we list some references to the MLP models and utilities used in the original model</p>
+<div class="section" id="nlp-transformers">
+<h3>NLP transformers<a class="headerlink" href="#nlp-transformers" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/huggingface/transformers">https://github.com/huggingface/transformers</a>
+Tensorflow &amp; PyTorch set of utilities for transforming text
+into something useable by the models</p>
+</div>
+<div class="section" id="bert-primary-reference">
+<h3>BERT primary reference<a class="headerlink" href="#bert-primary-reference" title="Permalink to this headline">¶</a></h3>
+<p>[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](<a class="reference external" href="https://arxiv.org/abs/1810.04805">https://arxiv.org/abs/1810.04805</a>)</p>
+<p>[documentation](<a class="reference external" href="https://huggingface.co/transformers/model_doc/bert.html">https://huggingface.co/transformers/model_doc/bert.html</a>)</p>
+</div>
+<div class="section" id="semantic-role-labeling-srl">
+<h3>Semantic Role Labeling (SRL)<a class="headerlink" href="#semantic-role-labeling-srl" title="Permalink to this headline">¶</a></h3>
+<p>Identifying conspiracy theories vs real theories
+<a class="reference external" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0233879">https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0233879</a></p>
+</div>
+<div class="section" id="sentence-bert">
+<h3>Sentence-BERT<a class="headerlink" href="#sentence-bert" title="Permalink to this headline">¶</a></h3>
+<p>Used in the clustering algorithm
+<a class="reference external" href="https://www.groundai.com/project/sentence-bert-sentence-embeddings-using-siamese-bert-networks/1">https://www.groundai.com/project/sentence-bert-sentence-embeddings-using-siamese-bert-networks/1</a>
+[code available](<a class="reference external" href="https://github.com/UKPLab/sentence-transformers">https://github.com/UKPLab/sentence-transformers</a>)</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Modeling primary literature</a><ul>
+<li><a class="reference internal" href="#gdelt">GDELT</a></li>
+<li><a class="reference internal" href="#argument-unit-recognition-and-classification">Argument Unit Recognition and Classification</a></li>
+<li><a class="reference internal" href="#bert">BERT</a><ul>
+<li><a class="reference internal" href="#nlp-transformers">NLP transformers</a></li>
+<li><a class="reference internal" href="#bert-primary-reference">BERT primary reference</a></li>
+<li><a class="reference internal" href="#semantic-role-labeling-srl">Semantic Role Labeling (SRL)</a></li>
+<li><a class="reference internal" href="#sentence-bert">Sentence-BERT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="extract_arguments.html"
+                        title="previous chapter">Extracting arguments from GDELT documents</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/modeling_references.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extract_arguments.html" title="Extracting arguments from GDELT documents"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

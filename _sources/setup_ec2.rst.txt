@@ -1,4 +1,4 @@
-.. setup_ec2
+.. _setup_ec2:
 
 Setting up EC2 instance
 ==========================
@@ -7,10 +7,22 @@ Below we list out the necessary steps for setting up an EC2 instance
 and be able to run a docker container hosting the `arg-mine <https://github.com/mpesavento/arg-mine>`_
 repository.
 
+Start up the instance
+---------------------
+First you will want to start up the instance via the AWS console and the EC2 panel.
+Once it is started, authenticate via ssh, and install additional utilities
+
 
 #. Set up the instance via the AWS console
-   `<https://console.aws.amazon.com/ec2/>`_
-   If you do not have a PEM file for secure access to the instance, create one and save it locally
+    `<https://console.aws.amazon.com/ec2/>`_
+
+    If you do not have a PEM file for secure access to the instance, create one and save it locally,
+    Eg, save as ``~/.ssh/gad_ec2_key.pem``
+
+#. Loc in to the instance via ssh
+    Eg::
+
+        ssh -i ~/.ssh/my_pem_key.pem
 
 #. Install docker
     Download and install docker. Set the current user to have permission to access the docker daemon::
@@ -31,12 +43,17 @@ repository.
     sudo apt-get install -yq make python3-pip
     python3 -m pip install -q virtualenv virtualenvwrapper
 
+
+Set up the repository and code environment
+------------------------------------------
+
 #. Clone repository from github
     If using https::
 
         git clone https://github.com/mpesavento/arg-mine.git
 
-    If using ssh, create ssh public key in github::
+    If using ssh, create ssh public key in github. This ssh key will only exist
+    for the instance you create::
 
         ssh-keygen -t rsa -b 4096 -C "your_github_email@example.com"
         chmod 400 ~/.ssh/id_rsa
@@ -66,6 +83,9 @@ repository.
     make requirements
     pip3 install -e .
 
+Set up the docker image and commands
+---------------------------------
+
 #. Build the docker image
     Run::
 
@@ -80,5 +100,10 @@ repository.
         make jupyter
 
 
+Next
+^^^^
 That's it! you have a working EC2 instance!
-From here, you can make an image to speed up development of future servers.
+From here, you can make a docker image to speed up development of future application servers.
+
+In our next section, we will go over how to download the raw data.
+:ref:`download_data`

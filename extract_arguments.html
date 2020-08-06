@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Commands &#8212; arg-mine 0.1.0 documentation</title>
+    <title>Extracting arguments from GDELT documents &#8212; arg-mine 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -17,8 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Setting up EC2 instance" href="setup_ec2.html" />
-    <link rel="prev" title="Getting Started" href="getting-started.html" /> 
+    <link rel="prev" title="Downloading existing datasets" href="download_data.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -30,10 +29,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="setup_ec2.html" title="Setting up EC2 instance"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="getting-started.html" title="Getting Started"
+          <a href="download_data.html" title="Downloading existing datasets"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
       </ul>
@@ -44,15 +40,31 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="commands">
-<h1>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h1>
-<p>The Makefile contains the central entry points for common tasks related to this project.</p>
-<div class="section" id="syncing-data-to-s3">
-<h2>Syncing data to S3<a class="headerlink" href="#syncing-data-to-s3" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sync_data_to_s3</span></code> will use <code class="docutils literal notranslate"><span class="pre">aws</span> <span class="pre">s3</span> <span class="pre">sync</span></code> to recursively sync files in <code class="docutils literal notranslate"><span class="pre">data/</span></code> up to <cite>s3://[OPTIONAL] your-bucket-for-syncing-data/data/</cite>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sync_data_from_s3</span></code> will use <code class="docutils literal notranslate"><span class="pre">aws</span> <span class="pre">s3</span> <span class="pre">sync</span></code> to recursively sync files from <code class="docutils literal notranslate"><span class="pre">s3://[OPTIONAL]</span> <span class="pre">your-bucket-for-syncing-data/data/</span></code> to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
-</ul>
+  <div class="section" id="extracting-arguments-from-gdelt-documents">
+<span id="extract-arguments"></span><h1>Extracting arguments from GDELT documents<a class="headerlink" href="#extracting-arguments-from-gdelt-documents" title="Permalink to this headline">¶</a></h1>
+<p>To more rapidly and effectively examine the Great American Debate on climate change,
+we want to identify arguments and claims made in internet content related to climate change.</p>
+<p>The sentences that contain arguments can then be further processed for analyzing
+the content and position of the argument, including whether they are for or against
+the given topic. However, this is a time-consuming process for humans to do. It
+would be far more efficient for a machine to automatically pre-label each sentence
+with whether or not there may be an argument or claim within that sentence, with some
+confidence.</p>
+<p>The <a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText API</a> allows
+queries via a <a class="reference external" href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a>
+API, running a BERT-like model for argument extraction.</p>
+<p>TODO: more content here, point to the references doc?</p>
+<p>Below, we describe how to use this API for argument extraction from a list of URLs
+containing web articles on a target topic.</p>
+<div class="section" id="using-the-high-level-extractor-application">
+<h2>Using the high-level extractor application<a class="headerlink" href="#using-the-high-level-extractor-application" title="Permalink to this headline">¶</a></h2>
+<p>blarg</p>
+</div>
+<div class="section" id="using-the-sessions-api">
+<h2>Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> API<a class="headerlink" href="#using-the-sessions-api" title="Permalink to this headline">¶</a></h2>
+<p>We provide a low-level wrapper around the
+<a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText REST API calls</a>,
+allowing configurable access to changing the different parameters used in the query.</p>
 </div>
 </div>
 
@@ -64,22 +76,20 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Commands</a><ul>
-<li><a class="reference internal" href="#syncing-data-to-s3">Syncing data to S3</a></li>
+<li><a class="reference internal" href="#">Extracting arguments from GDELT documents</a><ul>
+<li><a class="reference internal" href="#using-the-high-level-extractor-application">Using the high-level extractor application</a></li>
+<li><a class="reference internal" href="#using-the-sessions-api">Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> API</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="getting-started.html"
-                        title="previous chapter">Getting Started</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="setup_ec2.html"
-                        title="next chapter">Setting up EC2 instance</a></p>
+  <p class="topless"><a href="download_data.html"
+                        title="previous chapter">Downloading existing datasets</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/commands.rst.txt"
+      <li><a href="_sources/extract_arguments.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -107,10 +117,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="setup_ec2.html" title="Setting up EC2 instance"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="getting-started.html" title="Getting Started"
+          <a href="download_data.html" title="Downloading existing datasets"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
       </ul>

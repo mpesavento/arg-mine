@@ -16,7 +16,9 @@
     <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extracting arguments from GDELT documents" href="extract_arguments.html" />
+    <link rel="prev" title="Setting up EC2 instance" href="setup_ec2.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,6 +29,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="extract_arguments.html" title="Extracting arguments from GDELT documents"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup_ec2.html" title="Setting up EC2 instance"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
@@ -41,14 +49,36 @@
 <p>Some data has already been downloaded and made rapidly accessible to the
 <code class="docutils literal notranslate"><span class="pre">arg-mine</span></code> application. This data can be downloaded via synchronizing to the
 AWS S3 project bucket.</p>
-<p><strong>Project data bucket URI</strong>
-(why is this not bolding, or line breaking??
-<a class="reference external" href="https://s3.console.aws.amazon.com/s3/buckets/arg-mine-gdelt-data/">https://s3.console.aws.amazon.com/s3/buckets/arg-mine-gdelt-data/</a></p>
-<p>The datasets currently exist in two stages: <code class="docutils literal notranslate"><span class="pre">raw</span></code> and <code class="docutils literal notranslate"><span class="pre">processed</span></code>.</p>
-<div class="section" id="raw-data">
-<h2>Raw data<a class="headerlink" href="#raw-data" title="Permalink to this headline">¶</a></h2>
-<p>This is the
-<a class="reference external" href="https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/">GDELT dataset</a>,
+<p>The datasets currently exist in two stages: <code class="docutils literal notranslate"><span class="pre">raw</span></code> and <code class="docutils literal notranslate"><span class="pre">processed</span></code>. Here, we
+describe the process of downloading the raw data. In <span class="xref std std-ref">extract_arugments</span>, we
+show how to run the extraction API to download document metadata and the associated
+sentences and sentence metadata.</p>
+<div class="section" id="aws-storage">
+<h2>AWS Storage<a class="headerlink" href="#aws-storage" title="Permalink to this headline">¶</a></h2>
+<p>Downloaded and already processed data is stored in the AWS bucket associated with the
+Great American Debate AWS account. The URL is given below.</p>
+<dl class="simple">
+<dt><strong>Project data AWS S3 bucket URI</strong>:</dt><dd><p><a class="reference external" href="https://s3.console.aws.amazon.com/s3/buckets/arg-mine-gdelt-data/">https://s3.console.aws.amazon.com/s3/buckets/arg-mine-gdelt-data/</a></p>
+</dd>
+</dl>
+<p>The contents of this bucket are structured identically to the content in the root
+<code class="docutils literal notranslate"><span class="pre">data/</span></code> folder for the repository, serving to act as a backup cache for any data that is
+downloaded or extracted.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sync_data_to_s3</span></code> will use <code class="docutils literal notranslate"><span class="pre">aws</span> <span class="pre">s3</span> <span class="pre">sync</span></code> to recursively sync files in your local <code class="docutils literal notranslate"><span class="pre">arg-mmine/data/</span></code> up to <cite>arg-mine-gdelt-data/data/</cite>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sync_data_from_s3</span></code> will use <code class="docutils literal notranslate"><span class="pre">aws</span> <span class="pre">s3</span> <span class="pre">sync</span></code> to recursively sync files from <code class="docutils literal notranslate"><span class="pre">arg-mine-gdelt-data/data/</span></code> to local <code class="docutils literal notranslate"><span class="pre">arg-mine/data/</span></code>.</p></li>
+</ul>
+<p>If working in a new instance, either on an EC2 or your local host, you will want to:</p>
+<ol class="arabic simple">
+<li><p>download existing data via <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sync_data_to_s3</span></code></p></li>
+<li><p>run your extraction with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">batch_extract_gdelt</span></code> (see <a class="reference internal" href="extract_arguments.html#extract-arguments"><span class="std std-ref">Extracting arguments from GDELT documents</span></a> for more information)</p></li>
+<li><p>sync the new data to S3 with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">sync_data_from_s3</span></code></p></li>
+</ol>
+</div>
+<div class="section" id="gdelt-dataset">
+<h2>GDELT dataset<a class="headerlink" href="#gdelt-dataset" title="Permalink to this headline">¶</a></h2>
+<p>This project uses the
+<a class="reference external" href="https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/">GDELT climate change dataset</a>,
 which encompasses online media stories from global sources over the time span of 2015-2020.
 The data consists mainly of a list of URLs to the target articles, the title of the article, and
 a “label” containing the context from the article with one of the key phrases used to create the dataset.</p>
@@ -65,17 +95,63 @@ a “label” containing the context from the article with one of the key phrase
 and following the identified keyword.</p>
 <p>In this study, we are not using the context; we are only using the list of URLs to extract sentences
 from each document using the <a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText API</a>.</p>
-<div class="section" id="download-gdelt">
-<h3>Download GDELT<a class="headerlink" href="#download-gdelt" title="Permalink to this headline">¶</a></h3>
-<p>You can manually download the .zip files from the <a class="reference external" href="https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/">GDELT dataset</a> webpage.
+<p>To see more information on the raw download process, see <span class="xref std std-ref">download_gdelt_climate_en</span></p>
+</div>
+<div class="section" id="download-gdelt-urls">
+<h2>Download GDELT URLs<a class="headerlink" href="#download-gdelt-urls" title="Permalink to this headline">¶</a></h2>
+<p>You can manually download the .zip files from the <a class="reference internal" href="#gdelt-dataset">GDELT dataset</a> webpage.
 A simpler way to do this would be to run the makefile command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">download</span><span class="o">-</span><span class="n">gdelt</span>
 </pre></div>
 </div>
 <p>This will download all years of the dataset into the repositories
-<code class="docutils literal notranslate"><span class="pre">data/raw/2020-climate-change-narrative</span></code> folder, extract the zip files into the CSV files,
-and remove the leftover zip files.</p>
+<code class="docutils literal notranslate"><span class="pre">data/raw/2020-climate-change-narrative</span></code> folder,
+extract the zip files into the CSV files, and remove the leftover zip files,
+leaving only the CSVs containing the URLs</p>
+<p>The <cite>make download-gdelt</cite> command is a thin wrapper into a docker instance that runs the
+command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">download_gdelt_climate_en</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This python command does the downloading. The code can be seen
+here <span class="xref std std-doc">arg_mine/data/download_gdelt_climate_en.py</span></p>
 <p>This download will consume 7 MB of your harddrive space.</p>
+<div class="section" id="load-the-gdelt-data">
+<h3>Load the GDELT data<a class="headerlink" href="#load-the-gdelt-data" title="Permalink to this headline">¶</a></h3>
+<p>Data loaders have been written to easily read the CSV data for your target year.
+The GDELT loader automatically creates a <code class="docutils literal notranslate"><span class="pre">pd.Timestamp</span></code> from the parsed datetime in the CSV files.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">arg_mine</span> <span class="kn">import</span> <span class="n">DATA_DIR</span>
+<span class="kn">from</span> <span class="nn">arg_mine.data</span> <span class="kn">import</span> <span class="n">loaders</span>
+<span class="n">csv_datapath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-climate-change-narrative&quot;</span><span class="p">)</span>
+<span class="n">csv_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">csv_datapath</span><span class="p">,</span> <span class="s2">&quot;WebNewsEnglishSnippets.2020.csv&quot;</span><span class="p">)</span>
+<span class="n">url_df</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">get_gdelt_df</span><span class="p">(</span><span class="n">csv_filepath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns a pandas DataFrame containing the contents of the GDELT dataset.
+One can readily concatenate all GDELT data as well:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_gdelt_data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">loaders</span><span class="o">.</span><span class="n">get_gdelt_df</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">csv_datapath</span><span class="p">,</span> <span class="s2">&quot;WebNewsEnglishSnippets.</span><span class="si">{}</span><span class="s2">.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">)))</span>
+     <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">2021</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which writes out to <code class="docutils literal notranslate"><span class="pre">stdout</span></code> via logging:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">42</span><span class="p">:</span><span class="mi">49</span><span class="p">,</span><span class="mi">503</span><span class="p">:</span><span class="n">arg_mine</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">reading</span> <span class="n">data</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">2020</span><span class="o">-</span><span class="n">climate</span><span class="o">-</span><span class="n">change</span><span class="o">-</span><span class="n">narrative</span><span class="o">/</span><span class="n">WebNewsEnglishSnippets</span><span class="o">.</span><span class="mf">2015.</span><span class="n">csv</span>
+<span class="n">INFO</span><span class="p">:</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">01</span><span class="p">,</span><span class="mi">592</span><span class="p">:</span><span class="n">arg_mine</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">reading</span> <span class="n">data</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">2020</span><span class="o">-</span><span class="n">climate</span><span class="o">-</span><span class="n">change</span><span class="o">-</span><span class="n">narrative</span><span class="o">/</span><span class="n">WebNewsEnglishSnippets</span><span class="o">.</span><span class="mf">2016.</span><span class="n">csv</span>
+<span class="n">INFO</span><span class="p">:</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="mi">734</span><span class="p">:</span><span class="n">arg_mine</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">reading</span> <span class="n">data</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">2020</span><span class="o">-</span><span class="n">climate</span><span class="o">-</span><span class="n">change</span><span class="o">-</span><span class="n">narrative</span><span class="o">/</span><span class="n">WebNewsEnglishSnippets</span><span class="o">.</span><span class="mf">2017.</span><span class="n">csv</span>
+<span class="n">INFO</span><span class="p">:</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span><span class="mi">640</span><span class="p">:</span><span class="n">arg_mine</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">reading</span> <span class="n">data</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">2020</span><span class="o">-</span><span class="n">climate</span><span class="o">-</span><span class="n">change</span><span class="o">-</span><span class="n">narrative</span><span class="o">/</span><span class="n">WebNewsEnglishSnippets</span><span class="o">.</span><span class="mf">2018.</span><span class="n">csv</span>
+<span class="n">INFO</span><span class="p">:</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">36</span><span class="p">,</span><span class="mi">511</span><span class="p">:</span><span class="n">arg_mine</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">reading</span> <span class="n">data</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">2020</span><span class="o">-</span><span class="n">climate</span><span class="o">-</span><span class="n">change</span><span class="o">-</span><span class="n">narrative</span><span class="o">/</span><span class="n">WebNewsEnglishSnippets</span><span class="o">.</span><span class="mf">2019.</span><span class="n">csv</span>
+<span class="n">INFO</span><span class="p">:</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">50</span><span class="p">,</span><span class="mi">968</span><span class="p">:</span><span class="n">arg_mine</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">reading</span> <span class="n">data</span> <span class="n">from</span><span class="p">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="mi">2020</span><span class="o">-</span><span class="n">climate</span><span class="o">-</span><span class="n">change</span><span class="o">-</span><span class="n">narrative</span><span class="o">/</span><span class="n">WebNewsEnglishSnippets</span><span class="o">.</span><span class="mf">2020.</span><span class="n">csv</span>
+</pre></div>
+</div>
+<p>Most commands automatically use logging. If desired, an outer service application can be
+written to output all logs to a log file, rather than <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</p>
+</div>
+<div class="section" id="next">
+<h3>Next<a class="headerlink" href="#next" title="Permalink to this headline">¶</a></h3>
+<p>In the next section, we will learn about argument extraction based on the raw GDELT data.
+<a class="reference internal" href="extract_arguments.html#extract-arguments"><span class="std std-ref">Extracting arguments from GDELT documents</span></a></p>
 </div>
 </div>
 </div>
@@ -89,14 +165,23 @@ and remove the leftover zip files.</p>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Downloading existing datasets</a><ul>
-<li><a class="reference internal" href="#raw-data">Raw data</a><ul>
-<li><a class="reference internal" href="#download-gdelt">Download GDELT</a></li>
+<li><a class="reference internal" href="#aws-storage">AWS Storage</a></li>
+<li><a class="reference internal" href="#gdelt-dataset">GDELT dataset</a></li>
+<li><a class="reference internal" href="#download-gdelt-urls">Download GDELT URLs</a><ul>
+<li><a class="reference internal" href="#load-the-gdelt-data">Load the GDELT data</a></li>
+<li><a class="reference internal" href="#next">Next</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup_ec2.html"
+                        title="previous chapter">Setting up EC2 instance</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extract_arguments.html"
+                        title="next chapter">Extracting arguments from GDELT documents</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -127,6 +212,12 @@ and remove the leftover zip files.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="extract_arguments.html" title="Extracting arguments from GDELT documents"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup_ec2.html" title="Setting up EC2 instance"
+             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
