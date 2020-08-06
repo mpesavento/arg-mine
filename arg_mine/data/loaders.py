@@ -88,7 +88,7 @@ def load_processed_csv(
     return df
 
 
-def concat_csvs(filename_glob, base_path):
+def concat_csvs(filename_glob, read_path):
     """
     Given a globbed filename (eg "my_files_doc*.csv"), concatenate the returned
     CSVs into a DataFrame
@@ -97,14 +97,15 @@ def concat_csvs(filename_glob, base_path):
     ----------
     filename_glob : str
         filename matching the target files, needs to match the requirements from `glob` module
-    base_path : str
-        where to start looking for the files
+        Eg: ``"gdelt_2020_docs_docs*.csv"`` will find all files matching that pattern
+    read_path : str
+        base path to start looking for the files
 
     Returns
     -------
     pd.DataFrame
     """
-    filepath_list = sorted(glob.glob(os.path.join(base_path, filename_glob)))
+    filepath_list = sorted(glob.glob(os.path.join(read_path, filename_glob)))
     concat_df = pd.concat([pd.read_csv(filename) for filename in filepath_list], axis=0)
     # TODO: make this drop more generic when we have more than one type of processed data
     concat_df.dropna(subset=["sentence_original"], inplace=True)

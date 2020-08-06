@@ -1,4 +1,4 @@
-.. getting-started
+.. _getting-started:
 
 Getting Started
 ===============
@@ -48,15 +48,16 @@ To set up a virtual environment for development (assuming you have conda install
 This will create an environment in conda, if conda is installed, or a virtualenv if not. This
 will also install all dev requirements into the env.
 
-A full server set up from scratch can be found in the documentation at :doc:`setup_ec2`_
+A full server set up from scratch can be found in the documentation at
+:doc:`Setup EC2 <../setup_ec2>`.
 
 
 Setting up AWS credentials
 --------------------------
-To set up the AWS command line interface (`cli`) with your credentials, first make sure
+To set up the AWS command line interface (``awscli``) with your credentials, first make sure
 the AWS CLI has been installed. Currently, we recommend installing version 2:
 https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
-Follow these instructions for installation.
+Follow these instructions for installation for your target operating system.
 
 Once installed, you need to add your secrets to the CLI. In a terminal, run::
 
@@ -66,7 +67,7 @@ This will prompt you for your:
 
 * AWS access key
 * AWS secret key
-* AWS region (currently `us-east-2`)
+* AWS region (currently ``us-east-2``)
 * output format (default is json, recommended)
 
 ``make`` commands
@@ -97,7 +98,7 @@ This will launch the jupyter lab server, with the host repository volume-mapped 
 
 To update the documentation and push the update to http://mpesavento.github.io/arg-mine::
 
-    make docs
+    make docs-upload
 
 Note that this will overwrite any previous documentation and publish the new content live.
 

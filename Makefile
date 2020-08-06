@@ -86,8 +86,11 @@ compile-reqs:
 sync-reqs:
 	pip-sync requirements_dev.txt
 
-docs:
+docs-upload:
 	./scripts/build_upload_docs.sh
+
+docs:
+	cd ./docs/ && make html && cd ..
 
 .PHONY: clean data lint \
 	requirements \

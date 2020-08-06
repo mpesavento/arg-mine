@@ -67,6 +67,7 @@ def download_gdelt_year(year, base_url_fmt=BASE_URL_FMT):
         raise IOError("Expected to find a zip file, found '{}' instead".format(ext))
     csv_filepath = os.path.join(gdelt_raw_dir, csv_filename)
 
+    # sanity check to see if we have already downloaded the file.
     if not os.path.isfile(csv_filepath):
         download_file_from_url(full_url, zip_filepath)
         with zipfile.ZipFile(zip_filepath, "r") as zip_ref:
