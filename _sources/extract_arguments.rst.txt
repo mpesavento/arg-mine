@@ -15,7 +15,9 @@ confidence.
 
 The `ArgumentText API <https://api.argumentsearch.com/en/doc>`_ allows
 queries via a `RESTful <https://en.wikipedia.org/wiki/Representational_state_transfer>`_
-API, running a BERT-like model for argument extraction.
+API, running a BERT-like model for argument extraction. The primary literature for
+the argument mining model can be found  in :ref:`modeling_references`.
+TODO: why is this link not working???
 
 TODO: more content here, point to the references doc?
 
@@ -24,9 +26,47 @@ containing web articles on a target topic.
 
 Using the high-level extractor application
 ------------------------------------------
-blarg
+There are two primary data classes that are used to create data objects from the
+information returned from the REST API.
 
-Using the ``sessions`` API
+`ClassifyMetadata`
+^^^^^^^^^^^^^^^^^^
+TODO: how do I point to the source for this object??
+
+A data class that catches the returned dictionary from the low level ``requests``
+API call and makes it readily accessible and convertible to other formats.
+It also adds a ``doc_id``, based on the MD5 hash of the URL.
+This id serves as a unique index for each document,
+allowing rapid cross-referencing between sentences and document metadata.
+
+
+`ClassifiedSentence`
+^^^^^^^^^^^^^^^^^^^^
+A data class that catches the returned dictionary from the low level ``requests``
+API call. It also creates the URL-associated ``doc_id`` and a ``sentence_id``,
+based on the MD5 hash of the sentence. This has the side benefit of rapidly
+checking if identical sentences are repeated across different documents.
+
+This class also uses the enum class ``ArgumentLabel`` consistently identify
+whether a sentence contains an argument or not, eg ``argument`` or ``no argument``.
+
+It also uses the enum class ``StanceLabel``, with the possible values of ``pro``,
+``con``, and NA (empty string).
+
+
+.. code-block:: python
+
+    out_dict = classify_url_sentences(topic, url, user_id, api_key)
+
+    doc_metadata = ClassifyMetadata.from_dict(out_dict["metadata"]))
+    sentence_list = [
+        ClassifiedSentence.from_dict(url, topic, sentence)
+        for sentence in out_dict["sentences"]
+    ]
+
+
+
+Using the ``sessions`` module
 --------------------------
 We provide a low-level wrapper around the
 `ArgumentText REST API calls <https://api.argumentsearch.com/en/doc>`_,

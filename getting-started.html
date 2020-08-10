@@ -17,7 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Commands" href="commands.html" />
+    <link rel="next" title="Setting up EC2 instance" href="setup_ec2.html" />
     <link rel="prev" title="arg_mine documentation" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -30,7 +30,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="commands.html" title="Commands"
+          <a href="setup_ec2.html" title="Setting up EC2 instance"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="arg_mine documentation"
@@ -50,6 +50,49 @@
 A part of the Great American Debate project <a class="reference external" href="https://www.greatamericandebate.org/">https://www.greatamericandebate.org/</a></p>
 <p>You can read the full documentation here:
 <a class="reference external" href="http://mpesavento.github.io/arg-mine">http://mpesavento.github.io/arg-mine</a></p>
+<div class="section" id="project-set-up">
+<h2>Project set up<a class="headerlink" href="#project-set-up" title="Permalink to this headline">¶</a></h2>
+<p>First, clone the repository to your target location:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">folder</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">save</span><span class="o">/</span><span class="n">projects</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mpesavento</span><span class="o">/</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">arg</span><span class="o">-</span><span class="n">mine</span>
+</pre></div>
+</div>
+<p>To set up a virtual environment for development (assuming you have conda installed,
+from the cloned project root, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">create</span><span class="o">-</span><span class="n">environment</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">arg</span><span class="o">-</span><span class="n">mine</span>
+<span class="n">make</span> <span class="n">requirements</span>
+</pre></div>
+</div>
+<p>This will create an environment in <a class="reference external" href="https://docs.conda.io/en/latest/">conda</a>,
+if conda or <a class="reference external" href="https://www.anaconda.com/products/individual">anaconda</a> is installed,
+or a <a class="reference external" href="https://virtualenv.pypa.io/en/latest/">virtualenv</a> if not.
+This
+will also install all dev requirements into the env.</p>
+<p>A full server set up from scratch can be found in the documentation at
+<a class="reference internal" href="setup_ec2.html"><span class="doc">Setup EC2</span></a>. This document also contains the instructions
+on how to set up the virtualenv environment, which is a lighter installation
+than <code class="docutils literal notranslate"><span class="pre">miniconda</span></code> or <code class="docutils literal notranslate"><span class="pre">anaconda</span></code>.</p>
+</div>
+<div class="section" id="setting-up-aws-credentials">
+<h2>Setting up AWS credentials<a class="headerlink" href="#setting-up-aws-credentials" title="Permalink to this headline">¶</a></h2>
+<p>To set up the AWS command line interface (<code class="docutils literal notranslate"><span class="pre">awscli</span></code>) with your credentials, first make sure
+the AWS CLI has been installed. Currently, we recommend installing version 2:
+<a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html">https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html</a>
+Follow these instructions for installation for your target operating system.</p>
+<p>Once installed, you need to add your secrets to the CLI. In a terminal, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aws</span> <span class="n">configure</span>
+</pre></div>
+</div>
+<p>This will prompt you for your:</p>
+<ul class="simple">
+<li><p>AWS access key</p></li>
+<li><p>AWS secret key</p></li>
+<li><p>AWS region (currently <code class="docutils literal notranslate"><span class="pre">us-east-2</span></code>)</p></li>
+<li><p>output format (default is json, recommended)</p></li>
+</ul>
+</div>
 <div class="section" id="environment-variables">
 <h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
 <p>We are using the <code class="docutils literal notranslate"><span class="pre">dotenv</span></code> package to maintain separation of required keys and submitted code. The file <cite>.env.example</cite>
@@ -76,37 +119,9 @@ file with following required secrets. These will then be available as environmen
 <span class="n">user_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ARGUMENTEXT_USERID&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="project-set-up">
-<h2>Project set up<a class="headerlink" href="#project-set-up" title="Permalink to this headline">¶</a></h2>
-<p>To set up a virtual environment for development (assuming you have conda installed, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">create</span><span class="o">-</span><span class="n">environment</span>
-<span class="n">conda</span> <span class="n">activate</span> <span class="n">arg</span><span class="o">-</span><span class="n">mine</span>
-<span class="n">make</span> <span class="n">requirements</span>
-</pre></div>
-</div>
-<p>This will create an environment in conda, if conda is installed, or a virtualenv if not. This
-will also install all dev requirements into the env.</p>
-<p>A full server set up from scratch can be found in the documentation at
-<a class="reference internal" href="setup_ec2.html"><span class="doc">Setup EC2</span></a>.</p>
-</div>
-<div class="section" id="setting-up-aws-credentials">
-<h2>Setting up AWS credentials<a class="headerlink" href="#setting-up-aws-credentials" title="Permalink to this headline">¶</a></h2>
-<p>To set up the AWS command line interface (<code class="docutils literal notranslate"><span class="pre">awscli</span></code>) with your credentials, first make sure
-the AWS CLI has been installed. Currently, we recommend installing version 2:
-<a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html">https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html</a>
-Follow these instructions for installation for your target operating system.</p>
-<p>Once installed, you need to add your secrets to the CLI. In a terminal, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aws</span> <span class="n">configure</span>
-</pre></div>
-</div>
-<p>This will prompt you for your:</p>
-<ul class="simple">
-<li><p>AWS access key</p></li>
-<li><p>AWS secret key</p></li>
-<li><p>AWS region (currently <code class="docutils literal notranslate"><span class="pre">us-east-2</span></code>)</p></li>
-<li><p>output format (default is json, recommended)</p></li>
-</ul>
+<p>Generally, the lower level API methods will take care of loading these variables for you.
+For example, <code class="docutils literal notranslate"><span class="pre">arg_mine.api.auth.load_auth_tokens()</span></code> will load the required tokens from within
+the <code class="docutils literal notranslate"><span class="pre">arg_mine.api.session</span></code> module.</p>
 </div>
 <div class="section" id="make-commands">
 <h2><code class="docutils literal notranslate"><span class="pre">make</span></code> commands<a class="headerlink" href="#make-commands" title="Permalink to this headline">¶</a></h2>
@@ -120,7 +135,9 @@ either via <code class="docutils literal notranslate"><span class="pre">conda</s
 <a class="reference external" href="https://docs.docker.com/get-docker/">OS-dependent installation instructions</a> here
 for more info on how to do this.</p>
 <p>This <code class="docutils literal notranslate"><span class="pre">build</span></code> command may take a while, as it needs to download all dependencies and
-compile the jupyter lab server.</p>
+compile the jupyter lab server.
+TODO: A future release of this package will allow downloading the compiled
+docker image from DockerHub.</p>
 <p>To access the bash terminal in the docker container, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">shell</span>
 </pre></div>
@@ -130,13 +147,19 @@ compile the jupyter lab server.</p>
 </pre></div>
 </div>
 <p>This will launch the jupyter lab server, with the host repository volume-mapped to the docker container, persisting all changes.</p>
-<p>To update the documentation and push the update to <a class="reference external" href="http://mpesavento.github.io/arg-mine">http://mpesavento.github.io/arg-mine</a>:</p>
+<p>To update the documentation and view it locally, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">docs</span>
+</pre></div>
+</div>
+<p>and in your browser go to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">file</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">your</span> <span class="n">project</span> <span class="n">root</span><span class="o">&gt;</span><span class="n">arg</span><span class="o">-</span><span class="n">mine</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="n">_build</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+<p>To push the update to <a class="reference external" href="http://mpesavento.github.io/arg-mine">http://mpesavento.github.io/arg-mine</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">docs</span><span class="o">-</span><span class="n">upload</span>
 </pre></div>
 </div>
 <p>Note that this will overwrite any previous documentation and publish the new content live.</p>
-<p><strong>TODO</strong>
-Make a command to view documentation locally without publishing it</p>
 </div>
 <div class="section" id="dependency-management">
 <h2>Dependency management<a class="headerlink" href="#dependency-management" title="Permalink to this headline">¶</a></h2>
@@ -150,6 +173,22 @@ conflicts rapidly.</p>
 </div>
 <p>This will compile the <code class="docutils literal notranslate"><span class="pre">requirements.in</span></code> and create a fully updated static <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>,
 with a complete list of available packages and package versions that are known to work.</p>
+<p>After running this command, you will likely want to update the requirements in the
+virtual environment and for the docker image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">requirements</span>
+<span class="n">make</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>You will also want to have all of the project dependencies installed in the
+virtual environment (conda/virtualenv). To do this, make sure you have the
+virtual environment built (<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">create-environment</span></code>) and activated (either <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">arg_mine</span></code> for conda
+or <code class="docutils literal notranslate"><span class="pre">workon</span> <span class="pre">arg_mine</span></code> for venv). If activated, you should see <a href="#id2"><span class="problematic" id="id3">``</span></a>(arg_mine) ``
+at the beginning of the terminal prompt.</p>
+<div class="section" id="next">
+<h3>Next<a class="headerlink" href="#next" title="Permalink to this headline">¶</a></h3>
+<p>Learn how to set up a remote server with this application!
+<a class="reference internal" href="setup_ec2.html"><span class="doc">Setup EC2</span></a></p>
+</div>
 </div>
 </div>
 
@@ -162,11 +201,14 @@ with a complete list of available packages and package versions that are known t
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Getting Started</a><ul>
-<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
 <li><a class="reference internal" href="#project-set-up">Project set up</a></li>
 <li><a class="reference internal" href="#setting-up-aws-credentials">Setting up AWS credentials</a></li>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
 <li><a class="reference internal" href="#make-commands"><code class="docutils literal notranslate"><span class="pre">make</span></code> commands</a></li>
-<li><a class="reference internal" href="#dependency-management">Dependency management</a></li>
+<li><a class="reference internal" href="#dependency-management">Dependency management</a><ul>
+<li><a class="reference internal" href="#next">Next</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -175,8 +217,8 @@ with a complete list of available packages and package versions that are known t
   <p class="topless"><a href="index.html"
                         title="previous chapter">arg_mine documentation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="commands.html"
-                        title="next chapter">Commands</a></p>
+  <p class="topless"><a href="setup_ec2.html"
+                        title="next chapter">Setting up EC2 instance</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -208,7 +250,7 @@ with a complete list of available packages and package versions that are known t
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="commands.html" title="Commands"
+          <a href="setup_ec2.html" title="Setting up EC2 instance"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="arg_mine documentation"

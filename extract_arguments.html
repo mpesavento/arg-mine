@@ -17,6 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modeling primary literature" href="modeling_references.html" />
     <link rel="prev" title="Downloading existing datasets" href="download_data.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -28,6 +29,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="Modeling primary literature"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="download_data.html" title="Downloading existing datasets"
              accesskey="P">previous</a> |</li>
@@ -52,16 +56,48 @@ with whether or not there may be an argument or claim within that sentence, with
 confidence.</p>
 <p>The <a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText API</a> allows
 queries via a <a class="reference external" href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a>
-API, running a BERT-like model for argument extraction.</p>
+API, running a BERT-like model for argument extraction. The primary literature for
+the argument mining model can be found  in <span class="xref std std-ref">modeling_references</span>.
+TODO: why is this link not working???</p>
 <p>TODO: more content here, point to the references doc?</p>
 <p>Below, we describe how to use this API for argument extraction from a list of URLs
 containing web articles on a target topic.</p>
 <div class="section" id="using-the-high-level-extractor-application">
 <h2>Using the high-level extractor application<a class="headerlink" href="#using-the-high-level-extractor-application" title="Permalink to this headline">¶</a></h2>
-<p>blarg</p>
+<p>There are two primary data classes that are used to create data objects from the
+information returned from the REST API.</p>
+<div class="section" id="classifymetadata">
+<h3><cite>ClassifyMetadata</cite><a class="headerlink" href="#classifymetadata" title="Permalink to this headline">¶</a></h3>
+<p>TODO: how do I point to the source for this object??</p>
+<p>A data class that catches the returned dictionary from the low level <code class="docutils literal notranslate"><span class="pre">requests</span></code>
+API call and makes it readily accessible and convertible to other formats.
+It also adds a <code class="docutils literal notranslate"><span class="pre">doc_id</span></code>, based on the MD5 hash of the URL.
+This id serves as a unique index for each document,
+allowing rapid cross-referencing between sentences and document metadata.</p>
 </div>
-<div class="section" id="using-the-sessions-api">
-<h2>Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> API<a class="headerlink" href="#using-the-sessions-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classifiedsentence">
+<h3><cite>ClassifiedSentence</cite><a class="headerlink" href="#classifiedsentence" title="Permalink to this headline">¶</a></h3>
+<p>A data class that catches the returned dictionary from the low level <code class="docutils literal notranslate"><span class="pre">requests</span></code>
+API call. It also creates the URL-associated <code class="docutils literal notranslate"><span class="pre">doc_id</span></code> and a <code class="docutils literal notranslate"><span class="pre">sentence_id</span></code>,
+based on the MD5 hash of the sentence. This has the side benefit of rapidly
+checking if identical sentences are repeated across different documents.</p>
+<p>This class also uses the enum class <code class="docutils literal notranslate"><span class="pre">ArgumentLabel</span></code> consistently identify
+whether a sentence contains an argument or not, eg <code class="docutils literal notranslate"><span class="pre">argument</span></code> or <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">argument</span></code>.</p>
+<p>It also uses the enum class <code class="docutils literal notranslate"><span class="pre">StanceLabel</span></code>, with the possible values of <code class="docutils literal notranslate"><span class="pre">pro</span></code>,
+<code class="docutils literal notranslate"><span class="pre">con</span></code>, and NA (empty string).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">out_dict</span> <span class="o">=</span> <span class="n">classify_url_sentences</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+
+<span class="n">doc_metadata</span> <span class="o">=</span> <span class="n">ClassifyMetadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]))</span>
+<span class="n">sentence_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ClassifiedSentence</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;sentences&quot;</span><span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-the-sessions-module">
+<h2>Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> module<a class="headerlink" href="#using-the-sessions-module" title="Permalink to this headline">¶</a></h2>
 <p>We provide a low-level wrapper around the
 <a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText REST API calls</a>,
 allowing configurable access to changing the different parameters used in the query.</p>
@@ -77,8 +113,12 @@ allowing configurable access to changing the different parameters used in the qu
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Extracting arguments from GDELT documents</a><ul>
-<li><a class="reference internal" href="#using-the-high-level-extractor-application">Using the high-level extractor application</a></li>
-<li><a class="reference internal" href="#using-the-sessions-api">Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> API</a></li>
+<li><a class="reference internal" href="#using-the-high-level-extractor-application">Using the high-level extractor application</a><ul>
+<li><a class="reference internal" href="#classifymetadata"><cite>ClassifyMetadata</cite></a></li>
+<li><a class="reference internal" href="#classifiedsentence"><cite>ClassifiedSentence</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-sessions-module">Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> module</a></li>
 </ul>
 </li>
 </ul>
@@ -86,6 +126,9 @@ allowing configurable access to changing the different parameters used in the qu
   <h4>Previous topic</h4>
   <p class="topless"><a href="download_data.html"
                         title="previous chapter">Downloading existing datasets</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modeling_references.html"
+                        title="next chapter">Modeling primary literature</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -116,6 +159,9 @@ allowing configurable access to changing the different parameters used in the qu
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="Modeling primary literature"
+             >next</a> |</li>
         <li class="right" >
           <a href="download_data.html" title="Downloading existing datasets"
              >previous</a> |</li>

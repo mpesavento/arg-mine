@@ -1,4 +1,5 @@
-.. _download-data:
+.. _`download-data`:
+
 Downloading existing datasets
 =============================
 
@@ -57,7 +58,7 @@ and following the identified keyword.
 In this study, we are not using the context; we are only using the list of URLs to extract sentences
 from each document using the `ArgumentText API <https://api.argumentsearch.com/en/doc>`_.
 
-To see more information on the raw download process, see :ref:`download_gdelt_climate_en`
+To see more information on the raw download process, see :ref:`../arg_mine/data/download_gdelt_climate_en`
 
 
 Download GDELT URLs
@@ -78,7 +79,7 @@ command::
     arg_mine/data/download_gdelt_climate_en.py
 
 This python command does the downloading. The code can be seen
-here :doc:`arg_mine/data/download_gdelt_climate_en.py`
+here :file:`../arg_mine/data/download_gdelt_climate_en.py`
 
 
 This download will consume 7 MB of your harddrive space.

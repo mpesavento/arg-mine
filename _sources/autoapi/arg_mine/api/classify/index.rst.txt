@@ -97,7 +97,7 @@ Functions
 
 .. py:class:: ClassifyMetadata
 
-   data class to hold the return values from a classify API call
+   data class for the document metadata from a given URL, via a classify API call
 
    .. attribute:: doc_id
       :annotation: :str
