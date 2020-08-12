@@ -16,7 +16,9 @@
     <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ML primary literature &amp; references" href="modeling_references.html" />
+    <link rel="prev" title="Extracting arguments from GDELT documents" href="extract_arguments.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,6 +29,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="extract_arguments.html" title="Extracting arguments from GDELT documents"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
@@ -40,7 +48,129 @@
 <span id="explore-data"></span><h1>Exploring the Mined Argument Data<a class="headerlink" href="#exploring-the-mined-argument-data" title="Permalink to this headline">¶</a></h1>
 <p>So now you have some datasets, consisting of the documents and the sentences
 from those documents. What does this data look like? What can we do with it downstream?</p>
-<p>First, a few notes on IDs and cross-linking between sentences and documents.</p>
+<div class="section" id="document-and-sentence-ids">
+<h2>Document and Sentence IDs<a class="headerlink" href="#document-and-sentence-ids" title="Permalink to this headline">¶</a></h2>
+<p>First, a few notes on IDs and cross-linking between sentences and documents.
+To make it easy to identify unique documents and unique sentences, we use the
+<a class="reference external" href="https://en.wikipedia.org/wiki/MD5">MD5</a> hash generation algorithm to create unique
+IDs.</p>
+<p>For each URL in the GDELT dataset, we use the full URL as the input string
+to the hash. This guarantees that each document ID will be unique to each URL we extract.
+If there are duplicate URLs, we can search on unique IDs to only return unique
+documents.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arg_mine</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">unique_hash</span><span class="p">(</span><span class="s2">&quot;https://www.stourbridgenews.co.uk/news/national/18141364.seven-arrested-gas-rig-protest/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>gives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cc5e8dcf8b787ea4fc0f7455a84559ac</span>
+</pre></div>
+</div>
+<p>Similarly, for sentence IDs we use the full sentence string to create the hash;
+in particular, we use the <code class="docutils literal notranslate"><span class="pre">sentencePreprocessed</span></code> output from the ArgumenText API.
+The benefit of using the sentence as the input to the MD5 hash is that it becomes really
+easy to see if the same sentences are being used across different articles.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">unique_hash</span><span class="p">(</span><span class="s2">&quot;She said the oil and gas industry is “part of the solution” to climate change.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>gives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">6086288265e33</span><span class="n">cf745512f794d26e9ed</span>
+</pre></div>
+</div>
+<p>These hash values are saved in the CSV files, and will be useful for linking the
+target tables in a database. For example, you can find all sentences associated
+with a given article rapidly if you know the doc_id or the origin URL.</p>
+</div>
+<div class="section" id="argument-classification-results">
+<h2>Argument Classification results<a class="headerlink" href="#argument-classification-results" title="Permalink to this headline">¶</a></h2>
+<p>What is an argument, or a claim?
+The <a class="reference external" href="https://www.greatamericandebate.org/">Great American Debate</a> has clear
+definitions for these terms, which is beyond the scope of this documentation.</p>
+<p>The trained BERT-like model underlying the
+<a class="reference external" href="https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf">ArgumentText classifier</a>
+was trained on 8 different topics, none of which are related to climate change.
+However, the primary literature suggests that the model is reasonably good at
+transfer learning, and is able to generalize to other topics such as climate change.</p>
+<p>As referenced in the ArgumenText API <a class="reference external" href="https://api.argumentsearch.com/en/doc">documentation</a>,
+for a URL that is passed in, the model returns all of the parsed sentences, whether or not the
+sentence contains an <code class="docutils literal notranslate"><span class="pre">argument</span></code> or <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">argument</span></code> (thresholded at 0.5 confidence),
+the confidence score of the label, and the predicted stance (<code class="docutils literal notranslate"><span class="pre">pro</span></code> vs <code class="docutils literal notranslate"><span class="pre">con</span></code>), which
+is currently not being used.</p>
+<p>The returned data can be controlled with the <code class="docutils literal notranslate"><span class="pre">arg-mine</span></code> API, via
+<code class="docutils literal notranslate"><span class="pre">arg_mine.api.classify.bundle_payload()</span></code>. Two main factors that will affect the outputs
+are the <code class="docutils literal notranslate"><span class="pre">topicRelevance</span></code> model and <code class="docutils literal notranslate"><span class="pre">showOnlyArgs</span></code> option.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">topicRelevance</span></code> model (default: <code class="docutils literal notranslate"><span class="pre">word2vec</span></code>)selects the word distance matching algorithm to find
+words that are similar to the given topic, eg “climate change”. The <code class="docutils literal notranslate"><span class="pre">classify.TopicRelevance</span></code>
+enum class contains all of the possible options.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">showOnlyArgs</span></code> decreases the memory load on the client computer (currently unclear if
+it decreases computational load on the API server) by only returning sentences that are classified
+as arguments. However, this has the side effect of possibly missing some sentences
+that contain arguments and have a confidence score lower than 0.50.</p>
+</div>
+<div class="section" id="argument-mining-accuracy">
+<h2>Argument Mining accuracy<a class="headerlink" href="#argument-mining-accuracy" title="Permalink to this headline">¶</a></h2>
+<p>While the transfer learning of the BERT-based argument classifier is reasonably
+performative, it is not perfect. In a
+<a class="reference external" href="https://github.com/mpesavento/arg-mine/blob/master/notebooks/reports/argText%20accuracy%20evaluation%2020200714.ipynb">report</a>
+done to evaluate the accuracy, precision,
+and recall of the model, we analyzed the results on 600 manually labeled sentences.
+With a dataset based on the presumed natural
+distribution of sentences containing arguments vs no arguments (~21% of published articles),
+we see</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 16%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td></td>
+<td><p>accuracy</p></td>
+<td><p>precision</p></td>
+<td><p>recall</p></td>
+<td><p>f1_score</p></td>
+<td><p>roc_auc</p></td>
+</tr>
+<tr class="row-even"><td><p>threshold = 0.5</p></td>
+<td><p>0.821429</p></td>
+<td><p>0.555556</p></td>
+<td><p>0.833333</p></td>
+<td><p>0.666667</p></td>
+<td><p>0.894746</p></td>
+</tr>
+</tbody>
+</table>
+<p>Overall, the model correctly identifies 82% of the true positives and true negatives.
+The recall score of <code class="docutils literal notranslate"><span class="pre">0.83</span></code> indicates that the model is pretty good at identifying
+arugment sentences as argument sentences.</p>
+<p>The mediocre precision score indicates that out of the sentences that the model
+thinks are arguments, just over half of them are actually arguments. Part of the
+reason behind this is based on the fact that sentences containing arguments are
+more rare than sentences without arguments (about 1 in 5). This ratio may be different
+depending on the topic selected.</p>
+<p>The precision score can be slightly increased (order of 0.1) by increasing the threshold
+of confidence values from 0.5 to 0.90. This would also cause a corresponding decrease
+in recall, resulting in more false negatives (sentences that are actually
+arguments labeled as not argument).</p>
+<p>To adjust for the target balance of precision vs recall, the user can threshold
+based on the confidence value returned.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arg_mine</span> <span class="kn">import</span> <span class="n">DATA_DIR</span>
+<span class="kn">from</span> <span class="nn">arg_mine.data</span> <span class="kn">import</span> <span class="n">loaders</span>
+<span class="n">data_processed_project</span> <span class="o">=</span> <span class="s2">&quot;gdelt-climate-change-docs&quot;</span>
+<span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s2">&quot;processed&quot;</span><span class="p">,</span> <span class="n">data_processed_project</span><span class="p">)</span>
+<span class="n">docs_df</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">load_processed_csv</span><span class="p">(</span><span class="s2">&quot;gdelt_2020_docs_docs0-999.csv&quot;</span><span class="p">,</span> <span class="n">data_processed_project</span><span class="p">)</span>
+<span class="n">sentences_df</span> <span class="o">=</span> <span class="n">loaders</span><span class="o">.</span><span class="n">load_processed_csv</span><span class="p">(</span><span class="s2">&quot;gdelt_2020_sentences_docs0-999.csv&quot;</span><span class="p">,</span> <span class="n">data_processed_project</span><span class="p">,</span> <span class="n">drop_nan_cols</span><span class="o">=</span><span class="s1">&#39;sentence_original&#39;</span><span class="p">)</span>
+<span class="n">target_threshold</span> <span class="o">=</span> <span class="mf">0.75</span>
+
+<span class="n">sentences_df</span><span class="p">[</span><span class="s1">&#39;argument_outcome&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sentences_df</span><span class="o">.</span><span class="n">argument_confidence</span> <span class="o">&gt;</span> <span class="n">target_threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This code creates a new column in the sentences dataframe that contains a binary integer result
+for all sentences that have a confidence greater than the given threshold.</p>
+</div>
 </div>
 
 
@@ -49,6 +179,22 @@ from those documents. What does this data look like? What can we do with it down
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Exploring the Mined Argument Data</a><ul>
+<li><a class="reference internal" href="#document-and-sentence-ids">Document and Sentence IDs</a></li>
+<li><a class="reference internal" href="#argument-classification-results">Argument Classification results</a></li>
+<li><a class="reference internal" href="#argument-mining-accuracy">Argument Mining accuracy</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="extract_arguments.html"
+                        title="previous chapter">Extracting arguments from GDELT documents</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modeling_references.html"
+                        title="next chapter">ML primary literature &amp; references</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -79,6 +225,12 @@ from those documents. What does this data look like? What can we do with it down
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="extract_arguments.html" title="Extracting arguments from GDELT documents"
+             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>

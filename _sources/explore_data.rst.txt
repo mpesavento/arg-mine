@@ -6,4 +6,128 @@ Exploring the Mined Argument Data
 So now you have some datasets, consisting of the documents and the sentences
 from those documents. What does this data look like? What can we do with it downstream?
 
+
+Document and Sentence IDs
+----------------------------
 First, a few notes on IDs and cross-linking between sentences and documents.
+To make it easy to identify unique documents and unique sentences, we use the
+`MD5 <https://en.wikipedia.org/wiki/MD5>`_ hash generation algorithm to create unique
+IDs.
+
+For each URL in the GDELT dataset, we use the full URL as the input string
+to the hash. This guarantees that each document ID will be unique to each URL we extract.
+If there are duplicate URLs, we can search on unique IDs to only return unique
+documents.
+
+.. code-block:: python
+
+    from arg_mine import utils
+    utils.unique_hash("https://www.stourbridgenews.co.uk/news/national/18141364.seven-arrested-gas-rig-protest/")
+
+gives:
+
+.. code-block::
+
+    cc5e8dcf8b787ea4fc0f7455a84559ac
+
+Similarly, for sentence IDs we use the full sentence string to create the hash;
+in particular, we use the ``sentencePreprocessed`` output from the ArgumenText API.
+The benefit of using the sentence as the input to the MD5 hash is that it becomes really
+easy to see if the same sentences are being used across different articles.
+
+.. code-block:: python
+
+    utils.unique_hash("She said the oil and gas industry is “part of the solution” to climate change.")
+
+gives:
+
+.. code-block::
+
+    6086288265e33cf745512f794d26e9ed
+
+These hash values are saved in the CSV files, and will be useful for linking the
+target tables in a database. For example, you can find all sentences associated
+with a given article rapidly if you know the doc_id or the origin URL.
+
+
+Argument Classification results
+-------------------------------
+What is an argument, or a claim?
+The `Great American Debate <https://www.greatamericandebate.org/>`_ has clear
+definitions for these terms, which is beyond the scope of this documentation.
+
+The trained BERT-like model underlying the
+`ArgumentText classifier <https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf>`_
+was trained on 8 different topics, none of which are related to climate change.
+However, the primary literature suggests that the model is reasonably good at
+transfer learning, and is able to generalize to other topics such as climate change.
+
+As referenced in the ArgumenText API `documentation <https://api.argumentsearch.com/en/doc>`_,
+for a URL that is passed in, the model returns all of the parsed sentences, whether or not the
+sentence contains an ``argument`` or ``no argument`` (thresholded at 0.5 confidence),
+the confidence score of the label, and the predicted stance (``pro`` vs ``con``), which
+is currently not being used.
+
+The returned data can be controlled with the ``arg-mine`` API, via
+``arg_mine.api.classify.bundle_payload()``. Two main factors that will affect the outputs
+are the ``topicRelevance`` model and ``showOnlyArgs`` option.
+
+The ``topicRelevance`` model (default: ``word2vec``)selects the word distance matching algorithm to find
+words that are similar to the given topic, eg "climate change". The ``classify.TopicRelevance``
+enum class contains all of the possible options.
+
+The ``showOnlyArgs`` decreases the memory load on the client computer (currently unclear if
+it decreases computational load on the API server) by only returning sentences that are classified
+as arguments. However, this has the side effect of possibly missing some sentences
+that contain arguments and have a confidence score lower than 0.50.
+
+
+Argument Mining accuracy
+------------------------
+While the transfer learning of the BERT-based argument classifier is reasonably
+performative, it is not perfect. In a
+`report <https://github.com/mpesavento/arg-mine/blob/master/notebooks/reports/argText%20accuracy%20evaluation%2020200714.ipynb>`_
+done to evaluate the accuracy, precision,
+and recall of the model, we analyzed the results on 600 manually labeled sentences.
+With a dataset based on the presumed natural
+distribution of sentences containing arguments vs no arguments (~21% of published articles),
+we see
+
++-----------------+----------+-----------+----------+----------+----------+
+|                 | accuracy | precision | recall   | f1_score | roc_auc  |
++-----------------+----------+-----------+----------+----------+----------+
+| threshold = 0.5 | 0.821429 | 0.555556  | 0.833333 | 0.666667 | 0.894746 |
++-----------------+----------+-----------+----------+----------+----------+
+
+Overall, the model correctly identifies 82% of the true positives and true negatives.
+The recall score of ``0.83`` indicates that the model is pretty good at identifying
+arugment sentences as argument sentences.
+
+The mediocre precision score indicates that out of the sentences that the model
+thinks are arguments, just over half of them are actually arguments. Part of the
+reason behind this is based on the fact that sentences containing arguments are
+more rare than sentences without arguments (about 1 in 5). This ratio may be different
+depending on the topic selected.
+
+The precision score can be slightly increased (order of 0.1) by increasing the threshold
+of confidence values from 0.5 to 0.90. This would also cause a corresponding decrease
+in recall, resulting in more false negatives (sentences that are actually
+arguments labeled as not argument).
+
+To adjust for the target balance of precision vs recall, the user can threshold
+based on the confidence value returned.
+
+.. code-block:: python
+
+    from arg_mine import DATA_DIR
+    from arg_mine.data import loaders
+    data_processed_project = "gdelt-climate-change-docs"
+    base_path = os.path.join(DATA_DIR, "processed", data_processed_project)
+    docs_df = loaders.load_processed_csv("gdelt_2020_docs_docs0-999.csv", data_processed_project)
+    sentences_df = loaders.load_processed_csv("gdelt_2020_sentences_docs0-999.csv", data_processed_project, drop_nan_cols='sentence_original')
+    target_threshold = 0.75
+
+    sentences_df['argument_outcome'] = (sentences_df.argument_confidence > target_threshold).astype(int)
+
+This code creates a new column in the sentences dataframe that contains a binary integer result
+for all sentences that have a confidence greater than the given threshold.
