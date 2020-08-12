@@ -38,6 +38,9 @@
             
   <div class="section" id="module-arg_mine.data.extract_gdelt_sentences">
 <span id="arg-mine-data-extract-gdelt-sentences"></span><h1><a class="reference internal" href="#module-arg_mine.data.extract_gdelt_sentences" title="arg_mine.data.extract_gdelt_sentences"><code class="xref py py-mod docutils literal notranslate"><span class="pre">arg_mine.data.extract_gdelt_sentences</span></code></a><a class="headerlink" href="#module-arg_mine.data.extract_gdelt_sentences" title="Permalink to this headline">¶</a></h1>
+<p><p>Main entry point for document sentence argument classification from a list of URLs
+TODO: add unit testing for the CLI options</p>
+</p>
 <div class="section" id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="functions">
@@ -48,7 +51,7 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.extract_gdelt_sentences.main" title="arg_mine.data.extract_gdelt_sentences.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>(ndocs, chunk_size, batch_size)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.data.extract_gdelt_sentences.main" title="arg_mine.data.extract_gdelt_sentences.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>(ndocs, start_row, end_row, chunk_size, batch_size, year)</p></td>
 <td><p>Download and extract GDELT data to “data/raw/2020-climate-change-narrative”</p></td>
 </tr>
 </tbody>
@@ -58,9 +61,14 @@
 <code class="sig-prename descclassname">arg_mine.data.extract_gdelt_sentences.</code><code class="sig-name descname">_logger</code><a class="headerlink" href="#arg_mine.data.extract_gdelt_sentences._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py data">
+<dt id="arg_mine.data.extract_gdelt_sentences._WRITE_FILENAME_FMT">
+<code class="sig-prename descclassname">arg_mine.data.extract_gdelt_sentences.</code><code class="sig-name descname">_WRITE_FILENAME_FMT</code><em class="property"> = gdelt_{year}_{data}_docs{start:0{ndigit}d}-{end:0{ndigit}d}.csv</em><a class="headerlink" href="#arg_mine.data.extract_gdelt_sentences._WRITE_FILENAME_FMT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt id="arg_mine.data.extract_gdelt_sentences.main">
-<code class="sig-prename descclassname">arg_mine.data.extract_gdelt_sentences.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ndocs</span></em>, <em class="sig-param"><span class="n">chunk_size</span></em>, <em class="sig-param"><span class="n">batch_size</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.extract_gdelt_sentences.main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">arg_mine.data.extract_gdelt_sentences.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ndocs</span></em>, <em class="sig-param"><span class="n">start_row</span></em>, <em class="sig-param"><span class="n">end_row</span></em>, <em class="sig-param"><span class="n">chunk_size</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">year</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.data.extract_gdelt_sentences.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download and extract GDELT data to “data/raw/2020-climate-change-narrative”</p>
 </dd></dl>
 
@@ -80,6 +88,9 @@
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#arg_mine.data.extract_gdelt_sentences._logger">_logger</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#arg_mine.data.extract_gdelt_sentences._WRITE_FILENAME_FMT">_WRITE_FILENAME_FMT</a></li>
 </ul>
 <ul>
 <li><a class="reference internal" href="#arg_mine.data.extract_gdelt_sentences.main">main</a></li>

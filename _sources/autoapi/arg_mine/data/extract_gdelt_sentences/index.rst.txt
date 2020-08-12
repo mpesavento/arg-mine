@@ -3,6 +3,12 @@
 
 .. py:module:: arg_mine.data.extract_gdelt_sentences
 
+.. autoapi-nested-parse::
+
+   Main entry point for document sentence argument classification from a list of URLs
+   TODO: add unit testing for the CLI options
+
+
 
 Module Contents
 ---------------
@@ -21,7 +27,12 @@ Functions
 
    
 
-.. function:: main(ndocs, chunk_size, batch_size)
+.. data:: _WRITE_FILENAME_FMT
+   :annotation: = gdelt_{year}_{data}_docs{start:0{ndigit}d}-{end:0{ndigit}d}.csv
+
+   
+
+.. function:: main(ndocs, start_row, end_row, chunk_size, batch_size, year)
 
    Download and extract GDELT data to "data/raw/2020-climate-change-narrative"
 

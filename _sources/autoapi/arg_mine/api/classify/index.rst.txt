@@ -276,6 +276,24 @@ Functions
 
 .. function:: bundle_payload(topic, url, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC)
 
+   Bundle the target json payload with API parameters
+
+   Note that this call collects the authentication tokens for each time
+   this method is called.
+
+   :param topic: keywords used in topic_relevance search
+   :type topic: str
+   :param url: full URL to a target web document
+   :type url: str
+   :param only_arguments: If True, only return sentences that contain arguments. This option
+                          can be enabled to save storage space
+   :type only_arguments: bool
+   :param topic_relevance: enum/str for which topic relevance model to use. See TopicRelevance.
+   :type topic_relevance: TopicRelevance
+
+   :returns: json-able dict to be used in the http request
+   :rtype: dict
+
 
 .. function:: classify_url_sentences(topic: str, url: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)
 
@@ -288,10 +306,6 @@ Functions
    :type topic: str
    :param url: source of the content, webpage URL works well
    :type url: str
-   :param user_id:
-   :type user_id: str
-   :param api_key:
-   :type api_key: str
    :param only_arguments: only return the sentences of the estimated arguments
                           TODO: check to see if setting this true decreases the computation time on the server
    :type only_arguments: bool
@@ -382,8 +396,8 @@ Functions
    :param response_list:
    :type response_list: Iterable[requests.Response]
 
-   :returns: docs_df, sentences_df
-   :rtype: Tuple[pd.DataFrame, pd.DataFrame]
+   :returns: docs_df, sentences_df, missing_url_list
+   :rtype: Tuple[pd.DataFrame, pd.DataFrame, List]
 
 
 .. function:: response_error_check(response)

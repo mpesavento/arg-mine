@@ -75,7 +75,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#arg_mine.api.classify.bundle_payload" title="arg_mine.api.classify.bundle_payload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bundle_payload</span></code></a>(topic, url, only_arguments: bool = False, topic_relevance: str = TopicRelevance.WORD2VEC)</p></td>
-<td><p></p></td>
+<td><p>Bundle the target json payload with API parameters</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#arg_mine.api.classify.classify_url_sentences" title="arg_mine.api.classify.classify_url_sentences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_url_sentences</span></code></a>(topic: str, url: str, only_arguments: bool = True, topic_relevance: str = TopicRelevance.WORD2VEC, timeout: float = session.DEFAULT_TIMEOUT, request_session=None)</p></td>
 <td><p>For a given URL and topic phrase, identify which sentences contain arguments</p></td>
@@ -343,7 +343,27 @@ The kwargs in this class are optional, and are not required when parsing from a 
 <dl class="py function">
 <dt id="arg_mine.api.classify.bundle_payload">
 <code class="sig-prename descclassname">arg_mine.api.classify.</code><code class="sig-name descname">bundle_payload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">only_arguments</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">topic_relevance</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">TopicRelevance.WORD2VEC</span></em><span class="sig-paren">)</span><a class="headerlink" href="#arg_mine.api.classify.bundle_payload" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bundle the target json payload with API parameters</p>
+<p>Note that this call collects the authentication tokens for each time
+this method is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> (<em>str</em>) – keywords used in topic_relevance search</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – full URL to a target web document</p></li>
+<li><p><strong>only_arguments</strong> (<em>bool</em>) – If True, only return sentences that contain arguments. This option
+can be enabled to save storage space</p></li>
+<li><p><strong>topic_relevance</strong> (<a class="reference internal" href="#arg_mine.api.classify.TopicRelevance" title="arg_mine.api.classify.TopicRelevance"><em>TopicRelevance</em></a>) – enum/str for which topic relevance model to use. See TopicRelevance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>json-able dict to be used in the http request</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="arg_mine.api.classify.classify_url_sentences">
@@ -356,8 +376,6 @@ vs non-arguments</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>topic</strong> (<em>str</em>) – string of keywords used to query if sentence states argument on topic</p></li>
 <li><p><strong>url</strong> (<em>str</em>) – source of the content, webpage URL works well</p></li>
-<li><p><strong>user_id</strong> (<em>str</em>) – </p></li>
-<li><p><strong>api_key</strong> (<em>str</em>) – </p></li>
 <li><p><strong>only_arguments</strong> (<em>bool</em>) – only return the sentences of the estimated arguments
 TODO: check to see if setting this true decreases the computation time on the server</p></li>
 <li><p><strong>topic_relevance</strong> (<em>str</em>) – use options from TopicRelevance enum</p></li>
@@ -473,10 +491,10 @@ TODO: check to see if setting this true decreases the computation time on the se
 <dd class="field-odd"><p><strong>response_list</strong> (<em>Iterable</em><em>[</em><em>requests.Response</em><em>]</em>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>docs_df, sentences_df</p>
+<dd class="field-even"><p>docs_df, sentences_df, missing_url_list</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[pd.DataFrame, pd.DataFrame]</p>
+<dd class="field-odd"><p>Tuple[pd.DataFrame, pd.DataFrame, List]</p>
 </dd>
 </dl>
 </dd></dl>

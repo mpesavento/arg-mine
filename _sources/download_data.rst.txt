@@ -124,6 +124,8 @@ Most commands automatically use logging. If desired, an outer service applicatio
 written to output all logs to a log file, rather than ``stdout``.
 
 
+
+
 Next
 ^^^^
 In the next section, we will learn about argument extraction based on the raw GDELT data.

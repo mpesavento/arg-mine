@@ -17,7 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Modeling primary literature" href="modeling_references.html" />
+    <link rel="next" title="ML primary literature &amp; references" href="modeling_references.html" />
     <link rel="prev" title="Downloading existing datasets" href="download_data.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -30,7 +30,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="modeling_references.html" title="Modeling primary literature"
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="download_data.html" title="Downloading existing datasets"
@@ -57,18 +57,85 @@ confidence.</p>
 <p>The <a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText API</a> allows
 queries via a <a class="reference external" href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a>
 API, running a BERT-like model for argument extraction. The primary literature for
-the argument mining model can be found  in <a class="reference internal" href="modeling_references.html#modeling-references"><span class="std std-ref">Modeling primary literature</span></a>.
-TODO: why is this link not working???</p>
-<p>TODO: more content here, point to the references doc?</p>
+the argument mining model can be found in <a class="reference internal" href="modeling_references.html#modeling-references"><span class="std std-ref">ML primary literature &amp; references</span></a>.</p>
 <p>Below, we describe how to use this API for argument extraction from a list of URLs
 containing web articles on a target topic.</p>
-<div class="section" id="using-the-high-level-extractor-application">
-<h2>Using the high-level extractor application<a class="headerlink" href="#using-the-high-level-extractor-application" title="Permalink to this headline">¶</a></h2>
+<p>Currently, all data is stored as CSV files. The intended structure of the objects
+methods is to make it easy to link to a SQL database containing extracted document
+data. To hold the primary content in a format that is easy to translate between
+returned query data, CSV, and eventually database rows, we have the
+<code class="docutils literal notranslate"><span class="pre">ClassifyMetadata</span></code> object for document metadata, and the <code class="docutils literal notranslate"><span class="pre">ClassifiedSentences</span></code>
+objet for holding the data per extracted sentence.</p>
+<div class="section" id="command-line-interface-for-document-url-argument-extraction">
+<h2>Command Line Interface for document URL argument extraction<a class="headerlink" href="#command-line-interface-for-document-url-argument-extraction" title="Permalink to this headline">¶</a></h2>
+<p>The top level method for running an extraction is the CLI application entry point:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">extract_gdelt_sentences</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">year</span><span class="o">=</span><span class="mi">2020</span> <span class="o">--</span><span class="n">ndocs</span><span class="o">=</span><span class="mi">1000</span>
+</pre></div>
+</div>
+<p>This command will run an extraction on the first 1000 URLs in the year 2020 dataset.</p>
+<p>The command currently defaults to the year <code class="docutils literal notranslate"><span class="pre">2020</span></code>, so you must include that flag
+if you want to run extractions from any other year.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ndocs</span></code> flag specifies the number of documents in the given GDELT year to extract.
+By default, this starts at the first row (row 0) of the year’s dataset.</p>
+<p>For more information on the extraction app, see the help content:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">extract_gdelt_sentences</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<div class="section" id="output-files">
+<h3>Output files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h3>
+<p>The output files will be saved to
+<code class="docutils literal notranslate"><span class="pre">data/processed/gdelt-climate-change-docs</span></code> in two separate files, one for the
+document metadata (<code class="docutils literal notranslate"><span class="pre">gdelt_{year}_docs_*.csv</span></code>), one for the sentences and their
+associated likelihood of containing an arugment or not (<code class="docutils literal notranslate"><span class="pre">gdelt_{year}_sentences_*.csv</span></code>).
+For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">extract_gdelt_sentences</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">year</span><span class="o">=</span><span class="mi">2020</span> <span class="o">--</span><span class="n">ndocs</span><span class="o">=</span><span class="mi">1000</span>
+</pre></div>
+</div>
+<p>loads the dataset for year 2020, and extracts the first 1000 sentences and classifications
+into the files <code class="docutils literal notranslate"><span class="pre">gdelt_2020_docs_docs0000-0999.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">gdelt_2020_sentences_docs0000-0999.csv</span></code>
+Note that if you do not specify <code class="docutils literal notranslate"><span class="pre">start-row</span></code>, it will default to 0, and always start at the
+first document of the year’s dataset.</p>
+</div>
+<div class="section" id="start-end-document-url-indexing">
+<h3>Start/end document URL indexing<a class="headerlink" href="#start-end-document-url-indexing" title="Permalink to this headline">¶</a></h3>
+<p>You can specify the start and end row for a given year. This is useful if you
+want to manually create batched extractions for a given year. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">extract_gdelt_sentences</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">year</span><span class="o">=</span><span class="mi">2020</span> <span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">row</span><span class="o">=</span><span class="mi">42</span> <span class="o">--</span><span class="n">end</span><span class="o">-</span><span class="n">row</span><span class="o">=</span><span class="mi">156</span>
+</pre></div>
+</div>
+<p>would start at row 42 in the GDELT 2020 dataset up through row 156. Note that
+<code class="docutils literal notranslate"><span class="pre">end-row</span></code> is exclusive, keeping consistent with python indexing.</p>
+<p>You can also specify the number of documents you want to extract from a starting row:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">extract_gdelt_sentences</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">year</span><span class="o">=</span><span class="mi">2020</span> <span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">row</span><span class="o">=</span><span class="mi">42</span> <span class="o">--</span><span class="n">ndocs</span><span class="o">=</span><span class="mi">100</span>
+</pre></div>
+</div>
+<p>which would return 100 documents worth of sentences, starting with document 42.</p>
+</div>
+<div class="section" id="batch-extraction">
+<h3>Batch extraction<a class="headerlink" href="#batch-extraction" title="Permalink to this headline">¶</a></h3>
+<p>The extraction job may iterate over many documents, which can eventually cause
+a memory error on the user’s host running the extraction application. In addition,
+errors may occur late in an extraction that would cause all prior data in memory
+to be lost if the application fails for some reason.</p>
+<p>To mitigate this, you can run an extraction in batches, where it writes the output
+from the argument miner API to the output files at the end of every batch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">arg_mine</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">extract_gdelt_sentences</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">year</span><span class="o">=</span><span class="mi">2020</span> <span class="o">--</span><span class="n">ndocs</span><span class="o">=</span><span class="mi">5000</span> <span class="o">--</span><span class="n">batch</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span>
+</pre></div>
+</div>
+<p>This line extracts sentences from the first 5k documents in 2020, iterating
+with a batch size of 1000 documents over 5 batches. This will give five output files
+with the document metadata, and five files containing all of the classified sentences.</p>
+</div>
+</div>
+<div class="section" id="using-the-classify-module">
+<h2>Using the <code class="docutils literal notranslate"><span class="pre">classify</span></code> module<a class="headerlink" href="#using-the-classify-module" title="Permalink to this headline">¶</a></h2>
+<p>We provide a low-level wrapper around the
+<a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText REST API calls</a>,
+allowing configurable access to changing the different parameters used in the query.</p>
 <p>There are two primary data classes that are used to create data objects from the
 information returned from the REST API.</p>
 <div class="section" id="classifymetadata">
 <h3><cite>ClassifyMetadata</cite><a class="headerlink" href="#classifymetadata" title="Permalink to this headline">¶</a></h3>
-<p>TODO: how do I point to the source for this object??</p>
 <p>A data class that catches the returned dictionary from the low level <code class="docutils literal notranslate"><span class="pre">requests</span></code>
 API call and makes it readily accessible and convertible to other formats.
 It also adds a <code class="docutils literal notranslate"><span class="pre">doc_id</span></code>, based on the MD5 hash of the URL.
@@ -85,22 +152,92 @@ checking if identical sentences are repeated across different documents.</p>
 whether a sentence contains an argument or not, eg <code class="docutils literal notranslate"><span class="pre">argument</span></code> or <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">argument</span></code>.</p>
 <p>It also uses the enum class <code class="docutils literal notranslate"><span class="pre">StanceLabel</span></code>, with the possible values of <code class="docutils literal notranslate"><span class="pre">pro</span></code>,
 <code class="docutils literal notranslate"><span class="pre">con</span></code>, and NA (empty string).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">out_dict</span> <span class="o">=</span> <span class="n">classify_url_sentences</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+</div>
+<div class="section" id="argument-mining-from-web-documents">
+<h3>Argument Mining from web documents<a class="headerlink" href="#argument-mining-from-web-documents" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to classify all sentences in a single document is via the
+<code class="docutils literal notranslate"><span class="pre">classify.classify_url_sentences</span></code> method. Given the target topic, web url, and
+the necessary ArugmenText API keys (loaded from the .env file), we can
+quickly get the returned output from the API. Using the <code class="docutils literal notranslate"><span class="pre">ClassifyMetadata</span></code>
+and <code class="docutils literal notranslate"><span class="pre">ClassifiedSentence</span></code> data classes, we can easily create parsable objects
+from the dict returned from the API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arg_mine.api</span> <span class="kn">import</span> <span class="n">classify</span><span class="p">,</span> <span class="n">auth</span><span class="p">,</span> <span class="n">utils</span>
+<span class="n">user_id</span><span class="p">,</span> <span class="n">api_key</span> <span class="o">=</span> <span class="n">auth</span><span class="o">.</span><span class="n">load_auth_tokens</span><span class="p">()</span>
+<span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;climate change&quot;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://westchester.news12.com/story/41551116/firefighter-dies-as-australia-plans-to-adapt-to-wildfires&quot;</span>
+<span class="n">out_dict</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">classify_url_sentences</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
 
-<span class="n">doc_metadata</span> <span class="o">=</span> <span class="n">ClassifyMetadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]))</span>
+<span class="n">doc_metadata</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">ClassifyMetadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]))</span>
 <span class="n">sentence_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">ClassifiedSentence</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+    <span class="n">classify</span><span class="o">.</span><span class="n">ClassifiedSentence</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;sentences&quot;</span><span class="p">]</span>
 <span class="p">]</span>
 </pre></div>
 </div>
+<p>The sentence_list can easily be turned into a pandas DataFrame:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sentence_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">dataclasses_to_dicts</span><span class="p">(</span><span class="n">sentence_list</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>While this pattern works well for a single document, extraction from tens of thousands
+needs something a bit easier.</p>
+<p>A list of URLs can be run through the API with the following call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">doc_list</span><span class="p">,</span> <span class="n">sentence_list</span><span class="p">,</span> <span class="n">refused_doc_list</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">collect_sentences_by_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Still, this method is slow and does not have the ability to run in parallel.</p>
+</div>
+<div class="section" id="concurrency">
+<h3>Concurrency<a class="headerlink" href="#concurrency" title="Permalink to this headline">¶</a></h3>
+<p>Given a list of urls (eg <code class="docutils literal notranslate"><span class="pre">url_list</span></code> below), two simple calls can run the classification
+query on the given URLs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">url_list</span><span class="o">=</span><span class="p">[</span>
+    <span class="s1">&#39;https://www.stourbridgenews.co.uk/news/national/18141364.seven-arrested-gas-rig-protest/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;http://global.chinadaily.com.cn/a/202001/07/WS5e13ea37a310cf3e35582e46.html&#39;</span>
+    <span class="p">]</span>
+<span class="n">responses</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">fetch_concurrent</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="s2">&quot;climate change&quot;</span><span class="p">,</span> <span class="n">url_list</span><span class="o">=</span><span class="n">url_list</span><span class="p">)</span>
+<span class="n">docs_df</span><span class="p">,</span> <span class="n">sentences_df</span><span class="p">,</span> <span class="n">missing_docs</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">process_responses</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The line with <code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent</span></code> uses concurrent requests (via <code class="docutils literal notranslate"><span class="pre">grequests</span></code>) to send <code class="docutils literal notranslate"><span class="pre">POST</span></code> requests to
+the ArgumenText API server. It returns the response objects from the <cite>requests</cite> module.</p>
+<p>The line with <code class="docutils literal notranslate"><span class="pre">classify.process_responses</span></code> parses the server responses, returning a pandas DataFrame for the
+document metadata (from <cite>ClassifyMetadata</cite>), and a pandas DataFrame for the sentence
+classification results (from <cite>ClassifiedSentence</cite>). It also returns a list
+of the documents that returned a 404 (see <a class="reference internal" href="#missing-documents">“Missing” documents</a> below) or the
+API was otherwise unable to process the request.</p>
+</div>
+<div class="section" id="missing-documents">
+<h3>“Missing” documents<a class="headerlink" href="#missing-documents" title="Permalink to this headline">¶</a></h3>
+<p>Some URLs in the dataset may point to articles that no longer exist, or at least
+are not visible on the host website. These URLs would produce a
+<a class="reference external" href="https://en.wikipedia.org/wiki/HTTP_404">HTTP 404</a> error when the content is requested.</p>
+<p>While the high level API handles these errors, it currently does so silently in
+CLI sentence classifier. This code can be modified to save the missed documents
+in a separate output file, if desired.</p>
 </div>
 </div>
 <div class="section" id="using-the-sessions-module">
 <h2>Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> module<a class="headerlink" href="#using-the-sessions-module" title="Permalink to this headline">¶</a></h2>
-<p>We provide a low-level wrapper around the
-<a class="reference external" href="https://api.argumentsearch.com/en/doc">ArgumentText REST API calls</a>,
-allowing configurable access to changing the different parameters used in the query.</p>
+<p>A low level API has been built for using sessions in python <code class="docutils literal notranslate"><span class="pre">requests</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">session</span></code> module is the basis of a general platform to wrap the
+different components of the ArgumenText API. It provides general error handling
+and classes for managing the different possible endpoints
+(“classify”, “cluster_arguments”, and “search”). The <code class="docutils literal notranslate"><span class="pre">classify</span></code> module is written
+around the matching API endpoint, with future expansion readily accessible.</p>
+<p>Of note, the <code class="docutils literal notranslate"><span class="pre">session.get_session()</span></code> method returns a python <code class="docutils literal notranslate"><span class="pre">requests</span></code>
+session with various timeout and retry logic embedded in it. This
+has proven to be extremely useful when the ArgumenText API server is unable
+to keep up with the load being requested.</p>
+<p>This module also contains the low level <code class="docutils literal notranslate"><span class="pre">fetch()</span></code> method, which performs error
+handling and response extraction for the basic classifier mechanisms</p>
+<div class="section" id="todo">
+<h3>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>move <code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent()</span></code> into sessions</p></li>
+<li><p>swap <code class="docutils literal notranslate"><span class="pre">grequests</span></code> out for <code class="docutils literal notranslate"><span class="pre">requests-futures</span></code>, removing the monkey patch warning</p></li>
+<li><p>Stratify the extraction code; we are doing the same error handling in too many places</p></li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -113,12 +250,24 @@ allowing configurable access to changing the different parameters used in the qu
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Extracting arguments from GDELT documents</a><ul>
-<li><a class="reference internal" href="#using-the-high-level-extractor-application">Using the high-level extractor application</a><ul>
-<li><a class="reference internal" href="#classifymetadata"><cite>ClassifyMetadata</cite></a></li>
-<li><a class="reference internal" href="#classifiedsentence"><cite>ClassifiedSentence</cite></a></li>
+<li><a class="reference internal" href="#command-line-interface-for-document-url-argument-extraction">Command Line Interface for document URL argument extraction</a><ul>
+<li><a class="reference internal" href="#output-files">Output files</a></li>
+<li><a class="reference internal" href="#start-end-document-url-indexing">Start/end document URL indexing</a></li>
+<li><a class="reference internal" href="#batch-extraction">Batch extraction</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#using-the-sessions-module">Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> module</a></li>
+<li><a class="reference internal" href="#using-the-classify-module">Using the <code class="docutils literal notranslate"><span class="pre">classify</span></code> module</a><ul>
+<li><a class="reference internal" href="#classifymetadata"><cite>ClassifyMetadata</cite></a></li>
+<li><a class="reference internal" href="#classifiedsentence"><cite>ClassifiedSentence</cite></a></li>
+<li><a class="reference internal" href="#argument-mining-from-web-documents">Argument Mining from web documents</a></li>
+<li><a class="reference internal" href="#concurrency">Concurrency</a></li>
+<li><a class="reference internal" href="#missing-documents">“Missing” documents</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-sessions-module">Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> module</a><ul>
+<li><a class="reference internal" href="#todo">TODO</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -128,7 +277,7 @@ allowing configurable access to changing the different parameters used in the qu
                         title="previous chapter">Downloading existing datasets</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="modeling_references.html"
-                        title="next chapter">Modeling primary literature</a></p>
+                        title="next chapter">ML primary literature &amp; references</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -160,7 +309,7 @@ allowing configurable access to changing the different parameters used in the qu
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="modeling_references.html" title="Modeling primary literature"
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
              >next</a> |</li>
         <li class="right" >
           <a href="download_data.html" title="Downloading existing datasets"
