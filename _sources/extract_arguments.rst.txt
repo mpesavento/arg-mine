@@ -226,7 +226,9 @@ handling and response extraction for the basic classifier mechanisms
 
 
 TODO
-^^^^
+---------
+There are so many things to do to improve this package.
+
 * move ``classify.fetch_concurrent()`` into sessions
 * swap ``grequests`` out for ``requests-futures``, removing the monkey patch warning
 * Stratify the extraction code; we are doing the same error handling in too many places
