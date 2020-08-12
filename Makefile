@@ -7,7 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUCKET = arg-mine-gdelt-data
 PROFILE = default
-PROJECT_NAME = arg_mine
+PROJECT_NAME = arg_mine  # used in the virtual environment
 PYTHON_INTERPRETER = python3
 DOCKER_WORKSPACE = /opt/workspace
 
@@ -32,25 +32,6 @@ clean:
 lint:
 	flake8 arg_mine
 
-
-
-## Upload Data to S3
-# ignore any hidden files starting with "."
-sync_data_to_s3:
-ifeq (default, $(PROFILE))
-	aws s3 sync data/ s3://${BUCKET}/data/ \
-		--exclude "*/.DS_Store" --exclude "*/.gitignore" --exclude "*/.gitkeep"
-else
-	aws s3 sync data/ s3://${BUCKET}/data/
-endif
-
-## Download Data from S3
-sync_data_from_s3:
-ifeq (default, $(PROFILE))
-	aws s3 sync s3://$(BUCKET)/data/ data/
-else
-	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
-endif
 
 ## Set up python interpreter environment
 create_environment:
@@ -86,11 +67,12 @@ compile-reqs:
 sync-reqs:
 	pip-sync requirements_dev.txt
 
+docs:
+	cd ./docs/ && make html && cd ..
+
 docs-upload:
 	./scripts/build_upload_docs.sh
 
-docs:
-	cd ./docs/ && make html && cd ..
 
 .PHONY: clean data lint \
 	requirements \
@@ -98,6 +80,7 @@ docs:
 	compile-reqs \
 	sync-reqs \
 	docs \
+	docs-upload \
 	sync_data_from_s3 \
 	sync_data_to_s3
 
@@ -134,6 +117,25 @@ test:
 # PROJECT RULES                                                                 #
 #################################################################################
 
+
+## Upload Data to S3
+# ignore any hidden files starting with "."
+sync_data_to_s3:
+ifeq (default, $(PROFILE))
+	aws s3 sync data/ s3://${BUCKET}/data/ \
+		--exclude "*/.DS_Store" --exclude "*/.gitignore" --exclude "*/.gitkeep"
+else
+	aws s3 sync data/ s3://${BUCKET}/data/
+endif
+
+## Download Data from S3
+sync_data_from_s3:
+ifeq (default, $(PROFILE))
+	aws s3 sync s3://$(BUCKET)/data/ data/
+else
+	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
+endif
+
 download-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
@@ -144,19 +146,19 @@ extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=1000
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=1000 --year=2020
 
 test-extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=42
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=5 --year=2020 --start-row=2
 
 batch-extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=10000 --batch-size=1000
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=10000 --batch-size=1000  --year=2020
 
 
 

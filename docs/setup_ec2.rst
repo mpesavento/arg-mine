@@ -1,4 +1,4 @@
-.. _setup_ec2:
+.. _`setup_ec2`:
 
 Setting up EC2 instance
 ==========================
@@ -16,10 +16,13 @@ Once it is started, authenticate via ssh, and install additional utilities
 #. Set up the instance via the AWS console
     `<https://console.aws.amazon.com/ec2/>`_
 
+    The minimum instance type is ``t2.medium``, with 2 cores and 4 GB ram. The preferred
+    and tested instance size is ``t2.large``, with 2 cores and 8 GB ram.
+
     If you do not have a PEM file for secure access to the instance, create one and save it locally,
     Eg, save as ``~/.ssh/gad_ec2_key.pem``
 
-#. Loc in to the instance via ssh
+#. Log in to the instance via ssh
     Eg::
 
         ssh -i ~/.ssh/my_pem_key.pem
@@ -38,7 +41,7 @@ Once it is started, authenticate via ssh, and install additional utilities
     daemon. Is 'docker daemon' running on this host?: dial unix /var/run/docker.sock:
     connect: permission denied``. If this is the case, logout and log back in to the server.
 
-#. Install other useful utilities::
+#. Install other base server requirements::
 
     sudo apt-get install -yq make python3-pip
     python3 -m pip install -q virtualenv virtualenvwrapper
@@ -61,7 +64,7 @@ Set up the repository and code environment
         # copy and add ssh key to your github account
         git clone git@github.com:mpesavento/arg-mine.git
 
-#. Add variables to the env::
+#. Add variables to the env. Copy and paste this block, and run::
 
     cat << 'EOF' >> ~/.bashrc
     export PATH=/home/ubuntu/.local/bin:$PATH

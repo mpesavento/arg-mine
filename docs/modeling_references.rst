@@ -1,7 +1,7 @@
-.. modeling_references:
+.. _`modeling_references`:
 
-Modeling primary literature
-===========================
+ML primary literature & references
+==================================
 
 What did we use for this project?
 

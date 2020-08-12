@@ -4,7 +4,7 @@ import logging
 import time
 
 import requests
-import grequests
+import grequests  # really should have used requests-futures :/=
 import pandas as pd
 import json
 
@@ -42,7 +42,7 @@ class StanceLabel:
 @dataclass
 class ClassifyMetadata:
     """
-    data class to hold the return values from a classify API call
+    data class for the document metadata from a given URL, via a classify API call
     """
 
     doc_id: str  # unique hash associated with the source document / content
@@ -152,6 +152,29 @@ def bundle_payload(
     only_arguments: bool = False,
     topic_relevance: str = TopicRelevance.WORD2VEC,
 ):
+    """
+    Bundle the target json payload with API parameters
+
+    Note that this call collects the authentication tokens for each time
+    this method is called.
+
+    Parameters
+    ----------
+    topic: str
+        keywords used in topic_relevance search
+    url : str
+        full URL to a target web document
+    only_arguments : bool
+        If True, only return sentences that contain arguments. This option
+        can be enabled to save storage space
+    topic_relevance : TopicRelevance
+        enum/str for which topic relevance model to use. See TopicRelevance.
+
+    Returns
+    -------
+    dict
+        json-able dict to be used in the http request
+    """
     user_id, api_key = load_auth_tokens()
     payload = {
         "topic": topic,
@@ -189,8 +212,6 @@ def classify_url_sentences(
         string of keywords used to query if sentence states argument on topic
     url : str
         source of the content, webpage URL works well
-    user_id : str
-    api_key : str
     only_arguments : bool
         only return the sentences of the estimated arguments
         TODO: check to see if setting this true decreases the computation time on the server
@@ -406,10 +427,9 @@ def process_responses(response_list):
 
     Returns
     -------
-    Tuple[pd.DataFrame, pd.DataFrame]
-        docs_df, sentences_df
+    Tuple[pd.DataFrame, pd.DataFrame, List]
+        docs_df, sentences_df, missing_url_list
     """
-
     doc_list = []
     sentence_list = []
     missing_url_list = []

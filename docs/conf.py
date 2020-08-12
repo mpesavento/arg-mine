@@ -52,7 +52,7 @@ master_doc = "index"
 
 # Document Python Code
 autoapi_type = 'python'
-autoapi_dirs = '../arg_mine'
+autoapi_dirs = ['../arg_mine']
 
 
 # The version info for the project you're documenting, acts as replacement for

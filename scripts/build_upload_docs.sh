@@ -31,7 +31,7 @@ touch .nojekyll
 cd ./docs && make html && cd ../
 
 # get the package version number
-PACKAGE_VER=`python version.py`
+PACKAGE_VER=$(python version.py)
 
 if [[ -d "docs/_build/html" ]] && [[ -f "docs/_build/html/index.html" ]]; then
     echo 'Uploading documentation to the gh-pages branch...'
@@ -50,7 +50,7 @@ if [[ -d "docs/_build/html" ]] && [[ -f "docs/_build/html/index.html" ]]; then
 #    $CIRCLE_BUILD_URL
 #    EOM
     git commit -m "Deploy code docs for release: $PACKAGE_VER"
-    git push origin gh-pages
+    git push origin ${TARGET_BRANCH}
 else
     echo '' >&2
     echo 'Warning: No documentation (html) files have been found!' >&2
