@@ -1,0 +1,9 @@
+.. _`explore_data`:
+
+Exploring the Mined Argument Data
+=================================
+
+So now you have some datasets, consisting of the documents and the sentences
+from those documents. What does this data look like? What can we do with it downstream?
+
+First, a few notes on IDs and cross-linking between sentences and documents.
