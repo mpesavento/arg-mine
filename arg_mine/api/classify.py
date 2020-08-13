@@ -248,7 +248,9 @@ def collect_sentences_by_topic(
     Parameters
     ----------
     topic : str
+        keywords to use for topic identification in ArgText
     url_list : List[AnyStr]
+        list of URLs containing documents to argument mine
 
     Returns
     -------
@@ -319,153 +321,7 @@ def collect_sentences_for_url(topic, url, user_id, api_key):
     return doc_list, sentence_list, refused_doc_list
 
 
-def exception_handler(request, exception):
-    """
-    catch raised exceptions and log them
-    Returns any missing urls
-
-    Parameters
-    ----------
-    request : request.Request
-    exception : Optional[Exception]
-
-    Returns
-    -------
-    Optional[AnyStr]
-    """
-    url_404 = None
-    if isinstance(exception, errors.Refused):
-        url = json.loads(request.body.decode("utf-8"))["targetUrl"]
-        # _logger.warning("{}, url={}".format(exception, url))
-        url_404 = url
-    elif isinstance(exception, (errors.Unavailable, errors.ArgumenTextGatewayError)):
-        _logger.error(exception)
-    elif exception is not None:
-        _logger.exception(
-            "Request failed request:{} \n exception:{} ".format(request, exception)
-        )
-    return url_404
-
-
-def fetch_concurrent(
-    topic,
-    url_list,
-    only_arguments: bool = False,
-    topic_relevance: str = TopicRelevance.WORD2VEC,
-    pool_size: int = 5,
-    chunk_size: int = 100,
-):
-    """
-    Given a list of article URLs, iterate through them in chunks and return a list of responses
-
-    TODO: parse the chunks and write to storage files, in case of memory errors
-
-    Parameters
-    ----------
-    topic : str
-    url_list : List[AnyStr]
-    only_arguments : bool
-        only return the sentences of the estimated arguments
-        TODO: check to see if setting this true decreases the computation time on the server
-    topic_relevance : str
-        use options from TopicRelevance enum
-    pool_size : int
-    chunk_size : int
-
-    Returns
-    -------
-    List[requests.Response]
-    """
-    start_time = time.time()
-    s = session.get_session(pool_size=pool_size)
-    response_list = []
-
-    chunk_ix = 0
-    _logger.debug(">>>> starting doc extraction")
-    for i in range(0, len(url_list), chunk_size):
-        iter_time = time.time()
-        chunk_urls = url_list[i : i + chunk_size]  # noqa: E203
-        unsent_requests = (
-            grequests.post(
-                session.ApiUrl.CLASSIFY_BASE_URL,
-                json=bundle_payload(
-                    topic,
-                    u,
-                    only_arguments=only_arguments,
-                    topic_relevance=topic_relevance,
-                ),
-                session=s,
-                allow_redirects=False,
-            )
-            for u in chunk_urls
-        )
-        # output is a list of response objects
-        output = grequests.map(
-            unsent_requests, size=100, exception_handler=exception_handler
-        )
-        response_list.extend(output)
-        _logger.debug(
-            "iteration {} took {:0.3f} s ({} docs)".format(
-                chunk_ix, time.time() - iter_time, chunk_size
-            )
-        )
-        chunk_ix += 1
-
-    _logger.debug(
-        "{} URLs took {:0.3f} s".format(len(url_list), time.time() - start_time)
-    )
-    return response_list
-
-
-def process_responses(response_list):
-    """
-    Take a list of classify responses, convert them to docs and sentences, and create associate dataframes
-
-    Parameters
-    ----------
-    response_list : Iterable[requests.Response]
-
-    Returns
-    -------
-    Tuple[pd.DataFrame, pd.DataFrame, List]
-        docs_df, sentences_df, missing_url_list
-    """
-    doc_list = []
-    sentence_list = []
-    missing_url_list = []
-    for response in response_list:
-        if response is None:
-            # we weren't able to get a result from the server
-            continue
-
-        try:
-            # trigger any exceptions that happened for this doc url
-            response_error_check(response)
-        except Exception as e:
-            if hasattr(response, "request"):
-                # list the docs that the API couldnt access
-                url_404 = exception_handler(response.request, e)
-                if url_404:
-                    missing_url_list.append(url_404)
-            else:
-                _logger.exception(errors.Unavailable(e))
-            continue
-
-        # parse the response output
-        json_response = response.json()
-        if json_response:
-            doc_list.append(ClassifyMetadata.from_dict(json_response["metadata"]))
-            topic = json_response["metadata"]["topic"]
-            url = json_response["metadata"]["userMetadata"]
-            for sentence in json_response["sentences"]:
-                sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
-
-    docs_df = pd.DataFrame(utils.dataclasses_to_dicts(doc_list))
-    sentence_df = pd.DataFrame(utils.dataclasses_to_dicts(sentence_list))
-    return docs_df, sentence_df, missing_url_list
-
-
-def response_error_check(response):
+def _response_error_check(response):
     """
     Trigger any Exceptions that happened during a document URL request
     Convert raised exceptions to internal exception types for consistency
@@ -520,3 +376,157 @@ def response_error_check(response):
         msg = "ArgumentText service had internal error."
         _logger.exception(msg)
         raise errors.ArgumenTextGatewayError(e.response.status_code, msg) from e
+
+
+def _exception_handler(request, exception):
+    """
+    catch raised exceptions and log them
+    Returns any missing urls
+
+    Parameters
+    ----------
+    request : request.Request
+        the request made via HTTP
+    exception : Optional[Exception]
+        the exception that was raised from the given request
+    Returns
+    -------
+    Optional[AnyStr]
+        if there was a 404 error, this method returns the URL that caused the 404
+    """
+    url_404 = None
+    if isinstance(exception, errors.Refused):
+        url = json.loads(request.body.decode("utf-8"))["targetUrl"]
+        # _logger.warning("{}, url={}".format(exception, url))
+        url_404 = url
+    elif isinstance(exception, (errors.Unavailable, errors.ArgumenTextGatewayError)):
+        _logger.error(exception)
+    elif exception is not None:
+        _logger.exception(
+            "Request failed request:{} \n exception:{} ".format(request, exception)
+        )
+    return url_404
+
+
+def fetch_concurrent(
+    topic,
+    url_list,
+    only_arguments: bool = False,
+    topic_relevance: str = TopicRelevance.WORD2VEC,
+    pool_size: int = 5,
+    chunk_size: int = 1000,
+):
+    """
+    Given a list of article URLs, iterate through them in chunks and return a list of responses
+
+
+    Parameters
+    ----------
+    topic : str
+        keywords to use for topic identification in ArgText
+    url_list : List[AnyStr]
+        list of URLs containing documents to argument mine
+    only_arguments : bool
+        only return the sentences of the estimated arguments
+        TODO: check to see if setting this true decreases the computation time on the server
+    topic_relevance : str
+        use options from TopicRelevance enum
+    pool_size : int
+        How many threads to use for concurrency. Suggested=around 5
+    chunk_size : int
+        How many requests to read before downloading them and avoiding out of memory errors
+        (which is a known issue with grequests)
+
+    Returns
+    -------
+    List[requests.Response]
+    """
+    start_time = time.time()
+    s = session.get_session(pool_size=pool_size)
+    response_list = []
+
+    chunk_ix = 0
+    _logger.debug(">>>> starting doc extraction")
+    for i in range(0, len(url_list), chunk_size):
+        iter_time = time.time()
+        chunk_urls = url_list[i : i + chunk_size]  # noqa: E203
+        unsent_requests = (
+            grequests.post(
+                session.ApiUrl.CLASSIFY_BASE_URL,
+                json=bundle_payload(
+                    topic,
+                    u,
+                    only_arguments=only_arguments,
+                    topic_relevance=topic_relevance,
+                ),
+                session=s,
+                allow_redirects=False,
+            )
+            for u in chunk_urls
+        )
+        # output is a list of response objects
+        output = grequests.map(
+            unsent_requests, size=100, exception_handler=_exception_handler
+        )
+        response_list.extend(output)
+        _logger.debug(
+            "iteration {} took {:0.3f} s ({} docs)".format(
+                chunk_ix, time.time() - iter_time, chunk_size
+            )
+        )
+        chunk_ix += 1
+
+    _logger.debug(
+        "{} URLs took {:0.3f} s".format(len(url_list), time.time() - start_time)
+    )
+    return response_list
+
+
+def process_responses(response_list):
+    """
+    Take a list of classify responses, convert them to docs and sentences,
+    and create associate dataframes
+
+    Parameters
+    ----------
+    response_list : Iterable[requests.Response]
+
+    Returns
+    -------
+    Tuple[pd.DataFrame, pd.DataFrame, List]
+        docs_df, sentences_df, missing_url_list
+    """
+    doc_list = []
+    sentence_list = []
+    missing_url_list = []
+    for response in response_list:
+        if response is None:
+            # we weren't able to get a result from the server
+            continue
+
+        try:
+            # trigger any exceptions that happened for this doc url
+            _response_error_check(response)
+        except Exception as e:
+            if hasattr(response, "request"):
+                # list the docs that the API couldnt access
+                url_404 = _exception_handler(response.request, e)
+                if url_404:
+                    missing_url_list.append(url_404)
+            else:
+                _logger.exception(errors.Unavailable(e))
+            continue
+
+        # parse the response output
+        json_response = response.json()
+        if json_response:
+            doc_list.append(ClassifyMetadata.from_dict(json_response["metadata"]))
+            topic = json_response["metadata"]["topic"]
+            url = json_response["metadata"]["userMetadata"]
+            for sentence in json_response["sentences"]:
+                sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
+
+    docs_df = pd.DataFrame(utils.dataclasses_to_dicts(doc_list))
+    sentence_df = pd.DataFrame(utils.dataclasses_to_dicts(sentence_list))
+    return docs_df, sentence_df, missing_url_list
+

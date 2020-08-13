@@ -61,8 +61,10 @@ Identifying conspiracy theories vs real theories
 https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0233879
 
 
-Sentence-BERT
+Sentence-BERT (SBERT)
 ^^^^^^^^^^^^^^^^^^^^^^
 Used in the clustering algorithm
+https://arxiv.org/abs/1908.10084
+
 https://www.groundai.com/project/sentence-bert-sentence-embeddings-using-siamese-bert-networks/1
 [code available](https://github.com/UKPLab/sentence-transformers)
