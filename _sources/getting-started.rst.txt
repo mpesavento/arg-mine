@@ -119,6 +119,7 @@ This will launch the jupyter lab server, with the host repository volume-mapped 
 To update the documentation and view it locally, run::
 
     make docs
+
 and in your browser go to::
 
     file://<your project root>arg-mine/docs/_build/html/index.html
@@ -127,6 +128,7 @@ and in your browser go to::
 To push the update to http://mpesavento.github.io/arg-mine ::
 
     make docs-upload
+
 Note that this will overwrite any previous documentation and publish the new content live.
 
 

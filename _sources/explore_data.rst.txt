@@ -151,4 +151,4 @@ utilizing an `SBERT <https://arxiv.org/abs/1908.10084>`_ model for the sentence
 clustering.
 
 Future work will be able to utilize the low-level wrapper and error handling
-around the ``requests` module to query the clustering end point.
+around the ``requests`` module to query the clustering end point.
