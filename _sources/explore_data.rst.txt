@@ -55,6 +55,11 @@ Argument Classification results
 What is an argument, or a claim?
 The `Great American Debate <https://www.greatamericandebate.org/>`_ has clear
 definitions for these terms, which is beyond the scope of this documentation.
+The ArgumenText classifier is designed to identify a token (in this case a sentence)
+that contains an argument or claim. Manual review of a subset of classified sentences
+revealed that the model does a reasonable job at identifying sentences that contain
+claims. It must be noted that it does not isolate the claim(s) in a sentence, only
+flag that a claim is present.
 
 The trained BERT-like model underlying the
 `ArgumentText classifier <https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf>`_
@@ -74,7 +79,10 @@ are the ``topicRelevance`` model and ``showOnlyArgs`` option.
 
 The ``topicRelevance`` model (default: ``word2vec``)selects the word distance matching algorithm to find
 words that are similar to the given topic, eg "climate change". The ``classify.TopicRelevance``
-enum class contains all of the possible options.
+enum class contains all of the possible options. Other options include ``match-string``
+and ``n_gram_overlap``. ``word2vec`` was selected as the default for the most breadth
+in identifying sentences related to the selected topic. Further studies may examine
+the changes in model performance depending on which ``topicRelevance`` is selected.
 
 The ``showOnlyArgs`` decreases the memory load on the client computer (currently unclear if
 it decreases computational load on the API server) by only returning sentences that are classified
@@ -131,3 +139,16 @@ based on the confidence value returned.
 
 This code creates a new column in the sentences dataframe that contains a binary integer result
 for all sentences that have a confidence greater than the given threshold.
+From this column, the user can rapidly identify sentences that contain arguments.
+
+Next Steps
+---------------
+The next step in this process will be to do a clustering analysis across all sentences
+that contain arguments to identify similarities. The
+`ArgumenText API <https://api.argumentsearch.com/en/doc#api.cluster_arguments>`_
+has a ``cluster_arguments`` HTTP access point suitable for this purpose,
+utilizing an `SBERT <https://arxiv.org/abs/1908.10084>`_ model for the sentence
+clustering.
+
+Future work will be able to utilize the low-level wrapper and error handling
+around the ``requests` module to query the clustering end point.

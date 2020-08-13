@@ -85,7 +85,12 @@ with a given article rapidly if you know the doc_id or the origin URL.</p>
 <h2>Argument Classification results<a class="headerlink" href="#argument-classification-results" title="Permalink to this headline">¶</a></h2>
 <p>What is an argument, or a claim?
 The <a class="reference external" href="https://www.greatamericandebate.org/">Great American Debate</a> has clear
-definitions for these terms, which is beyond the scope of this documentation.</p>
+definitions for these terms, which is beyond the scope of this documentation.
+The ArgumenText classifier is designed to identify a token (in this case a sentence)
+that contains an argument or claim. Manual review of a subset of classified sentences
+revealed that the model does a reasonable job at identifying sentences that contain
+claims. It must be noted that it does not isolate the claim(s) in a sentence, only
+flag that a claim is present.</p>
 <p>The trained BERT-like model underlying the
 <a class="reference external" href="https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf">ArgumentText classifier</a>
 was trained on 8 different topics, none of which are related to climate change.
@@ -101,7 +106,10 @@ is currently not being used.</p>
 are the <code class="docutils literal notranslate"><span class="pre">topicRelevance</span></code> model and <code class="docutils literal notranslate"><span class="pre">showOnlyArgs</span></code> option.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">topicRelevance</span></code> model (default: <code class="docutils literal notranslate"><span class="pre">word2vec</span></code>)selects the word distance matching algorithm to find
 words that are similar to the given topic, eg “climate change”. The <code class="docutils literal notranslate"><span class="pre">classify.TopicRelevance</span></code>
-enum class contains all of the possible options.</p>
+enum class contains all of the possible options. Other options include <code class="docutils literal notranslate"><span class="pre">match-string</span></code>
+and <code class="docutils literal notranslate"><span class="pre">n_gram_overlap</span></code>. <code class="docutils literal notranslate"><span class="pre">word2vec</span></code> was selected as the default for the most breadth
+in identifying sentences related to the selected topic. Further studies may examine
+the changes in model performance depending on which <code class="docutils literal notranslate"><span class="pre">topicRelevance</span></code> is selected.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">showOnlyArgs</span></code> decreases the memory load on the client computer (currently unclear if
 it decreases computational load on the API server) by only returning sentences that are classified
 as arguments. However, this has the side effect of possibly missing some sentences
@@ -169,7 +177,19 @@ based on the confidence value returned.</p>
 </pre></div>
 </div>
 <p>This code creates a new column in the sentences dataframe that contains a binary integer result
-for all sentences that have a confidence greater than the given threshold.</p>
+for all sentences that have a confidence greater than the given threshold.
+From this column, the user can rapidly identify sentences that contain arguments.</p>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>The next step in this process will be to do a clustering analysis across all sentences
+that contain arguments to identify similarities. The
+<a class="reference external" href="https://api.argumentsearch.com/en/doc#api.cluster_arguments">ArgumenText API</a>
+has a <code class="docutils literal notranslate"><span class="pre">cluster_arguments</span></code> HTTP access point suitable for this purpose,
+utilizing an <a class="reference external" href="https://arxiv.org/abs/1908.10084">SBERT</a> model for the sentence
+clustering.</p>
+<p>Future work will be able to utilize the low-level wrapper and error handling
+around the <a href="#id1"><span class="problematic" id="id2">``</span></a>requests` module to query the clustering end point.</p>
 </div>
 </div>
 
@@ -185,6 +205,7 @@ for all sentences that have a confidence greater than the given threshold.</p>
 <li><a class="reference internal" href="#document-and-sentence-ids">Document and Sentence IDs</a></li>
 <li><a class="reference internal" href="#argument-classification-results">Argument Classification results</a></li>
 <li><a class="reference internal" href="#argument-mining-accuracy">Argument Mining accuracy</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
 </ul>
