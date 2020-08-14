@@ -141,14 +141,3 @@ This code creates a new column in the sentences dataframe that contains a binary
 for all sentences that have a confidence greater than the given threshold.
 From this column, the user can rapidly identify sentences that contain arguments.
 
-Next Steps
----------------
-The next step in this process will be to do a clustering analysis across all sentences
-that contain arguments to identify similarities. The
-`ArgumenText API <https://api.argumentsearch.com/en/doc#api.cluster_arguments>`_
-has a ``cluster_arguments`` HTTP access point suitable for this purpose,
-utilizing an `SBERT <https://arxiv.org/abs/1908.10084>`_ model for the sentence
-clustering.
-
-Future work will be able to utilize the low-level wrapper and error handling
-around the ``requests` module to query the clustering end point.

@@ -102,8 +102,8 @@ class ClassifiedSentence:
     The kwargs in this class are optional, and are not required when parsing from a dict
     """
 
-    url: str
     doc_id: str
+    url: str
     topic: str
     sentence_id: str
     argument_confidence: float
@@ -118,8 +118,8 @@ class ClassifiedSentence:
     def from_dict(cls, url, topic, sentence_dict):
         """Load data object from dict"""
         return ClassifiedSentence(
-            url=url,
             doc_id=ClassifyMetadata.make_doc_id(url),
+            url=url,
             topic=topic,
             sentence_id=cls.make_sentence_id(sentence_dict["sentencePreprocessed"]),
             argument_confidence=sentence_dict["argumentConfidence"],

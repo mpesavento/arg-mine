@@ -87,7 +87,7 @@ Set up the repository and code environment
     pip3 install -e .
 
 Set up the docker image and commands
----------------------------------
+------------------------------------
 
 #. Build the docker image
     Run::

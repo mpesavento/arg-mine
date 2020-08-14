@@ -64,6 +64,40 @@ into the files ``gdelt_2020_docs_docs0000-0999.csv`` and ``gdelt_2020_sentences_
 Note that if you do not specify ``start-row``, it will default to 0, and always start at the
 first document of the year's dataset.
 
+The docs file has the following columns:
+
+* doc_id
+* url
+* topic
+* model_version
+* language
+* time_argument_prediction
+* time_attention_computation
+* time_preprocessing
+* time_stance_prediction
+* time_logging
+* time_total
+* total_arguments
+* total_contra_arguments
+* total_pro_arguments
+* total_non_arguments
+* total_classified_sentences
+
+The sentences file has the following schema:
+
+* doc_id
+* url
+* topic
+* sentence_id
+* argument_confidence
+* argument_label
+* sentence_original
+* sentence_preprocessed
+* sort_confidence
+* stance_confidence
+* stance_label
+
+
 Start/end document URL indexing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can specify the start and end row for a given year. This is useful if you
@@ -221,14 +255,6 @@ session with various timeout and retry logic embedded in it. This
 has proven to be extremely useful when the ArgumenText API server is unable
 to keep up with the load being requested.
 
-This module also contains the low level ``fetch()`` method, which performs error
+This module also contains the low level ``session.fetch()`` method, which performs error
 handling and response extraction for the basic classifier mechanisms
 
-
-TODO
----------
-There are so many things to do to improve this package.
-
-* move ``classify.fetch_concurrent()`` into sessions
-* swap ``grequests`` out for ``requests-futures``, removing the monkey patch warning
-* Stratify the extraction code; we are doing the same error handling in too many places

@@ -72,6 +72,8 @@ Each of these should have the corresponding values in the appropriate place.
 * Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.
 * Obtain your ArgumentText keys by filling out the registration form `here <https://api.argumentsearch.com/en/api_registration>`_
 
+MAKE THE argetxt API registration MORE EVIDENT
+
 These env vars can be loaded into the environment inside a script or notebook via::
 
     from dotenv import load_dotenv, find_dotenv
@@ -119,6 +121,7 @@ This will launch the jupyter lab server, with the host repository volume-mapped 
 To update the documentation and view it locally, run::
 
     make docs
+
 and in your browser go to::
 
     file://<your project root>arg-mine/docs/_build/html/index.html
@@ -127,6 +130,7 @@ and in your browser go to::
 To push the update to http://mpesavento.github.io/arg-mine ::
 
     make docs-upload
+
 Note that this will overwrite any previous documentation and publish the new content live.
 
 
