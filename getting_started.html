@@ -92,11 +92,17 @@ Follow these instructions for installation for your target operating system.</p>
 <li><p>AWS region (currently <code class="docutils literal notranslate"><span class="pre">us-east-2</span></code>)</p></li>
 <li><p>output format (default is json, recommended)</p></li>
 </ul>
+<p>You will need to enter your access key and secret key into the <code class="docutils literal notranslate"><span class="pre">.env</span></code> file (see <a class="reference internal" href="#env-vars"><span class="std std-ref">Environment Variables</span></a>).</p>
+</div>
+<div class="section" id="argumentext-api-key-access">
+<h2>ArgumenText API key access<a class="headerlink" href="#argumentext-api-key-access" title="Permalink to this headline">¶</a></h2>
+<p>To access the ArgumenText API service, you need a user_id and key.</p>
+<p>Obtain your ArgumentText keys by filling out the registration form <a class="reference external" href="https://api.argumentsearch.com/en/api_registration">here</a></p>
 </div>
 <div class="section" id="environment-variables">
-<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<span id="env-vars"></span><h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
 <p>We are using the <code class="docutils literal notranslate"><span class="pre">dotenv</span></code> package to maintain separation of required keys and submitted code. The file <cite>.env.example</cite>
-is part of the base repo. To use this file, make a copy named <code class="docutils literal notranslate"><span class="pre">.env</span></code> at the project root, and edit the
+is part of the base repo. To use this file, make a copy of <code class="docutils literal notranslate"><span class="pre">.env.example</span></code> named <code class="docutils literal notranslate"><span class="pre">.env</span></code> at the project root, and edit the
 file with following required secrets. These will then be available as environment variables:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ARGUMENTEXT_USERID</span><span class="o">=&lt;</span><span class="n">your_userid</span><span class="o">&gt;</span>
 <span class="n">ARGUMENTEXT_KEY</span><span class="o">=&lt;</span><span class="n">your_key</span><span class="o">&gt;</span>
@@ -104,12 +110,8 @@ file with following required secrets. These will then be available as environmen
 <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">your_key</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>Each of these should have the corresponding values in the appropriate place.</p>
-<ul class="simple">
-<li><p>Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.</p></li>
-<li><p>Obtain your ArgumentText keys by filling out the registration form <a class="reference external" href="https://api.argumentsearch.com/en/api_registration">here</a></p></li>
-</ul>
-<p>MAKE THE argetxt API registration MORE EVIDENT</p>
+<p>Each of these should have the corresponding values in the appropriate place.
+Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.</p>
 <p>These env vars can be loaded into the environment inside a script or notebook via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
 <span class="n">load_dotenv</span><span class="p">(</span><span class="n">find_dotenv</span><span class="p">())</span>
@@ -204,6 +206,7 @@ at the beginning of the terminal prompt.</p>
 <li><a class="reference internal" href="#">Getting Started</a><ul>
 <li><a class="reference internal" href="#project-set-up">Project set up</a></li>
 <li><a class="reference internal" href="#setting-up-aws-credentials">Setting up AWS credentials</a></li>
+<li><a class="reference internal" href="#argumentext-api-key-access">ArgumenText API key access</a></li>
 <li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
 <li><a class="reference internal" href="#make-commands"><code class="docutils literal notranslate"><span class="pre">make</span></code> commands</a></li>
 <li><a class="reference internal" href="#dependency-management">Dependency management</a><ul>

@@ -55,10 +55,20 @@ This will prompt you for your:
 * AWS region (currently ``us-east-2``)
 * output format (default is json, recommended)
 
+You will need to enter your access key and secret key into the ``.env`` file (see :ref:`env_vars`).
+
+ArgumenText API key access
+--------------------------
+To access the ArgumenText API service, you need a user_id and key.
+
+Obtain your ArgumentText keys by filling out the registration form `here <https://api.argumentsearch.com/en/api_registration>`_
+
+.. _`env_vars`:
+
 Environment Variables
 ---------------------
 We are using the ``dotenv`` package to maintain separation of required keys and submitted code. The file `.env.example`
-is part of the base repo. To use this file, make a copy named ``.env`` at the project root, and edit the
+is part of the base repo. To use this file, make a copy of ``.env.example`` named ``.env`` at the project root, and edit the
 file with following required secrets. These will then be available as environment variables:
 ::
 
@@ -68,11 +78,7 @@ file with following required secrets. These will then be available as environmen
     AWS_SECRET_ACCESS_KEY=<your_key>
 
 Each of these should have the corresponding values in the appropriate place.
-
-* Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.
-* Obtain your ArgumentText keys by filling out the registration form `here <https://api.argumentsearch.com/en/api_registration>`_
-
-MAKE THE argetxt API registration MORE EVIDENT
+Enter in your unique AWS access keys, obtained from your personal account or from your AWS account administrator.
 
 These env vars can be loaded into the environment inside a script or notebook via::
 
