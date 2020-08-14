@@ -15,7 +15,7 @@ Classes
    arg_mine.api.classify.TopicRelevance
    arg_mine.api.classify.ArgumentLabel
    arg_mine.api.classify.StanceLabel
-   arg_mine.api.classify.ClassifyMetadata
+   arg_mine.api.classify.DocumentMetadata
    arg_mine.api.classify.ClassifiedSentence
 
 
@@ -95,7 +95,7 @@ Functions
       
 
 
-.. py:class:: ClassifyMetadata
+.. py:class:: DocumentMetadata
 
    data class for the document metadata from a given URL, via a classify API call
 
@@ -199,12 +199,12 @@ Functions
    data class to hold the return values from a classify API call
    The kwargs in this class are optional, and are not required when parsing from a dict
 
-   .. attribute:: url
+   .. attribute:: doc_id
       :annotation: :str
 
       
 
-   .. attribute:: doc_id
+   .. attribute:: url
       :annotation: :str
 
       
@@ -331,12 +331,12 @@ Functions
    :type url_list: List[AnyStr]
 
    :returns:
-   :rtype: Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+   :rtype: Tuple[List[DocumentMetadata],  List[ClassifiedSentence], List[str]]
 
 
 .. function:: collect_sentences_for_url(topic, url, user_id, api_key)
 
-   Thin wrapper function for getting the ClassifyMetadata and ClassifiedSentence objects for a url
+   Thin wrapper function for getting the DocumentMetadata and ClassifiedSentence objects for a url
 
    :param topic:
    :type topic: str
@@ -348,7 +348,7 @@ Functions
    :type api_key: str
 
    :returns:
-   :rtype: Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+   :rtype: Tuple[List[DocumentMetadata],  List[ClassifiedSentence], List[str]]
 
 
 .. function:: _response_error_check(response)

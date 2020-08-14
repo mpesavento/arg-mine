@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Future Directions &#8212; arg-mine 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ML primary literature &amp; references" href="modeling_references.html" />
+    <link rel="prev" title="Exploring the Mined Argument Data" href="explore_data.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="explore_data.html" title="Exploring the Mined Argument Data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="future-directions">
+<h1>Future Directions<a class="headerlink" href="#future-directions" title="Permalink to this headline">¶</a></h1>
+<p>There is still a lot of work that can be done to improve this tool. Here, we outline
+a few of the suggested improvements on the software engineering side, as well
+as future directions that the data extraction, argument mining, and argument clustering
+can take.</p>
+<div class="section" id="todo">
+<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<p>There are so many things to do to improve this package.</p>
+<ul class="simple">
+<li><p>move <code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent()</span></code> into sessions</p></li>
+<li><p>swap <code class="docutils literal notranslate"><span class="pre">grequests</span></code> out for <code class="docutils literal notranslate"><span class="pre">requests-futures</span></code>, removing the monkey patch warning</p></li>
+<li><p>Stratify the extraction code; we are doing the same error handling in too many places</p></li>
+<li><p>Add a context manager for the authentication tokens in <code class="docutils literal notranslate"><span class="pre">arg_mine.api.auth</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>The next step in this process will be to do a clustering analysis across all sentences
+that contain arguments to identify similarities. The
+<a class="reference external" href="https://api.argumentsearch.com/en/doc#api.cluster_arguments">ArgumenText API</a>
+has a <code class="docutils literal notranslate"><span class="pre">cluster_arguments</span></code> HTTP access point suitable for this purpose,
+utilizing an <a class="reference external" href="https://arxiv.org/abs/1908.10084">SBERT</a> model for the sentence
+clustering.</p>
+<p>Future work will be able to utilize the low-level wrapper and error handling
+around the <code class="docutils literal notranslate"><span class="pre">requests</span></code> module to query the clustering end point.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Future Directions</a><ul>
+<li><a class="reference internal" href="#todo">TODO</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="explore_data.html"
+                        title="previous chapter">Exploring the Mined Argument Data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modeling_references.html"
+                        title="next chapter">ML primary literature &amp; references</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/future_directions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="explore_data.html" title="Exploring the Mined Argument Data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>

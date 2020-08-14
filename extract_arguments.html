@@ -64,8 +64,38 @@ containing web articles on a target topic.</p>
 methods is to make it easy to link to a SQL database containing extracted document
 data. To hold the primary content in a format that is easy to translate between
 returned query data, CSV, and eventually database rows, we have the
-<code class="docutils literal notranslate"><span class="pre">ClassifyMetadata</span></code> object for document metadata, and the <code class="docutils literal notranslate"><span class="pre">ClassifiedSentences</span></code>
-objet for holding the data per extracted sentence.</p>
+<code class="docutils literal notranslate"><span class="pre">DocumentMetadata</span></code> object for document metadata, and the <code class="docutils literal notranslate"><span class="pre">ClassifiedSentences</span></code>
+objet for holding the model predictions per extracted sentence.</p>
+<div class="section" id="argumentext-api">
+<h2>ArgumenText API<a class="headerlink" href="#argumentext-api" title="Permalink to this headline">¶</a></h2>
+<p>The lowest level Application Programming Interface is the RESTful server, hosted at
+<a class="reference external" href="https://api.argumentsearch.com/en">https://api.argumentsearch.com/en</a>. This endpoint has subpaths, depending
+on whether you want to classify, cluster, or search, eg
+<code class="docutils literal notranslate"><span class="pre">https://api.argumentsearch.com/en/classify</span></code>.
+The design is to use the POST verb via HTTP, with a JSON payload containing the
+target content and required parameters. These parameters are fully documented
+<a class="reference external" href="https://api.argumentsearch.com/en/doc">here</a>.</p>
+<p>The model published as a service contains proprietary training data, so does not
+exactly match the model described in the
+<a class="reference external" href="https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf">AURC paper</a>.</p>
+<p>It is important to note the limitations of the service. Based on communication
+with the author of the service (Johannes Daxenberger, a collaborator with the
+<a class="reference external" href="https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf">AURC paper</a>), there are a few key limitations to note:</p>
+<ol class="arabic simple">
+<li><p>There is an internal limit in the server for the number of concurrent connections
+that can occur in parallel, with a given API key. This number is reported to be
+a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code> threads, but this has not been verified. As a rule of thumb,
+it is more efficient to send longer texts in a single request,
+then multiple shorter requests in parallel.</p></li>
+<li><p>The server times out on a given classification task after 200 seconds (3.3 minutes).
+This means that if a document is too large, or you send the server too much content
+to process in a single task, that it may time out on processing the sentence
+classification.</p></li>
+</ol>
+<p>Internally, ArgumenText uses Apache Tika or JusText for article parsing from
+the html webpages into articles and sentences. As such, it is not perfect, and may
+return portions of the webpage that may not be considered part of the main article body.</p>
+</div>
 <div class="section" id="command-line-interface-for-document-url-argument-extraction">
 <h2>Command Line Interface for document URL argument extraction<a class="headerlink" href="#command-line-interface-for-document-url-argument-extraction" title="Permalink to this headline">¶</a></h2>
 <p>The top level method for running an extraction is the CLI application entry point:</p>
@@ -95,6 +125,50 @@ For example:</p>
 into the files <code class="docutils literal notranslate"><span class="pre">gdelt_2020_docs_docs0000-0999.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">gdelt_2020_sentences_docs0000-0999.csv</span></code>
 Note that if you do not specify <code class="docutils literal notranslate"><span class="pre">start-row</span></code>, it will default to 0, and always start at the
 first document of the year’s dataset.</p>
+<p>Note that while a filename may span over a start and end index (say, 0-999), the
+content inside the file may not have that many documents listed internally (eg 1000).
+This is due to data attrition, and a significant number of the articles in the
+GDELT dataset returning 404, and thus no available data. This attrition rate
+appears to be close to 25%. For example, out of 1000 articles, you may expect to see 750
+within the output file.</p>
+<p>The docs file contains the output from the <code class="docutils literal notranslate"><span class="pre">DocumentMetadata</span></code> class, and
+has the following columns:</p>
+<ul class="simple">
+<li><p>doc_id</p></li>
+<li><p>url</p></li>
+<li><p>topic</p></li>
+<li><p>model_version</p></li>
+<li><p>language</p></li>
+<li><p>time_argument_prediction</p></li>
+<li><p>time_attention_computation</p></li>
+<li><p>time_preprocessing</p></li>
+<li><p>time_stance_prediction</p></li>
+<li><p>time_logging</p></li>
+<li><p>time_total</p></li>
+<li><p>total_arguments</p></li>
+<li><p>total_contra_arguments</p></li>
+<li><p>total_pro_arguments</p></li>
+<li><p>total_non_arguments</p></li>
+<li><p>total_classified_sentences</p></li>
+</ul>
+<p>The sentences file contains the output from the <code class="docutils literal notranslate"><span class="pre">ClassifiedSentence</span></code> class, and
+has the following columns:</p>
+<ul class="simple">
+<li><p>doc_id</p></li>
+<li><p>url</p></li>
+<li><p>topic</p></li>
+<li><p>sentence_id</p></li>
+<li><p>argument_confidence</p></li>
+<li><p>argument_label</p></li>
+<li><p>sentence_original</p></li>
+<li><p>sentence_preprocessed</p></li>
+<li><p>sort_confidence</p></li>
+<li><p>stance_confidence</p></li>
+<li><p>stance_label</p></li>
+</ul>
+<p>Other than the <code class="docutils literal notranslate"><span class="pre">doc_id</span></code> and <code class="docutils literal notranslate"><span class="pre">sentence_id</span></code>, all of these values come from the
+<a class="reference external" href="https://api.argumentsearch.com/en/doc#api.classify_api">ArgumenText API classify output</a>
+See their documentation for further information on each column.</p>
 </div>
 <div class="section" id="start-end-document-url-indexing">
 <h3>Start/end document URL indexing<a class="headerlink" href="#start-end-document-url-indexing" title="Permalink to this headline">¶</a></h3>
@@ -125,7 +199,47 @@ from the argument miner API to the output files at the end of every batch:</p>
 <p>This line extracts sentences from the first 5k documents in 2020, iterating
 with a batch size of 1000 documents over 5 batches. This will give five output files
 with the document metadata, and five files containing all of the classified sentences.</p>
+<p>Bathc extraction is to be used in memory-limited environments. For example,
+when running the extraction job on an EC2 <code class="docutils literal notranslate"><span class="pre">t2.large</span></code> instance with 8 GB of memory,
+you may limited to a maximum batch size on the order of 100000 documents. Given that the
+full GDELT dataset contains 5 million articles, batch processing would make sense here.</p>
+<p>It takes approximately 8 hours to run 10000 articles. During that time, the application
+or server may crash, so saving the extracted data once an hour may be a reasonable guideline,
+more so than the limitations on memory.</p>
 </div>
+</div>
+<div class="section" id="document-and-sentence-ids">
+<h2>Document and Sentence IDs<a class="headerlink" href="#document-and-sentence-ids" title="Permalink to this headline">¶</a></h2>
+<p>A few notes on IDs and cross-linking between sentences and documents.
+To make it easy to identify unique documents and unique sentences, we use the
+<a class="reference external" href="https://en.wikipedia.org/wiki/MD5">MD5</a> hash generation algorithm to create unique
+IDs.</p>
+<p>For each URL in the GDELT dataset, we use the full URL as the input string
+to the hash. This guarantees that each document ID will be unique to each URL we extract.
+If there are duplicate URLs, we can search on unique IDs to only return unique
+documents.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arg_mine</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">unique_hash</span><span class="p">(</span><span class="s2">&quot;https://www.stourbridgenews.co.uk/news/national/18141364.seven-arrested-gas-rig-protest/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>gives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cc5e8dcf8b787ea4fc0f7455a84559ac</span>
+</pre></div>
+</div>
+<p>Similarly, for sentence IDs we use the full sentence string to create the hash;
+in particular, we use the <code class="docutils literal notranslate"><span class="pre">sentencePreprocessed</span></code> output from the ArgumenText API.
+The benefit of using the sentence as the input to the MD5 hash is that it becomes really
+easy to see if the same sentences are being used across different articles.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">unique_hash</span><span class="p">(</span><span class="s2">&quot;She said the oil and gas industry is “part of the solution” to climate change.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>gives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">6086288265e33</span><span class="n">cf745512f794d26e9ed</span>
+</pre></div>
+</div>
+<p>These hash values are saved in the CSV files, and will be useful for linking the
+target tables in a database. For example, you can find all sentences associated
+with a given article rapidly if you know the doc_id or the origin URL.</p>
 </div>
 <div class="section" id="using-the-classify-module">
 <h2>Using the <code class="docutils literal notranslate"><span class="pre">classify</span></code> module<a class="headerlink" href="#using-the-classify-module" title="Permalink to this headline">¶</a></h2>
@@ -134,8 +248,8 @@ with the document metadata, and five files containing all of the classified sent
 allowing configurable access to changing the different parameters used in the query.</p>
 <p>There are two primary data classes that are used to create data objects from the
 information returned from the REST API.</p>
-<div class="section" id="classifymetadata">
-<h3><cite>ClassifyMetadata</cite><a class="headerlink" href="#classifymetadata" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="documentmetadata">
+<h3><cite>DocumentMetadata</cite><a class="headerlink" href="#documentmetadata" title="Permalink to this headline">¶</a></h3>
 <p>A data class that catches the returned dictionary from the low level <code class="docutils literal notranslate"><span class="pre">requests</span></code>
 API call and makes it readily accessible and convertible to other formats.
 It also adds a <code class="docutils literal notranslate"><span class="pre">doc_id</span></code>, based on the MD5 hash of the URL.
@@ -158,7 +272,7 @@ whether a sentence contains an argument or not, eg <code class="docutils literal
 <p>The easiest way to classify all sentences in a single document is via the
 <code class="docutils literal notranslate"><span class="pre">classify.classify_url_sentences</span></code> method. Given the target topic, web url, and
 the necessary ArugmenText API keys (loaded from the .env file), we can
-quickly get the returned output from the API. Using the <code class="docutils literal notranslate"><span class="pre">ClassifyMetadata</span></code>
+quickly get the returned output from the API. Using the <code class="docutils literal notranslate"><span class="pre">DocumentMetadata</span></code>
 and <code class="docutils literal notranslate"><span class="pre">ClassifiedSentence</span></code> data classes, we can easily create parsable objects
 from the dict returned from the API.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arg_mine.api</span> <span class="kn">import</span> <span class="n">classify</span><span class="p">,</span> <span class="n">auth</span><span class="p">,</span> <span class="n">utils</span>
@@ -167,7 +281,7 @@ from the dict returned from the API.</p>
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://westchester.news12.com/story/41551116/firefighter-dies-as-australia-plans-to-adapt-to-wildfires&quot;</span>
 <span class="n">out_dict</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">classify_url_sentences</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
 
-<span class="n">doc_metadata</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">ClassifyMetadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]))</span>
+<span class="n">doc_metadata</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">DocumentMetadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]))</span>
 <span class="n">sentence_list</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">classify</span><span class="o">.</span><span class="n">ClassifiedSentence</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">out_dict</span><span class="p">[</span><span class="s2">&quot;sentences&quot;</span><span class="p">]</span>
@@ -181,7 +295,7 @@ from the dict returned from the API.</p>
 <p>While this pattern works well for a single document, extraction from tens of thousands
 needs something a bit easier.</p>
 <p>A list of URLs can be run through the API with the following call:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">doc_list</span><span class="p">,</span> <span class="n">sentence_list</span><span class="p">,</span> <span class="n">refused_doc_list</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">collect_sentences_by_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url_list</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doc_list</span><span class="p">,</span> <span class="n">sentence_list</span><span class="p">,</span> <span class="n">refused_doc_list</span> <span class="o">=</span> <span class="n">classify</span><span class="o">.</span><span class="n">collect_sentences_by_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">url_list</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Still, this method is slow and does not have the ability to run in parallel.</p>
@@ -201,7 +315,7 @@ query on the given URLs.</p>
 <p>The line with <code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent</span></code> uses concurrent requests (via <code class="docutils literal notranslate"><span class="pre">grequests</span></code>) to send <code class="docutils literal notranslate"><span class="pre">POST</span></code> requests to
 the ArgumenText API server. It returns the response objects from the <cite>requests</cite> module.</p>
 <p>The line with <code class="docutils literal notranslate"><span class="pre">classify.process_responses</span></code> parses the server responses, returning a pandas DataFrame for the
-document metadata (from <cite>ClassifyMetadata</cite>), and a pandas DataFrame for the sentence
+document metadata (from <cite>DocumentMetadata</cite>), and a pandas DataFrame for the sentence
 classification results (from <cite>ClassifiedSentence</cite>). It also returns a list
 of the documents that returned a 404 (see <a class="reference internal" href="#missing-documents">“Missing” documents</a> below) or the
 API was otherwise unable to process the request.</p>
@@ -228,17 +342,13 @@ around the matching API endpoint, with future expansion readily accessible.</p>
 session with various timeout and retry logic embedded in it. This
 has proven to be extremely useful when the ArgumenText API server is unable
 to keep up with the load being requested.</p>
-<p>This module also contains the low level <code class="docutils literal notranslate"><span class="pre">fetch()</span></code> method, which performs error
-handling and response extraction for the basic classifier mechanisms</p>
-</div>
-<div class="section" id="todo">
-<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
-<p>There are so many things to do to improve this package.</p>
-<ul class="simple">
-<li><p>move <code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent()</span></code> into sessions</p></li>
-<li><p>swap <code class="docutils literal notranslate"><span class="pre">grequests</span></code> out for <code class="docutils literal notranslate"><span class="pre">requests-futures</span></code>, removing the monkey patch warning</p></li>
-<li><p>Stratify the extraction code; we are doing the same error handling in too many places</p></li>
-</ul>
+<p>This module also contains the low level <code class="docutils literal notranslate"><span class="pre">session.fetch()</span></code> method, which performs error
+handling and response extraction for the basic classifier mechanisms. This
+method contains layers of error handling around the requests.push() call to the
+API end point. Generally, the user shouldn’t need to look into this method.
+Much of the structure in <code class="docutils literal notranslate"><span class="pre">session.fetch()</span></code> is duplicated in
+<code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent()</span></code>, which could probably use some refactoring and
+simplification.</p>
 </div>
 </div>
 
@@ -251,14 +361,16 @@ handling and response extraction for the basic classifier mechanisms</p>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Extracting arguments from GDELT documents</a><ul>
+<li><a class="reference internal" href="#argumentext-api">ArgumenText API</a></li>
 <li><a class="reference internal" href="#command-line-interface-for-document-url-argument-extraction">Command Line Interface for document URL argument extraction</a><ul>
 <li><a class="reference internal" href="#output-files">Output files</a></li>
 <li><a class="reference internal" href="#start-end-document-url-indexing">Start/end document URL indexing</a></li>
 <li><a class="reference internal" href="#batch-extraction">Batch extraction</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#document-and-sentence-ids">Document and Sentence IDs</a></li>
 <li><a class="reference internal" href="#using-the-classify-module">Using the <code class="docutils literal notranslate"><span class="pre">classify</span></code> module</a><ul>
-<li><a class="reference internal" href="#classifymetadata"><cite>ClassifyMetadata</cite></a></li>
+<li><a class="reference internal" href="#documentmetadata"><cite>DocumentMetadata</cite></a></li>
 <li><a class="reference internal" href="#classifiedsentence"><cite>ClassifiedSentence</cite></a></li>
 <li><a class="reference internal" href="#argument-mining-from-web-documents">Argument Mining from web documents</a></li>
 <li><a class="reference internal" href="#concurrency">Concurrency</a></li>
@@ -266,7 +378,6 @@ handling and response extraction for the basic classifier mechanisms</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#using-the-sessions-module">Using the <code class="docutils literal notranslate"><span class="pre">sessions</span></code> module</a></li>
-<li><a class="reference internal" href="#todo">TODO</a></li>
 </ul>
 </li>
 </ul>
