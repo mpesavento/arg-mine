@@ -6,7 +6,6 @@ import os
 import logging
 
 import click
-from dotenv import find_dotenv, load_dotenv
 
 from arg_mine import DATA_DIR
 from arg_mine.data.loaders import get_gdelt_df
@@ -102,11 +101,13 @@ def main(ndocs, start_row, end_row, chunk_size, batch_size, year):
     elif end_row is None and ndocs:
         print(2)
         end_row = start_row + ndocs
-    elif start_row and end_row and ndocs != (end_row-start_row):
+    elif start_row and end_row and ndocs != (end_row - start_row):
         print(3)
         # we set the end_row to stop on, but it doesnt match the target ndocs.
         # warn, and set ndocs to end_row
-        _logger.warning("Both ndocs and end_row are specified and don't match; using end_row")
+        _logger.warning(
+            "Both ndocs and end_row are specified and don't match; using end_row"
+        )
         ndocs = end_row
     else:
         msg = (
@@ -118,9 +119,7 @@ def main(ndocs, start_row, end_row, chunk_size, batch_size, year):
         _logger.error(msg)
         raise ValueError(msg)
 
-    print("ndocs: {}, start_row={}, end_row={}".format(
-                ndocs, start_row, end_row
-            ))
+    print("ndocs: {}, start_row={}, end_row={}".format(ndocs, start_row, end_row))
 
     # crop the URL list
     url_list = url_df.content_url.values[start_row:end_row]
@@ -143,9 +142,7 @@ def main(ndocs, start_row, end_row, chunk_size, batch_size, year):
             end_ix = doc_ix + batch_size - 1  # this is inclusive!!!
             _logger.debug("Running batch {} [{}-{}]".format(batch_ix, start_ix, end_ix))
             responses = classify.fetch_concurrent(
-                topic,
-                url_list=url_list[start_ix:end_ix + 1],
-                chunk_size=chunk_size,
+                topic, url_list=url_list[start_ix : end_ix + 1], chunk_size=chunk_size,
             )
             docs_df, sentences_df, missing_docs = classify.process_responses(responses)
 
@@ -206,7 +203,11 @@ def main(ndocs, start_row, end_row, chunk_size, batch_size, year):
             os.path.join(
                 out_data_path,
                 _WRITE_FILENAME_FMT.format(
-                    data="sentences", start=start_row, end=ndocs, ndigit=ndigit, year=year,
+                    data="sentences",
+                    start=start_row,
+                    end=ndocs,
+                    ndigit=ndigit,
+                    year=year,
                 ),
             ),
             header=True,

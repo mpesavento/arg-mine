@@ -11,11 +11,12 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   getting-started
+   getting_started
    setup_ec2
    download_data
    extract_arguments
    explore_data
+   tech_logistics
    modeling_references
 
 
