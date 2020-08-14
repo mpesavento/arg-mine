@@ -529,4 +529,3 @@ def process_responses(response_list):
     docs_df = pd.DataFrame(utils.dataclasses_to_dicts(doc_list))
     sentence_df = pd.DataFrame(utils.dataclasses_to_dicts(sentence_list))
     return docs_df, sentence_df, missing_url_list
-
