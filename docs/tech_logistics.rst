@@ -99,7 +99,7 @@ which may not be beneficial in the long run.
 
 **Current suggestion**
 
-Use `fetch_concurrent()` to run a set of extractions from a single server, given
+Use ``fetch_concurrent()`` to run a set of extractions from a single server, given
 a specific index range. Set up 3 servers to simultaneously run extractions, each with
 a specified non-overlapping index range (remember that the ``end-index`` is exclusive!).
 
@@ -107,7 +107,7 @@ Eg:
 
 | Have server A iterate over 300,000 URLs in batch sizes of 10000, from [0-300000)
 | Have server B iterate over 300,000 URLs in batch sizes of 10000, from [300000-600000)
-| Have server C iterate over 300,000 URLs in batch sizes of 10000, from [600000-900000)
+| Have server C iterate over 400,000 URLs in batch sizes of 10000, from [600000-1000000)
 
 The 10k batch sizes should be sufficient to fit in 8 GB memory, and take 5 hours to complete
 each batch. If an error occurs in a given batch and the data is lost, identify the last valid
@@ -136,6 +136,22 @@ for doing the asynchronous request parsing.
 * swap ``grequests`` out for ``requests-futures``, removing the monkey patch warning
 * Test & confirm that new concurrency gives a 1.5-3x improvement over serial processing
 * Refactor the classify/session code; we are doing the same error handling in too many places
+
+
+Storage
+^^^^^^^^^
+Currently, we are relying on manual sync or upload of the local data files
+to the S3 bucket. This model is incomplete, and has the possibility of
+data file collisions (one file overwriting another). Hopefully the naming should
+be unique enough to prevent this, but it is still possible.
+
+Another possible mechanism is to load the CSV files into SQL tables (using
+`Amazon RDS <https://aws.amazon.com/rds/sqlserver/>`_. This
+would provide a longer term storage solution, and give rapid queryable access
+to the target data.
+
+A suggested target is to be able to use ElastiSearch over the S3 data files.
+While this may be feasible, it has not been looked into concretely.
 
 
 Code cleanliness
