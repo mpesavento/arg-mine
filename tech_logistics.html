@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Technical Logistics &#8212; arg-mine 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ML primary literature &amp; references" href="modeling_references.html" />
+    <link rel="prev" title="Exploring the Mined Argument Data" href="explore_data.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="explore_data.html" title="Exploring the Mined Argument Data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="technical-logistics">
+<h1>Technical Logistics<a class="headerlink" href="#technical-logistics" title="Permalink to this headline">¶</a></h1>
+<p>There are a few key logistical notes that must be documented. These notes will
+help guide business decisions on how to proceed with using the <code class="docutils literal notranslate"><span class="pre">arg-mine</span></code> tool
+presented here.</p>
+<div class="section" id="cost-time-and">
+<h2>Cost (time and $$)<a class="headerlink" href="#cost-time-and" title="Permalink to this headline">¶</a></h2>
+<p>How much does it cost to use the ArgumenText API to extract arguments from
+the GDELT dataset?</p>
+<div class="section" id="time">
+<h3>Time<a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h3>
+<p>As observed in experiments that were not fully optimized for parallelization,
+the current time estimate is that it take roughly <code class="docutils literal notranslate"><span class="pre">1.8</span> <span class="pre">(±</span> <span class="pre">1)</span></code> seconds per URL.
+This time includes 1) sending the HTTP request, 2) server parsing and classification,
+3) return of the response from the server, 4) local parsing of the response.
+The duration of processing time will vary depending on the length of the article,
+and how many sentences there are to be classified as argument or no argument.</p>
+<p>If we assume a linear extrapolation, this implies that:</p>
+<div class="line-block">
+<div class="line">100 documents = 3 minutes</div>
+<div class="line">1000 documents  = 30 minutes</div>
+<div class="line">10000 documents = 300 minutes (5 hours)</div>
+<div class="line">100000 documents = 3000 minutes (50 hours)</div>
+<div class="line">1000000 (1M) documents = 30000 minutes (500 hours, or 20.8 days)</div>
+</div>
+<p>These durations have been empirically confirmed up to 10k documents.</p>
+<p>With one year worth of data representing approximately 1M documents, it would take
+3 weeks of compute time to extract one year worth of argument data.</p>
+<p>Note that these time estimates were created by running the extraction locally,
+rather than on an EC2 machine. However, the 10k URL extraction that was performed
+on an EC2 machine roughly corresponds to the 5 hours estimated above, possibly
+a little bit faster.</p>
+<p>These times were calculated based on the current speed of the
+<code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent()</span></code> call. However, we know that this call is not
+using concurrency correctly, so we could easily see a 2x reduction in duration
+with improved concurrent requests to the server.</p>
+<p>We discuss the challenges in concurrency below, in <a class="reference internal" href="#future-strategy"><span class="std std-ref">Future Strategy</span></a>.</p>
+</div>
+<div class="section" id="money">
+<h3>Money<a class="headerlink" href="#money" title="Permalink to this headline">¶</a></h3>
+<p>The times created above were run on a <code class="docutils literal notranslate"><span class="pre">t2.large</span></code>
+<a class="reference external" href="https://aws.amazon.com/ec2/instance-types/t2/">EC2 instance</a>, with
+2 CPus and 8 GB of RAM. This instance costs $0.0928/hr with on-demand pricing.</p>
+<div class="line-block">
+<div class="line">Running a single server for 24 hours will cost $2.227.</div>
+<div class="line">Running a single server for 168 hours (7 days) will cost $15.59</div>
+<div class="line">Running a single server for 504 hours (21 days) will cost $46.72</div>
+</div>
+<p>Running 20 servers for 24 hours (480 total compute hours) will cost $44.54</p>
+<p>Storing the data in S3 will also have an ongoing cost. Current
+<a class="reference external" href="https://aws.amazon.com/s3/pricing/">S3 storage rates</a>
+are <code class="docutils literal notranslate"><span class="pre">$0.023</span> <span class="pre">/</span> <span class="pre">GB</span></code>, for the first 50 TB under standard tier pricing. There are
+other tiers available for infrequently accessed data, which can cut the cost roughly
+in half to $0.0125 / GB</p>
+<p>From the current data stored on S3, 10000 attempted URLs (actual returned 7450 results)
+takes approximately 300 MB of space on disk with the CSV files. This costs roughly
+$0.006 per month.</p>
+<p>If we linearly extrapolate, we obtain the following disk usage estimates.</p>
+<div class="line-block">
+<div class="line">10000 documents = 300 MB</div>
+<div class="line">100000 documents = 3 GB</div>
+<div class="line">1000000 documents = 30 GB</div>
+<div class="line">5000000 documents = 150 GB</div>
+</div>
+<p>If the entire 5M dataset of sentences is extracted, it would take roughly 150 GB
+of storage on S3, and have a monthly cost of $3.45 / month.</p>
+</div>
+<div class="section" id="future-strategy">
+<span id="id1"></span><h3>Future Strategy<a class="headerlink" href="#future-strategy" title="Permalink to this headline">¶</a></h3>
+<p>Divide and conquer tends to be the solution for “big data” problems, and this problem
+is no exception. The HTTP requests are set up so that they can be processed in parallel
+by as many machines as necessary, with no requirements for shared state or memory between
+processes.</p>
+<p>This is immensely advantageous, in that one machine taking 21 days to process
+1 million documents could also be reduced to 21 machines taking 1 day to process
+1 million documents. The cost of using that many servers would be roughly the same
+as if one server was running for 21 days.</p>
+<p>The most significant blocker is that the ArgumenText API only supports up to 3
+requests at a time, presumably associated with a given API key. This is not likely
+to change in the near future. Possible workarounds include using 3 servers at a
+time with the same key, and obtaining additional keys to scale up. This adds complexity,
+which may not be beneficial in the long run.</p>
+<p><strong>Current suggestion</strong></p>
+<p>Use <cite>fetch_concurrent()</cite> to run a set of extractions from a single server, given
+a specific index range. Set up 3 servers to simultaneously run extractions, each with
+a specified non-overlapping index range (remember that the <code class="docutils literal notranslate"><span class="pre">end-index</span></code> is exclusive!).</p>
+<p>Eg:</p>
+<div class="line-block">
+<div class="line">Have server A iterate over 300,000 URLs in batch sizes of 10000, from [0-300000)</div>
+<div class="line">Have server B iterate over 300,000 URLs in batch sizes of 10000, from [300000-600000)</div>
+<div class="line">Have server C iterate over 300,000 URLs in batch sizes of 10000, from [600000-900000)</div>
+</div>
+<p>The 10k batch sizes should be sufficient to fit in 8 GB memory, and take 5 hours to complete
+each batch. If an error occurs in a given batch and the data is lost, identify the last valid
+index and restart the job from that start row.</p>
+<p>The extraction of 1M documents should have a total cost of $45.00 of compute time,
+and $0.69 in S3 storage.</p>
+</div>
+</div>
+<div class="section" id="arg-mine-package-improvements">
+<h2><code class="docutils literal notranslate"><span class="pre">arg_mine</span></code> package improvements<a class="headerlink" href="#arg-mine-package-improvements" title="Permalink to this headline">¶</a></h2>
+<p>There is still a lot of work that can be done to improve this tool. Here, we outline
+a few of the suggested improvements on the software engineering side, as well
+as future directions that the data extraction, argument mining, and argument clustering
+can take.</p>
+<div class="section" id="concurrency">
+<h3>Concurrency<a class="headerlink" href="#concurrency" title="Permalink to this headline">¶</a></h3>
+<p>A decision was made to use <code class="docutils literal notranslate"><span class="pre">grequests</span></code> package for concurrent HTTP requests.
+While this may have worked, this package is rapidly becoming derelict, with
+<code class="docutils literal notranslate"><span class="pre">requests-futures</span></code> or <code class="docutils literal notranslate"><span class="pre">concurrent-futures</span></code> (see <a class="reference external" href="https://stackoverflow.com/a/46144596">this</a>)
+for doing the asynchronous request parsing.</p>
+<ul class="simple">
+<li><p>move <code class="docutils literal notranslate"><span class="pre">classify.fetch_concurrent()</span></code> into sessions</p></li>
+<li><p>swap <code class="docutils literal notranslate"><span class="pre">grequests</span></code> out for <code class="docutils literal notranslate"><span class="pre">requests-futures</span></code>, removing the monkey patch warning</p></li>
+<li><p>Test &amp; confirm that new concurrency gives a 1.5-3x improvement over serial processing</p></li>
+<li><p>Refactor the classify/session code; we are doing the same error handling in too many places</p></li>
+</ul>
+</div>
+<div class="section" id="code-cleanliness">
+<h3>Code cleanliness<a class="headerlink" href="#code-cleanliness" title="Permalink to this headline">¶</a></h3>
+<p>While the author of the package did their best, there are definitely a string of
+<code class="docutils literal notranslate"><span class="pre">TODOs</span></code> throughout the package. Here are some of the more important tech debt
+items that should be addressed.</p>
+<ul class="simple">
+<li><p>Add unit tests for <code class="docutils literal notranslate"><span class="pre">arg_mine.data.extract_gdelt_sentences</span></code></p></li>
+<li><p>Add unit tests for <code class="docutils literal notranslate"><span class="pre">arg_mine.api.classify</span></code> business logic</p></li>
+<li><p>Add a context manager for the authentication tokens in <code class="docutils literal notranslate"><span class="pre">arg_mine.api.auth</span></code></p></li>
+<li><p>Test efficiency of using the <code class="docutils literal notranslate"><span class="pre">only_arguments</span></code> parameter in the classify payload
+(expect to see reduced local memory load, and possibly reduced server time)</p></li>
+</ul>
+</div>
+<div class="section" id="adding-cluster-requests-api">
+<h3>Adding cluster requests API<a class="headerlink" href="#adding-cluster-requests-api" title="Permalink to this headline">¶</a></h3>
+<p>The next step in this process will be to do a clustering analysis across all sentences
+that contain arguments to identify similarities. The
+<a class="reference external" href="https://api.argumentsearch.com/en/doc#api.cluster_arguments">ArgumenText API</a>
+has a <code class="docutils literal notranslate"><span class="pre">cluster_arguments</span></code> HTTP access point suitable for this purpose,
+utilizing an <a class="reference external" href="https://arxiv.org/abs/1908.10084">SBERT</a> model for the sentence
+clustering.</p>
+<p>Future work will be able to utilize the low-level wrapper and error handling
+around the <code class="docutils literal notranslate"><span class="pre">requests</span></code> module to query the clustering end point. Given
+the targeted concurrency model refactoring, the <code class="docutils literal notranslate"><span class="pre">`arg_mine.api.sessions</span></code> module should
+be ready to use in the creation of a new <code class="docutils literal notranslate"><span class="pre">arg_mine.api.clustering</span></code> module, paralleling
+the work done in <code class="docutils literal notranslate"><span class="pre">arg_mine.api.classify</span></code>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Technical Logistics</a><ul>
+<li><a class="reference internal" href="#cost-time-and">Cost (time and $$)</a><ul>
+<li><a class="reference internal" href="#time">Time</a></li>
+<li><a class="reference internal" href="#money">Money</a></li>
+<li><a class="reference internal" href="#future-strategy">Future Strategy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#arg-mine-package-improvements"><code class="docutils literal notranslate"><span class="pre">arg_mine</span></code> package improvements</a><ul>
+<li><a class="reference internal" href="#concurrency">Concurrency</a></li>
+<li><a class="reference internal" href="#code-cleanliness">Code cleanliness</a></li>
+<li><a class="reference internal" href="#adding-cluster-requests-api">Adding cluster requests API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="explore_data.html"
+                        title="previous chapter">Exploring the Mined Argument Data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modeling_references.html"
+                        title="next chapter">ML primary literature &amp; references</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tech_logistics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modeling_references.html" title="ML primary literature &amp; references"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="explore_data.html" title="Exploring the Mined Argument Data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arg-mine 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Mike Pesavento.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.4.
+    </div>
+  </body>
+</html>
