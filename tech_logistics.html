@@ -127,14 +127,14 @@ to change in the near future. Possible workarounds include using 3 servers at a
 time with the same key, and obtaining additional keys to scale up. This adds complexity,
 which may not be beneficial in the long run.</p>
 <p><strong>Current suggestion</strong></p>
-<p>Use <cite>fetch_concurrent()</cite> to run a set of extractions from a single server, given
+<p>Use <code class="docutils literal notranslate"><span class="pre">fetch_concurrent()</span></code> to run a set of extractions from a single server, given
 a specific index range. Set up 3 servers to simultaneously run extractions, each with
 a specified non-overlapping index range (remember that the <code class="docutils literal notranslate"><span class="pre">end-index</span></code> is exclusive!).</p>
 <p>Eg:</p>
 <div class="line-block">
 <div class="line">Have server A iterate over 300,000 URLs in batch sizes of 10000, from [0-300000)</div>
 <div class="line">Have server B iterate over 300,000 URLs in batch sizes of 10000, from [300000-600000)</div>
-<div class="line">Have server C iterate over 300,000 URLs in batch sizes of 10000, from [600000-900000)</div>
+<div class="line">Have server C iterate over 400,000 URLs in batch sizes of 10000, from [600000-1000000)</div>
 </div>
 <p>The 10k batch sizes should be sufficient to fit in 8 GB memory, and take 5 hours to complete
 each batch. If an error occurs in a given batch and the data is lost, identify the last valid
@@ -161,6 +161,19 @@ for doing the asynchronous request parsing.</p>
 <li><p>Test &amp; confirm that new concurrency gives a 1.5-3x improvement over serial processing</p></li>
 <li><p>Refactor the classify/session code; we are doing the same error handling in too many places</p></li>
 </ul>
+</div>
+<div class="section" id="storage">
+<h3>Storage<a class="headerlink" href="#storage" title="Permalink to this headline">¶</a></h3>
+<p>Currently, we are relying on manual sync or upload of the local data files
+to the S3 bucket. This model is incomplete, and has the possibility of
+data file collisions (one file overwriting another). Hopefully the naming should
+be unique enough to prevent this, but it is still possible.</p>
+<p>Another possible mechanism is to load the CSV files into SQL tables (using
+<a class="reference external" href="https://aws.amazon.com/rds/sqlserver/">Amazon RDS</a>. This
+would provide a longer term storage solution, and give rapid queryable access
+to the target data.</p>
+<p>A suggested target is to be able to use ElastiSearch over the S3 data files.
+While this may be feasible, it has not been looked into concretely.</p>
 </div>
 <div class="section" id="code-cleanliness">
 <h3>Code cleanliness<a class="headerlink" href="#code-cleanliness" title="Permalink to this headline">¶</a></h3>
@@ -209,6 +222,7 @@ the work done in <code class="docutils literal notranslate"><span class="pre">ar
 </li>
 <li><a class="reference internal" href="#arg-mine-package-improvements"><code class="docutils literal notranslate"><span class="pre">arg_mine</span></code> package improvements</a><ul>
 <li><a class="reference internal" href="#concurrency">Concurrency</a></li>
+<li><a class="reference internal" href="#storage">Storage</a></li>
 <li><a class="reference internal" href="#code-cleanliness">Code cleanliness</a></li>
 <li><a class="reference internal" href="#adding-cluster-requests-api">Adding cluster requests API</a></li>
 </ul>
