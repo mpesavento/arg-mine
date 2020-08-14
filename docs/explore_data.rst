@@ -7,48 +7,6 @@ So now you have some datasets, consisting of the documents and the sentences
 from those documents. What does this data look like? What can we do with it downstream?
 
 
-Document and Sentence IDs
-----------------------------
-First, a few notes on IDs and cross-linking between sentences and documents.
-To make it easy to identify unique documents and unique sentences, we use the
-`MD5 <https://en.wikipedia.org/wiki/MD5>`_ hash generation algorithm to create unique
-IDs.
-
-For each URL in the GDELT dataset, we use the full URL as the input string
-to the hash. This guarantees that each document ID will be unique to each URL we extract.
-If there are duplicate URLs, we can search on unique IDs to only return unique
-documents.
-
-.. code-block:: python
-
-    from arg_mine import utils
-    utils.unique_hash("https://www.stourbridgenews.co.uk/news/national/18141364.seven-arrested-gas-rig-protest/")
-
-gives:
-
-.. code-block::
-
-    cc5e8dcf8b787ea4fc0f7455a84559ac
-
-Similarly, for sentence IDs we use the full sentence string to create the hash;
-in particular, we use the ``sentencePreprocessed`` output from the ArgumenText API.
-The benefit of using the sentence as the input to the MD5 hash is that it becomes really
-easy to see if the same sentences are being used across different articles.
-
-.. code-block:: python
-
-    utils.unique_hash("She said the oil and gas industry is “part of the solution” to climate change.")
-
-gives:
-
-.. code-block::
-
-    6086288265e33cf745512f794d26e9ed
-
-These hash values are saved in the CSV files, and will be useful for linking the
-target tables in a database. For example, you can find all sentences associated
-with a given article rapidly if you know the doc_id or the origin URL.
-
 
 Argument Classification results
 -------------------------------

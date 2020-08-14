@@ -18,7 +18,6 @@ queries via a `RESTful <https://en.wikipedia.org/wiki/Representational_state_tra
 API, running a BERT-like model for argument extraction. The primary literature for
 the argument mining model can be found in :ref:`modeling_references`.
 
-
 Below, we describe how to use this API for argument extraction from a list of URLs
 containing web articles on a target topic.
 
@@ -26,8 +25,40 @@ Currently, all data is stored as CSV files. The intended structure of the object
 methods is to make it easy to link to a SQL database containing extracted document
 data. To hold the primary content in a format that is easy to translate between
 returned query data, CSV, and eventually database rows, we have the
-``ClassifyMetadata`` object for document metadata, and the ``ClassifiedSentences``
-objet for holding the data per extracted sentence.
+``DocumentMetadata`` object for document metadata, and the ``ClassifiedSentences``
+objet for holding the model predictions per extracted sentence.
+
+ArgumenText API
+---------------
+The lowest level Application Programming Interface is the RESTful server, hosted at
+`<https://api.argumentsearch.com/en>`_. This endpoint has subpaths, depending
+on whether you want to classify, cluster, or search, eg
+``https://api.argumentsearch.com/en/classify``.
+The design is to use the POST verb via HTTP, with a JSON payload containing the
+target content and required parameters. These parameters are fully documented
+`here <https://api.argumentsearch.com/en/doc>`_.
+
+The model published as a service contains proprietary training data, so does not
+exactly match the model described in the
+`AURC paper <https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf>`_.
+
+It is important to note the limitations of the service. Based on communication
+with the author of the service (Johannes Daxenberger, a collaborator with the
+`AURC paper <https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf>`_), there are a few key limitations to note:
+
+1. There is an internal limit in the server for the number of concurrent connections
+   that can occur in parallel, with a given API key. This number is reported to be
+   a maximum of ``3`` threads, but this has not been verified. As a rule of thumb,
+   it is more efficient to send longer texts in a single request,
+   then multiple shorter requests in parallel.
+2. The server times out on a given classification task after 200 seconds (3.3 minutes).
+   This means that if a document is too large, or you send the server too much content
+   to process in a single task, that it may time out on processing the sentence
+   classification.
+
+Internally, ArgumenText uses Apache Tika or JusText for article parsing from
+the html webpages into articles and sentences. As such, it is not perfect, and may
+return portions of the webpage that may not be considered part of the main article body.
 
 
 Command Line Interface for document URL argument extraction
@@ -64,7 +95,15 @@ into the files ``gdelt_2020_docs_docs0000-0999.csv`` and ``gdelt_2020_sentences_
 Note that if you do not specify ``start-row``, it will default to 0, and always start at the
 first document of the year's dataset.
 
-The docs file has the following columns:
+Note that while a filename may span over a start and end index (say, 0-999), the
+content inside the file may not have that many documents listed internally (eg 1000).
+This is due to data attrition, and a significant number of the articles in the
+GDELT dataset returning 404, and thus no available data. This attrition rate
+appears to be close to 25%. For example, out of 1000 articles, you may expect to see 750
+within the output file.
+
+The docs file contains the output from the ``DocumentMetadata`` class, and
+has the following columns:
 
 * doc_id
 * url
@@ -83,7 +122,8 @@ The docs file has the following columns:
 * total_non_arguments
 * total_classified_sentences
 
-The sentences file has the following schema:
+The sentences file contains the output from the ``ClassifiedSentence`` class, and
+has the following columns:
 
 * doc_id
 * url
@@ -96,6 +136,11 @@ The sentences file has the following schema:
 * sort_confidence
 * stance_confidence
 * stance_label
+
+
+Other than the ``doc_id`` and ``sentence_id``, all of these values come from the
+`ArgumenText API classify output <https://api.argumentsearch.com/en/doc#api.classify_api>`_
+See their documentation for further information on each column.
 
 
 Start/end document URL indexing
@@ -131,6 +176,56 @@ This line extracts sentences from the first 5k documents in 2020, iterating
 with a batch size of 1000 documents over 5 batches. This will give five output files
 with the document metadata, and five files containing all of the classified sentences.
 
+Bathc extraction is to be used in memory-limited environments. For example,
+when running the extraction job on an EC2 ``t2.large`` instance with 8 GB of memory,
+you may limited to a maximum batch size on the order of 100000 documents. Given that the
+full GDELT dataset contains 5 million articles, batch processing would make sense here.
+
+It takes approximately 8 hours to run 10000 articles. During that time, the application
+or server may crash, so saving the extracted data once an hour may be a reasonable guideline,
+more so than the limitations on memory.
+
+Document and Sentence IDs
+----------------------------
+A few notes on IDs and cross-linking between sentences and documents.
+To make it easy to identify unique documents and unique sentences, we use the
+`MD5 <https://en.wikipedia.org/wiki/MD5>`_ hash generation algorithm to create unique
+IDs.
+
+For each URL in the GDELT dataset, we use the full URL as the input string
+to the hash. This guarantees that each document ID will be unique to each URL we extract.
+If there are duplicate URLs, we can search on unique IDs to only return unique
+documents.
+
+.. code-block:: python
+
+    from arg_mine import utils
+    utils.unique_hash("https://www.stourbridgenews.co.uk/news/national/18141364.seven-arrested-gas-rig-protest/")
+
+gives:
+
+.. code-block::
+
+    cc5e8dcf8b787ea4fc0f7455a84559ac
+
+Similarly, for sentence IDs we use the full sentence string to create the hash;
+in particular, we use the ``sentencePreprocessed`` output from the ArgumenText API.
+The benefit of using the sentence as the input to the MD5 hash is that it becomes really
+easy to see if the same sentences are being used across different articles.
+
+.. code-block:: python
+
+    utils.unique_hash("She said the oil and gas industry is “part of the solution” to climate change.")
+
+gives:
+
+.. code-block::
+
+    6086288265e33cf745512f794d26e9ed
+
+These hash values are saved in the CSV files, and will be useful for linking the
+target tables in a database. For example, you can find all sentences associated
+with a given article rapidly if you know the doc_id or the origin URL.
 
 
 Using the ``classify`` module
@@ -143,7 +238,7 @@ allowing configurable access to changing the different parameters used in the qu
 There are two primary data classes that are used to create data objects from the
 information returned from the REST API.
 
-`ClassifyMetadata`
+`DocumentMetadata`
 ^^^^^^^^^^^^^^^^^^
 A data class that catches the returned dictionary from the low level ``requests``
 API call and makes it readily accessible and convertible to other formats.
@@ -171,7 +266,7 @@ Argument Mining from web documents
 The easiest way to classify all sentences in a single document is via the
 ``classify.classify_url_sentences`` method. Given the target topic, web url, and
 the necessary ArugmenText API keys (loaded from the .env file), we can
-quickly get the returned output from the API. Using the ``ClassifyMetadata``
+quickly get the returned output from the API. Using the ``DocumentMetadata``
 and ``ClassifiedSentence`` data classes, we can easily create parsable objects
 from the dict returned from the API.
 
@@ -183,7 +278,7 @@ from the dict returned from the API.
     url = "http://westchester.news12.com/story/41551116/firefighter-dies-as-australia-plans-to-adapt-to-wildfires"
     out_dict = classify.classify_url_sentences(topic, url, user_id, api_key)
 
-    doc_metadata = classify.ClassifyMetadata.from_dict(out_dict["metadata"]))
+    doc_metadata = classify.DocumentMetadata.from_dict(out_dict["metadata"]))
     sentence_list = [
         classify.ClassifiedSentence.from_dict(url, topic, sentence)
         for sentence in out_dict["sentences"]
@@ -198,7 +293,9 @@ The sentence_list can easily be turned into a pandas DataFrame:
 While this pattern works well for a single document, extraction from tens of thousands
 needs something a bit easier.
 
-A list of URLs can be run through the API with the following call::
+A list of URLs can be run through the API with the following call:
+
+.. code-block:: python
 
     doc_list, sentence_list, refused_doc_list = classify.collect_sentences_by_topic(topic, url_list)
 
@@ -223,7 +320,7 @@ The line with ``classify.fetch_concurrent`` uses concurrent requests (via ``greq
 the ArgumenText API server. It returns the response objects from the `requests` module.
 
 The line with ``classify.process_responses`` parses the server responses, returning a pandas DataFrame for the
-document metadata (from `ClassifyMetadata`), and a pandas DataFrame for the sentence
+document metadata (from `DocumentMetadata`), and a pandas DataFrame for the sentence
 classification results (from `ClassifiedSentence`). It also returns a list
 of the documents that returned a 404 (see `"Missing" documents`_ below) or the
 API was otherwise unable to process the request.
@@ -256,5 +353,10 @@ has proven to be extremely useful when the ArgumenText API server is unable
 to keep up with the load being requested.
 
 This module also contains the low level ``session.fetch()`` method, which performs error
-handling and response extraction for the basic classifier mechanisms
+handling and response extraction for the basic classifier mechanisms. This
+method contains layers of error handling around the requests.push() call to the
+API end point. Generally, the user shouldn't need to look into this method.
+Much of the structure in ``session.fetch()`` is duplicated in
+``classify.fetch_concurrent()``, which could probably use some refactoring and
+simplification.
 

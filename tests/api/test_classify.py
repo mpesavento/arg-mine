@@ -3,7 +3,7 @@ import unittest
 from arg_mine.api import classify
 
 
-class TestClassifyMetadata(unittest.TestCase):
+class TestDocumentMetadata(unittest.TestCase):
     def setUp(self) -> None:
         self.url = "https://www.cnn.com/politics/foo/bar.html"
         self.doc_id = "f285e6a93ee7d536f8b701739704fcec"
@@ -32,8 +32,8 @@ class TestClassifyMetadata(unittest.TestCase):
         }
 
     def test_from_dict(self):
-        meta_out = classify.ClassifyMetadata.from_dict(self.metadata_dict)
-        self.assertIsInstance(meta_out, classify.ClassifyMetadata)
+        meta_out = classify.DocumentMetadata.from_dict(self.metadata_dict)
+        self.assertIsInstance(meta_out, classify.DocumentMetadata)
         self.assertEqual(meta_out.url, self.url)
         # check that the document id is the same as what we expect
         self.assertEqual(meta_out.doc_id, self.doc_id)

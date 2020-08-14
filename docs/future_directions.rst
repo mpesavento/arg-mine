@@ -18,6 +18,8 @@ There are so many things to do to improve this package.
 * swap ``grequests`` out for ``requests-futures``, removing the monkey patch warning
 * Stratify the extraction code; we are doing the same error handling in too many places
 
+* Add a context manager for the authentication tokens in ``arg_mine.api.auth``
+
 
 Next Steps
 ---------------

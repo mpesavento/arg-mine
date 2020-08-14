@@ -40,7 +40,7 @@ class StanceLabel:
 
 
 @dataclass
-class ClassifyMetadata:
+class DocumentMetadata:
     """
     data class for the document metadata from a given URL, via a classify API call
     """
@@ -69,7 +69,7 @@ class ClassifyMetadata:
         url = metadata_dict[
             "userMetadata"
         ]  # should be enforcing upstream that the metadata will be the URL
-        return ClassifyMetadata(
+        return DocumentMetadata(
             # make the document ID based on the url
             doc_id=cls.make_doc_id(url),
             url=url,
@@ -118,7 +118,7 @@ class ClassifiedSentence:
     def from_dict(cls, url, topic, sentence_dict):
         """Load data object from dict"""
         return ClassifiedSentence(
-            doc_id=ClassifyMetadata.make_doc_id(url),
+            doc_id=DocumentMetadata.make_doc_id(url),
             url=url,
             topic=topic,
             sentence_id=cls.make_sentence_id(sentence_dict["sentencePreprocessed"]),
@@ -254,7 +254,7 @@ def collect_sentences_by_topic(
 
     Returns
     -------
-    Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+    Tuple[List[DocumentMetadata],  List[ClassifiedSentence], List[str]]
     """
     user_id, api_key = load_auth_tokens()
 
@@ -278,7 +278,7 @@ def collect_sentences_by_topic(
                 _logger.error(e)
 
             if out_dict:
-                doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
+                doc_list.append(DocumentMetadata.from_dict(out_dict["metadata"]))
                 for sentence in out_dict["sentences"]:
                     sentence_list.append(
                         ClassifiedSentence.from_dict(url, topic, sentence)
@@ -289,7 +289,7 @@ def collect_sentences_by_topic(
 
 def collect_sentences_for_url(topic, url, user_id, api_key):
     """
-    Thin wrapper function for getting the ClassifyMetadata and ClassifiedSentence objects for a url
+    Thin wrapper function for getting the DocumentMetadata and ClassifiedSentence objects for a url
 
     Parameters
     ----------
@@ -300,7 +300,7 @@ def collect_sentences_for_url(topic, url, user_id, api_key):
 
     Returns
     -------
-    Tuple[List[ClassifyMetadata],  List[ClassifiedSentence], List[str]]
+    Tuple[List[DocumentMetadata],  List[ClassifiedSentence], List[str]]
     """
     doc_list = []
     refused_doc_list = []
@@ -315,7 +315,7 @@ def collect_sentences_for_url(topic, url, user_id, api_key):
         _logger.error(e)
 
     if out_dict:
-        doc_list.append(ClassifyMetadata.from_dict(out_dict["metadata"]))
+        doc_list.append(DocumentMetadata.from_dict(out_dict["metadata"]))
         for sentence in out_dict["sentences"]:
             sentence_list.append(ClassifiedSentence.from_dict(url, topic, sentence))
     return doc_list, sentence_list, refused_doc_list
@@ -520,7 +520,7 @@ def process_responses(response_list):
         # parse the response output
         json_response = response.json()
         if json_response:
-            doc_list.append(ClassifyMetadata.from_dict(json_response["metadata"]))
+            doc_list.append(DocumentMetadata.from_dict(json_response["metadata"]))
             topic = json_response["metadata"]["topic"]
             url = json_response["metadata"]["userMetadata"]
             for sentence in json_response["sentences"]:

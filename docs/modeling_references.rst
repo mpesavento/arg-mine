@@ -16,6 +16,8 @@ Online News:
 https://blog.gdeltproject.org/a-new-contextual-dataset-for-exploring-climate-change-narratives-6-3m-english-news-urls-with-contextual-snippets-2015-2020/
 
 
+.. _`AURC_paper`:
+
 Argument Unit Recognition and Classification
 --------------------------------------------
 paper: https://aaai.org/Papers/AAAI/2020GB/AAAI-TrautmannD.7498.pdf

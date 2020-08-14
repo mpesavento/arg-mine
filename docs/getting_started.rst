@@ -126,7 +126,6 @@ and in your browser go to::
 
     file://<your project root>arg-mine/docs/_build/html/index.html
 
-
 To push the update to http://mpesavento.github.io/arg-mine ::
 
     make docs-upload
@@ -149,7 +148,7 @@ This will compile the ``requirements.in`` and create a fully updated static ``re
 with a complete list of available packages and package versions that are known to work.
 
 After running this command, you will likely want to update the requirements in the
-virtual environment and for the docker image::
+virtual environment and for the docker image ::
 
     make requirements
     make build

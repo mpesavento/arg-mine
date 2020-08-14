@@ -152,7 +152,7 @@ test-extract-gdelt:
 	docker run --rm -it \
 		${DOCKER_RUN_OPTS} \
 		${PROJECT_NAME} \
-		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=5 --year=2020 --start-row=2
+		$(PYTHON_INTERPRETER) arg_mine/data/extract_gdelt_sentences.py --ndocs=6 --year=2020 --start-row=2
 
 batch-extract-gdelt:
 	docker run --rm -it \
