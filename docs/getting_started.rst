@@ -21,8 +21,8 @@ First, clone the repository to your target location::
 To set up a virtual environment for development (assuming you have conda installed,
 from the cloned project root, run::
 
-    make create-environment
-    conda activate arg-mine
+    make create_environment
+    conda activate arg_mine
     make requirements
 
 This will create an environment in `conda <https://docs.conda.io/en/latest/>`_,

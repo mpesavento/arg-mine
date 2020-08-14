@@ -16,7 +16,7 @@ Contents:
    download_data
    extract_arguments
    explore_data
-   future_directions
+   tech_logistics
    modeling_references
 
 
