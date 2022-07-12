@@ -1,24 +1,24 @@
 # external requirements
-ipython~=7.15.0
-notebook~=6.0.3
-jupyterhub~=1.1.0
-jupyterlab~=2.1.4
+ipython~=8.4.0
+notebook~=6.4.12
+jupyterhub~=2.3.1
+jupyterlab~=2.2.10
 
-awscli~=1.18.73
+awscli~=1.25.28
 click
 python-dotenv
 ipywidgets
 ipympl
-matplotlib~=3.2.1
+matplotlib~=3.5.2
 nltk>=3.5
-pandas~=1.0.4
+pandas~=1.4.3
 plotly~=4.8.1
 requests
 grequests>=0.6.0
-scikit-image~=0.16.2
-scikit-learn~=0.22.2
-seaborn~=0.10.1
-statsmodels~=0.11.1
+scikit-image~=0.19.3
+scikit-learn~=1.1.1
+seaborn~=0.11.2
+statsmodels~=0.13.2
 
 ## to add, will add tf/pytorch
 #transformers
